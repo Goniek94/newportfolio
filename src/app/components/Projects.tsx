@@ -3,8 +3,11 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import VSCodeViewer from "./VSCodeViewer";
-import { autosellFiles } from "../data/vscode/index";
-import { ecomatiFiles } from "../data/vscode/ecomatiFiles";
+import {
+  autosellFiles,
+  newEcomatiFiles,
+  portfolioFiles,
+} from "../data/vscode/index";
 import { FaCode, FaTerminal } from "react-icons/fa";
 
 const LiveCodeTerminal = ({
@@ -88,244 +91,186 @@ const projects = [
   {
     id: 1,
     number: "01",
-    title: "Ecomati Shop",
-    category: "E-Commerce Platform",
+    title: "Autosell.pl",
+    category: "Enterprise Marketplace",
     year: "2024 — 2025",
     description:
-      "Modern organic food e-commerce platform with dynamic product variants, shopping cart management, and Prisma ORM integration. Built with Next.js 14 and TypeScript.",
-    tech: ["Next.js 14", "TypeScript", "Prisma", "PostgreSQL", "Framer Motion"],
+      "Full-stack automotive marketplace with real-time WebSocket notifications, advanced search engine with 30+ filters, and professional admin dashboard. Built with React, Node.js, MongoDB, and Socket.IO.",
+    tech: ["React 18", "Node.js", "MongoDB", "Socket.IO", "Express", "Redis"],
     snippets: [
       {
-        name: "ProductCard.tsx",
-        code: `const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
+        name: "SocketContext.js",
+        code: `// Real-time WebSocket connection management
+const [socket, setSocket] = useState(null);
+const { isAuthenticated, user } = useAuth();
+const [isConnected, setIsConnected] = useState(false);
 
-const currentVariant = product.variants?.[selectedVariantIndex];
-const displayPrice = currentVariant?.price || product.price;
-const displaySize = currentVariant?.size || product.sizes?.[0] || "Standard";
-
-const handleQuickAdd = (e: React.MouseEvent) => {
-  e.preventDefault();
-  e.stopPropagation();
-  addToCart(product, displaySize, 1);
-  showToast(\`Dodano do koszyka: \${product.name} (\${displaySize})\`);
-};
-
-const handleVariantClick = (e: React.MouseEvent, index: number) => {
-  e.preventDefault();
-  e.stopPropagation();
-  setSelectedVariantIndex(index);
-};`,
-      },
-      {
-        name: "CartContext.tsx",
-        code: `const addToCart = (product: Product, size: string, quantity: number = 1) => {
-  setCart((prev) => {
-    const existing = prev.find(
-      (item) => item.id === product.id && item.selectedSize === size,
-    );
-
-    if (existing) {
-      return prev.map((item) =>
-        item.id === product.id && item.selectedSize === size
-          ? { ...item, quantity: item.quantity + quantity }
-          : item,
-      );
-    } else {
-      const newItem: CartItem = {
-        ...product,
-        cartId: \`\${product.id}-\${size}\`,
-        selectedSize: size,
-        quantity: quantity,
-      };
-      return [...prev, newItem];
+useEffect(() => {
+  if (!isAuthenticated) {
+    if (notificationService.isConnected()) {
+      notificationService.disconnect();
+      setSocket(null);
+      setIsConnected(false);
     }
-  });
-};`,
+    return;
+  }
+
+  const initializeSocket = async () => {
+    await notificationService.connect();
+    const s = notificationService.socket;
+    
+    if (s) {
+      s.on("connect", () => setIsConnected(true));
+      s.on("disconnect", () => setIsConnected(false));
+      setSocket(s);
+    }
+  };
+
+  initializeSocket();
+}, [isAuthenticated]);`,
       },
       {
-        name: "page.tsx",
-        code: `async function getFeaturedProducts() {
-  try {
-    const products = await prisma.product.findMany({
-      where: {
-        deletedAt: null,
-        isAvailable: true,
-      },
-      take: 12,
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+        name: "adController.js",
+        code: `// Advanced search with scoring algorithm
+static async searchAds(req, res, next) {
+  const { sortBy = "createdAt", order = "desc" } = req.query;
+  const activeFilter = { status: getActiveStatusFilter() };
 
-    return products.map((p: any) => {
-      const weightOptions = p.weightOptions as any;
-      const hasVariants =
-        weightOptions?.variants && weightOptions.variants.length > 0;
+  const allAds = await Ad.find(activeFilter);
 
-      const firstVariant = hasVariants ? weightOptions.variants[0] : null;
-      const displaySize = firstVariant?.size || "";
-      const displayPrice = firstVariant?.price || p.price;
-      const variantCount = hasVariants ? weightOptions.variants.length : 0;
+  const adsWithScore = allAds.map((ad) => {
+    const match_score = calculateMatchScore(ad, req.query);
+    const is_featured = ad.listingType === "wyróżnione" ? 1 : 0;
+    return { ...ad.toObject(), match_score, is_featured };
+  });
 
-      const variants = hasVariants
-        ? weightOptions.variants.map((v: any) => ({
-            size: v.size,
-            price: \`\${v.price} zł\`,
-            priceNumeric: parseFloat(v.price),
-          }))
-        : undefined;
+  adsWithScore.sort((a, b) => {
+    if (b.is_featured !== a.is_featured)
+      return b.is_featured - a.is_featured;
+    
+    let comparison = 0;
+    switch (sortBy) {
+      case "price": comparison = (a.price || 0) - (b.price || 0); break;
+      case "year": comparison = (a.year || 0) - (b.year || 0); break;
+      default: comparison = new Date(a.createdAt) - new Date(b.createdAt);
+    }
+    
+    return comparison * (order === "desc" ? -1 : 1);
+  });
 
-      return {
-        id: Number(p.id),
-        name: p.name,
-        desc: p.shortDescription || "",
-        price: \`\${displayPrice} zł\`,
-        displaySize,
-        variantCount,
-        image: p.mainImage || "/Img/Olejbio.png",
-        category: p.category,
-        group: p.productGroup || "",
-        featured: p.isFeatured,
-        sizes: hasVariants
-          ? weightOptions.variants.map((v: any) => v.size)
-          : [],
-        variants,
-      };
-    });
-  } catch (error) {
-    console.error("Error fetching featured products:", error);
-    return [];
-  }
+  res.status(200).json({ ads: adsWithScore });
 }`,
       },
     ],
-    website: "https://ecomati-shop.vercel.app",
-    github: "https://github.com/Goniek94/ecomati",
+    website: "https://www.autosell.pl",
+    github: "https://github.com/Goniek94",
     isInteractive: true,
   },
   {
     id: 2,
     number: "02",
-    title: "Autosell.pl",
-    category: "Full-Stack Ecosystem",
+    title: "Ecomati.pl",
+    category: "Organic E-Commerce",
     year: "2024 — 2025",
     description:
-      "Enterprise automotive marketplace with high-performance search engine, real-time notifications, and professional admin dashboard.",
-    tech: ["Next.js", "Node.js", "MongoDB", "Socket.IO", "Redis"],
+      "Full-stack organic food e-commerce platform with dynamic product variants, admin dashboard, and Supabase storage. Features shopping cart management, Prisma ORM, and NextAuth authentication.",
+    tech: ["Next.js 14", "TypeScript", "Prisma", "PostgreSQL", "NextAuth"],
     snippets: [
       {
-        name: "adController.js",
-        code: `static async getAllAds(req, res, next) {
-  const { brand, model, minPrice, maxPrice } = req.query;
-  const filter = { status: getActiveStatusFilter() };
+        name: "ProductCard.tsx",
+        code: `// Dynamic product variants with real-time updates
+const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
+const currentVariant = product.variants?.[selectedVariantIndex];
+const displayPrice = currentVariant?.price || product.price;
 
-  if (brand) filter.brand = brand;
-  if (model) filter.model = model;
-
-  const ads = await Ad.find(filter)
-    .sort({ createdAt: -1 })
-    .limit(30);
-}`,
+const handleQuickAdd = (e: React.MouseEvent) => {
+  e.preventDefault();
+  addToCart(product, displaySize, 1);
+  showToast(\`Dodano: \${product.name}\`);
+};`,
       },
       {
-        name: "socketService.js",
-        code: `this.io = new Server(server, {
-  cors: { origin: ["http://localhost:3000"] },
-  pingTimeout: 60000,
-  connectionStateRecovery: {
-    maxDisconnectionDuration: 2 * 60 * 1000
+        name: "products/route.ts",
+        code: `// Admin API with rate limiting
+export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-});`,
+
+  const ip = request.headers.get("x-forwarded-for") ?? "127.0.0.1";
+  const { success, limit, remaining } = await checkRateLimit(\`products_\${ip}\`);
+
+  if (!success) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
+  const body = await request.json();
+  const validated = createProductSchema.parse(body);
+  
+  const product = await prisma.product.create({ data: validated });
+  return NextResponse.json(product, { status: 201 });
+}`,
       },
     ],
-    website: "https://www.autosell.pl",
+    website: "https://ecomati.pl",
+    github: "https://github.com/Goniek94/ecomati",
     isInteractive: true,
   },
   {
     id: 3,
     number: "03",
-    title: "WinXP OS Portfolio",
-    category: "Interactive Simulation",
-    year: "2025",
+    title: "Portfolio XP",
+    category: "Interactive Portfolio",
+    year: "2026",
     description:
-      "A deep dive into browser-based operating systems. Complex state management for windowing, file systems, and real-time audio.",
-    tech: ["React", "TypeScript", "Tailwind", "Framer Motion"],
+      "Windows XP-inspired interactive portfolio with modern animations, 3D globe visualization, and VSCode-style code viewer. Features real-time clock, animated loader, and smooth page transitions.",
+    tech: ["Next.js 14", "TypeScript", "Framer Motion", "Three.js"],
     snippets: [
       {
-        name: "WindowManager.tsx",
-        code: `export const WindowProvider = ({ children }) => {
-  const [activeWindows, setActive] = useState([]);
-  
-  const focusWindow = (id) => {
-    setZIndex(prev => prev + 1);
-    updateWindowOrder(id);
+        name: "Hero.tsx",
+        code: `// Animated hero with real-time clock
+const [time, setTime] = useState("");
+const [quoteIndex, setQuoteIndex] = useState(0);
+
+useEffect(() => {
+  const updateTime = () => {
+    const now = new Date();
+    setTime(now.toLocaleTimeString("pl-PL", { hour12: false }));
   };
-};`,
+  updateTime();
+  const timer = setInterval(updateTime, 1000);
+  return () => clearInterval(timer);
+}, []);
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    setQuoteIndex((prev) => (prev + 1) % quotes.length);
+  }, 5000);
+  return () => clearInterval(interval);
+}, []);`,
       },
-    ],
-    website: "https://mateusz-goszczycki-portfolio.vercel.app/",
-    github: "https://github.com/Goniek94",
-    isInteractive: true,
-  },
-  {
-    id: 4,
-    number: "04",
-    title: "ShopX E-Commerce",
-    category: "Modern Online Store",
-    year: "2024",
-    description:
-      "Full-featured e-commerce platform with Stripe payments, inventory management, and analytics dashboard. Built for scalability and conversion optimization.",
-    tech: ["Next.js 14", "Prisma", "PostgreSQL", "Stripe", "Zustand"],
-    snippets: [
       {
-        name: "checkout.ts",
-        code: `export async function createCheckout(items: CartItem[]) {
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
-    line_items: items.map(item => ({
-      price_data: {
-        currency: 'pln',
-        product_data: { name: item.name },
-        unit_amount: item.price * 100,
-      },
-      quantity: item.quantity,
-    })),
-    mode: 'payment',
-    success_url: \`\${url}/success\`,
-  });
-  
-  return session;
-}`,
+        name: "InitialLoader.tsx",
+        code: `// Tech snow animation with particles
+const [particles, setParticles] = useState<Array<any>>([]);
+
+useEffect(() => {
+  const generated = Array.from({ length: 30 }).map((_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    delay: Math.random() * 5,
+    duration: Math.random() * 10 + 10,
+    symbol: snowSymbols[Math.floor(Math.random() * snowSymbols.length)],
+    size: Math.random() * 14 + 10,
+    opacity: Math.random() * 0.3 + 0.05,
+  }));
+  setParticles(generated);
+}, []);`,
       },
     ],
-    website: "https://shopx-demo.vercel.app",
-    github: "https://github.com/Goniek94/shopx",
-    isInteractive: true,
-  },
-  {
-    id: 5,
-    number: "05",
-    title: "Transport Services",
-    category: "Core Web Vitals King",
-    year: "2024",
-    description:
-      "Built for speed and SEO. Custom Vanilla JS component loader to eliminate framework overhead and achieve 99+ Lighthouse score.",
-    tech: ["HTML5", "SCSS", "Vanilla JS", "Gulp"],
-    snippets: [
-      {
-        name: "componentLoader.js",
-        code: `const initLazyComponents = () => {
-  const components = document.querySelectorAll('[data-lazy]');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) load(entry.target);
-    });
-  });
-};`,
-      },
-    ],
-    website: "https://phumarbus.pl",
-    github: "https://github.com/Goniek94",
+    website: "https://portfolio-xp.vercel.app",
+    github: "https://github.com/Goniek94/Portfolio",
     isInteractive: true,
   },
 ];
@@ -335,9 +280,17 @@ export default function Projects() {
   const [currentFiles, setCurrentFiles] = useState(autosellFiles);
   const [currentTitle, setCurrentTitle] = useState("Autosell-Repo");
 
-  const openVSCode = (files: any[], title: string) => {
-    setCurrentFiles(files);
-    setCurrentTitle(title);
+  const openVSCode = (projectId: number) => {
+    if (projectId === 1) {
+      setCurrentFiles(autosellFiles);
+      setCurrentTitle("Autosell-Repo");
+    } else if (projectId === 2) {
+      setCurrentFiles(newEcomatiFiles);
+      setCurrentTitle("Ecomati-Repo");
+    } else if (projectId === 3) {
+      setCurrentFiles(portfolioFiles);
+      setCurrentTitle("Portfolio-Repo");
+    }
     setIsVSCodeOpen(true);
   };
 
@@ -403,15 +356,7 @@ export default function Projects() {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ delay: idx * 0.1 }}
               className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center group cursor-pointer border border-[#222] p-8 rounded-[2rem] bg-[#0a0a0a] transition-all duration-500 hover:border-[#D4AF37]/60 hover:bg-[#0f0f0f] hover:shadow-[0_0_40px_rgba(212,175,55,0.15)]"
-              onClick={() => {
-                if (project.id === 1) {
-                  openVSCode(ecomatiFiles, "Ecomati-Repo");
-                } else if (project.id === 2) {
-                  openVSCode(autosellFiles, "Autosell-Repo");
-                } else {
-                  setIsVSCodeOpen(true);
-                }
-              }}
+              onClick={() => openVSCode(project.id)}
             >
               {/* LEFT: INFO */}
               <div className="lg:col-span-7 space-y-6">
@@ -463,15 +408,7 @@ export default function Projects() {
                     </a>
                   )}
                   <button
-                    onClick={() => {
-                      if (project.id === 1) {
-                        openVSCode(ecomatiFiles, "Ecomati-Repo");
-                      } else if (project.id === 2) {
-                        openVSCode(autosellFiles, "Autosell-Repo");
-                      } else {
-                        setIsVSCodeOpen(true);
-                      }
-                    }}
+                    onClick={() => openVSCode(project.id)}
                     className="flex items-center gap-2 text-[#4ec9b0] font-mono text-xs uppercase font-black hover:text-white transition-all"
                   >
                     <FaCode size={14} /> Explore Code

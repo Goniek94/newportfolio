@@ -13,28 +13,8 @@ interface VSCodeViewerProps {
 
 const highlightCode = (code: string) => {
   if (!code) return "";
-  return code
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(
-      /\b(const|let|var|class|import|from|return|if|else|try|catch|async|await|new|this|export|default|function|interface|type)\b/g,
-      '<span style="color: #c586c0;">$1</span>',
-    )
-    .replace(
-      /\b(require|module|exports|console|window|document|localStorage|process)\b/g,
-      '<span style="color: #4ec9b0;">$1</span>',
-    )
-    .replace(/'([^']*)'/g, "<span style=\"color: #ce9178;\">'$1'</span>")
-    .replace(/"([^"]*)"/g, '<span style="color: #ce9178;">"$1"</span>')
-    .replace(/\/\/.*$/gm, '<span style="color: #6a9955;">$&</span>')
-    .replace(
-      /\b([A-Z][a-zA-Z0-9_]*)\b/g,
-      '<span style="color: #4ec9b0;">$1</span>',
-    )
-    .replace(
-      /\b([a-z][a-zA-Z0-9_]*)(?=\()/g,
-      '<span style="color: #dcdcaa;">$1</span>',
-    );
+  // Just escape HTML, no syntax highlighting
+  return code.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 };
 
 export default function VSCodeViewer({
