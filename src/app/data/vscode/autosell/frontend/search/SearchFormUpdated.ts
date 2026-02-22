@@ -1,4 +1,4 @@
-export const searchFormUpdatedCode = `// SearchFormUpdated.js
+export const searchFormUpdatedCode = `// SearchFormUpdated.ts
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import BasicFilters from "./BasicFilters";
