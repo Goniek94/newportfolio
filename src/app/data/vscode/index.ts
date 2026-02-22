@@ -7,7 +7,9 @@ export type FileNode = {
   children?: FileNode[];
 };
 
-// Export all project files
-export { autosellFiles } from "./autosellFiles";
+// Zmieniona ścieżka - teraz wskazuje na Twój nowy folder i plik index.ts w nim
+export { autosellFiles } from "./autosell/index";
+
+// Pozostałe projekty na razie zostawiamy bez zmian (dopóki ich też nie podzielisz)
 export { newEcomatiFiles } from "./newEcomatiFiles";
 export { portfolioFiles } from "./portfolioFiles";
