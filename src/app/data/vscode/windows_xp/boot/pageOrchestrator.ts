@@ -1,0 +1,117 @@
+export const pageOrchestratorCode = `'use client';
+
+import React, { useState, useCallback, useEffect } from 'react';
+import BootScreen from '@/components/boot/BootScreen';
+import WelcomeScreen from '@/components/boot/WelcomeScreen';
+import GlitchOverlay from '@/components/DesktopXP/Glitch';
+import DesktopXP from '@/components/DesktopXP/Desktop';
+import Warning from '@/components/DesktopXP/Warning';
+import InfoScreen from '@/components/DesktopXP/Desktop/components/InfoScreen';
+
+// Full app phase flow
+type AppPhase = 'boot' | 'welcome' | 'desktop' | 'glitch' | 'warning' | 'info';
+
+interface AppState {
+  currentPhase: AppPhase;
+  glitchCompleted: boolean;
+}
+
+export default function Home() {
+  const [state, setState] = useState<AppState>({
+    currentPhase: 'boot',
+    glitchCompleted: false,
+  });
+
+  const [transitionAudio, setTransitionAudio] = useState<HTMLAudioElement | null>(null);
+
+  // Boot → Welcome
+  const handleBootFinish = useCallback(() => {
+    setState((prev) => ({ ...prev, currentPhase: 'welcome' }));
+  }, []);
+
+  // Welcome → Desktop (+ play XP startup sound)
+  const handleWelcomeFinish = useCallback(() => {
+    setState((prev) => ({ ...prev, currentPhase: 'desktop' }));
+
+    const possiblePaths = [
+      '/sound/Microsoft Windows XP Startup Sound.mp3',
+      '/sound/windows-startup.mp3',
+    ];
+
+    (async () => {
+      for (const path of possiblePaths) {
+        try {
+          const audio = new Audio(path);
+          audio.volume = 0.7;
+          await new Promise((res, rej) => {
+            audio.addEventListener('canplaythrough', res as EventListener, { once: true });
+            audio.addEventListener('error', rej as EventListener, { once: true });
+            audio.load();
+          });
+          setTransitionAudio(audio);
+          audio.play().catch(() => {});
+          break;
+        } catch { /* try next */ }
+      }
+    })();
+  }, []);
+
+  // Desktop → Glitch (triggered after 5s on desktop)
+  const handleGlitchTrigger = useCallback(() => {
+    if (!state.glitchCompleted) {
+      setState((prev) => ({ ...prev, currentPhase: 'glitch' }));
+    }
+  }, [state.glitchCompleted]);
+
+  // Glitch → Warning (BSOD)
+  const handleGlitchFinish = useCallback(() => {
+    setState((prev) => ({ ...prev, currentPhase: 'warning' }));
+  }, []);
+
+  // Warning → Info screen
+  const handleWarningFinish = useCallback(() => {
+    setState((prev) => ({ ...prev, currentPhase: 'info' }));
+  }, []);
+
+  // Info → Desktop (glitch completed, portfolio icons shown)
+  const handleInfoFinish = useCallback(() => {
+    setState((prev) => ({ ...prev, currentPhase: 'desktop', glitchCompleted: true }));
+  }, []);
+
+  useEffect(() => () => { transitionAudio?.pause(); }, [transitionAudio]);
+
+  return (
+    <div className="w-full h-screen overflow-hidden relative bg-black">
+      {state.currentPhase === 'boot' && (
+        <div className="absolute inset-0" style={{ zIndex: 30 }}>
+          <BootScreen onFinish={handleBootFinish} />
+        </div>
+      )}
+      {state.currentPhase === 'welcome' && (
+        <div className="absolute inset-0" style={{ zIndex: 30 }}>
+          <WelcomeScreen onFinish={handleWelcomeFinish} />
+        </div>
+      )}
+      {state.currentPhase === 'desktop' && (
+        <div className="absolute inset-0" style={{ zIndex: 30 }}>
+          <DesktopXP showAdditionalIcons={false} onGlitchTrigger={handleGlitchTrigger} />
+        </div>
+      )}
+      {state.currentPhase === 'glitch' && (
+        <div className="absolute inset-0 z-40">
+          <GlitchOverlay onFinish={handleGlitchFinish} />
+        </div>
+      )}
+      {state.currentPhase === 'warning' && (
+        <div className="absolute inset-0 z-40">
+          <Warning onFinish={handleWarningFinish} />
+        </div>
+      )}
+      {state.currentPhase === 'info' && (
+        <div className="absolute inset-0 z-40">
+          <InfoScreen onFinish={handleInfoFinish} />
+        </div>
+      )}
+    </div>
+  );
+}`;

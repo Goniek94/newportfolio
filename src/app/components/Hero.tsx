@@ -1,12 +1,7 @@
 "use client";
 
-import {
-  motion,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-} from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 
 const quotes = [
   {
@@ -32,24 +27,14 @@ const quotes = [
     id: 3,
     text: (
       <>
-        4 years of learning, building{" "}
-        <span className="text-[#D4AF37]">production apps for clients</span>{" "}
-        since August 2024.
+        4+ years of continuous learning since 2020, shipping{" "}
+        <span className="text-[#D4AF37]">production apps</span> since 2024.
       </>
     ),
   },
 ];
 
 export default function Hero() {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [time, setTime] = useState("");
 
@@ -71,10 +56,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section
-      ref={containerRef}
-      className="relative min-h-screen w-full bg-[#050505] text-[#e1e1e1] flex flex-col justify-center px-5 sm:px-8 md:px-12 overflow-hidden pt-20 pb-12 md:pt-32 md:pb-20"
-    >
+    <section className="relative min-h-screen w-full bg-[#050505] text-[#e1e1e1] flex flex-col justify-center px-5 sm:px-8 md:px-12 overflow-hidden pt-8 pb-12 md:pt-14 md:pb-20">
       {/* Background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_50%,#1a1a1a,transparent)] pointer-events-none opacity-60" />
@@ -127,10 +109,7 @@ export default function Hero() {
         </div>
 
         {/* TITLE */}
-        <motion.div
-          style={{ y, opacity }}
-          className="relative z-20 mix-blend-difference"
-        >
+        <div className="relative z-20 mix-blend-difference">
           <h1
             className="font-black tracking-tighter text-white uppercase leading-[0.85]"
             style={{ fontSize: "clamp(3.5rem, 14vw, 12rem)" }}
@@ -152,7 +131,7 @@ export default function Hero() {
               Goszczycki
             </motion.span>
           </h1>
-        </motion.div>
+        </div>
 
         {/* ROTATING QUOTES */}
         <div className="mt-6 md:mt-12 max-w-3xl border-t border-[#222] pt-5 md:pt-10">

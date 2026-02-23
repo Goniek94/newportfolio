@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+// Note: scroll-triggered animations removed — only marquee/scanning animations kept
 import VSCodeViewer from "./VSCodeViewer";
 import {
   autosellFiles,
   newEcomatiFiles,
   portfolioFiles,
+  windowsXpFiles,
 } from "../data/vscode/index";
 import { FaCode, FaTerminal, FaLock, FaUnlock } from "react-icons/fa";
 
@@ -333,27 +335,29 @@ const validation = productSchema.safeParse(body);`,
   {
     id: 3,
     number: "03",
-    title: "Portfolio XP",
+    title: "Windows XP",
     nda: false,
-    category: "Interactive Portfolio",
+    category: "Interactive OS Portfolio",
     year: "2026",
     description:
-      "Windows XP-inspired interactive portfolio with modern animations, 3D globe visualization, and VSCode-style code viewer. Features real-time clock, animated loader, and smooth page transitions.",
-    tech: ["Next.js 14", "TypeScript", "Framer Motion", "Three.js"],
+      "An interactive web portfolio built as a fully functional Windows XP simulation. Features a custom window manager handling z-index, focus, and minimize/maximize/fullscreen states. It includes a complete boot sequence (boot → welcome → desktop → narrative glitch) and meticulously recreated retro apps like Winamp (with active audio lifecycle management) and Gadu-Gadu. Designed to showcase advanced React state management and modular frontend architecture disguised as a nostalgic operating system.",
+    tech: ["Next.js (App Router)", "React", "TypeScript", "Tailwind CSS v4"],
     snippets: [
       {
-        name: "Hero.tsx",
-        code: `// Animated hero with real-time clock
-const [time, setTime] = useState("");`,
+        name: "useWindowManager.ts",
+        code: `// Custom window management logic
+const [windows, setWindows] = useState<WindowState[]>([]);
+const bringToFront = (id: string) => updateZIndex(id);`,
       },
       {
-        name: "InitialLoader.tsx",
-        code: `// Tech snow animation with particles
-const [particles, setParticles] = useState<Array<any>>([]);`,
+        name: "WinampPlayer.tsx",
+        code: `// Retro audio player with playback state
+const { play, pause, currentTrack } = useAudioContext();
+const [visualizerData, setVisualizerData] = useState([]);`,
       },
     ],
     website: "https://mateusz-goszczycki-portfolio.vercel.app/",
-    github: "https://github.com/Goniek94/Portfolio",
+    github: "https://github.com/Goniek94/Windows_xp",
     isInteractive: true,
   },
 ];
@@ -374,8 +378,8 @@ export default function Projects() {
       setCurrentFiles(newEcomatiFiles);
       setCurrentTitle("Ecomati-Repo");
     } else if (projectId === 3) {
-      setCurrentFiles(portfolioFiles);
-      setCurrentTitle("Portfolio-Repo");
+      setCurrentFiles(windowsXpFiles);
+      setCurrentTitle("Windows-XP-Repo");
     }
     setIsVSCodeOpen(true);
   };
@@ -383,7 +387,7 @@ export default function Projects() {
   return (
     <section
       id="projects"
-      className="relative w-full bg-[#050505] text-[#e1e1e1] py-20 md:py-32 px-4 md:px-12 overflow-hidden"
+      className="relative w-full bg-[#050505] text-[#e1e1e1] py-14 md:py-20 px-4 md:px-12 overflow-hidden"
     >
       <VSCodeViewer
         isOpen={isVSCodeOpen}
@@ -394,15 +398,9 @@ export default function Projects() {
 
       <div className="max-w-[1700px] mx-auto relative z-10">
         {/* HEADER */}
-        <div className="mb-14 md:mb-24 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-start">
+        <div className="mb-10 md:mb-16 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-start">
           {/* Left — label + big title */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="lg:col-span-5 space-y-5 md:space-y-6"
-          >
+          <div className="lg:col-span-5 space-y-5 md:space-y-6">
             <div className="flex items-center gap-3 md:gap-4">
               <div className="h-[2px] w-10 md:w-16 bg-[#D4AF37] shrink-0" />
               <span className="text-[10px] md:text-xs font-mono tracking-[0.2em] md:tracking-[0.3em] text-[#D4AF37] uppercase font-bold">
@@ -420,39 +418,42 @@ export default function Projects() {
                 Projects
               </span>
             </h2>
-          </motion.div>
+          </div>
 
-          {/* Right — description */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.15 }}
-            className="lg:col-span-7 space-y-3 md:space-y-4"
-          >
-            <p className="text-xl sm:text-2xl md:text-3xl text-neutral-300 font-light leading-relaxed border-l-4 border-[#D4AF37] pl-5 md:pl-8">
-              Real-world applications built{" "}
-              <span className="text-white font-semibold">
-                from concept to deployment
+          {/* Right — description + quote */}
+          <div className="lg:col-span-7 space-y-6 md:space-y-8 flex flex-col justify-between h-full">
+            <div className="space-y-3 md:space-y-4">
+              <p className="text-xl sm:text-2xl md:text-3xl text-neutral-300 font-light leading-relaxed border-l-4 border-[#D4AF37] pl-5 md:pl-8">
+                Real-world applications built{" "}
+                <span className="text-white font-semibold">
+                  from concept to deployment
+                </span>
+                .
+              </p>
+              <p className="text-neutral-500 text-base md:text-lg leading-relaxed pl-5 md:pl-8">
+                Every project is production-grade — live users, real data,
+                working payments. Click any card to explore the source code.
+              </p>
+            </div>
+
+            {/* Inspirational quote */}
+            <div className="relative pl-5 md:pl-8 pt-4 md:pt-6 border-t border-[#1a1a1a]">
+              <span className="absolute -top-5 left-5 md:left-8 text-[#D4AF37]/15 text-6xl md:text-7xl font-serif leading-none select-none">
+                &ldquo;
               </span>
-              .
-            </p>
-            <p className="text-neutral-500 text-base md:text-lg leading-relaxed pl-5 md:pl-8">
-              Every project is production-grade — live users, real data, working
-              payments. Click any card to explore the source code.
-            </p>
-          </motion.div>
+              <p className="text-neutral-400 text-base md:text-xl italic font-light leading-relaxed">
+                Every problem has a solution. And if there is no solution, then
+                perhaps it was never a problem to begin with.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* PROJECTS */}
         <div className="flex flex-col gap-12 md:gap-24">
-          {projects.map((project, idx) => (
-            <motion.div
+          {projects.map((project) => (
+            <div
               key={project.id}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ delay: idx * 0.1 }}
               className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-12 items-center group cursor-pointer border border-[#222] p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-[#0a0a0a] transition-all duration-500 hover:border-[#D4AF37]/60 hover:bg-[#0f0f0f] hover:shadow-[0_0_40px_rgba(212,175,55,0.15)]"
               onClick={() => openVSCode(project.id)}
             >
@@ -541,7 +542,7 @@ export default function Projects() {
                 <div className="absolute -z-10 -inset-1 bg-gradient-to-r from-[#D4AF37]/20 to-transparent rounded-[1.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
                 <div className="absolute -z-10 -top-4 -right-4 w-full h-full border border-[#D4AF37]/20 rounded-[1.5rem] rotate-2 group-hover:rotate-3 transition-all duration-700 hidden md:block" />
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

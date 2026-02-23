@@ -162,28 +162,53 @@ export default function InitialLoader({ finishLoading }: LoaderProps) {
             xmlns="http://www.w3.org/2000/svg"
             className="w-full md:w-[600px]"
           >
-            <motion.path
-              d="M0 10 H200 L210 2 L230 18 L240 10 H360 L370 2 L390 18 L400 10 H600"
+            {/* Pulse path definition */}
+            <defs>
+              <path
+                id="pulsePath"
+                d="M0 10 H30 L35 5 L40 15 L45 3 L50 17 L55 10 H90 L95 5 L100 15 L105 3 L110 17 L115 10 H150 L155 5 L160 15 L165 3 L170 17 L175 10 H210 L215 5 L220 15 L225 3 L230 17 L235 10 H270 L275 5 L280 15 L285 3 L290 17 L295 10 H330 L335 5 L340 15 L345 3 L350 17 L355 10 H390 L395 5 L400 15 L405 3 L410 17 L415 10 H450 L455 5 L460 15 L465 3 L470 17 L475 10 H510 L515 5 L520 15 L525 3 L530 17 L535 10 H570 L575 5 L580 15 L585 3 L590 17 L595 10 H600"
+              />
+              {/* Glow filter for the moving dot */}
+              <filter
+                id="pulseGlow"
+                x="-50%"
+                y="-50%"
+                width="200%"
+                height="200%"
+              >
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            {/* Static pulse line */}
+            <motion.use
+              href="#pulsePath"
               stroke="#D4AF37"
-              strokeWidth="2"
+              strokeWidth="1.5"
+              fill="none"
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ duration: 1.5, ease: "easeInOut", delay: 0.5 }}
+              transition={{ duration: 2, ease: "easeInOut", delay: 0.5 }}
             />
-          </motion.svg>
 
-          {/* Glowing Dot */}
-          <motion.div
-            initial={{ opacity: 0, left: "0%" }}
-            animate={{ opacity: [0, 1, 1, 0], left: "100%" }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              repeatDelay: 1,
-              ease: "easeInOut",
-            }}
-            className="absolute top-1/2 -translate-y-1/2 w-20 h-[2px] bg-yellow-400 blur-[3px]"
-          />
+            {/* Glowing dot that follows the pulse path – starts after line is drawn */}
+            <circle r="4" fill="#facc15" filter="url(#pulseGlow)" opacity="0">
+              <animateMotion dur="3s" repeatCount="indefinite" begin="2.5s">
+                <mpath href="#pulsePath" />
+              </animateMotion>
+              <animate
+                attributeName="opacity"
+                values="0;0.9;0.9;0"
+                dur="3s"
+                repeatCount="indefinite"
+                begin="2.5s"
+              />
+            </circle>
+          </motion.svg>
         </div>
 
         {/* DEVELOPER */}

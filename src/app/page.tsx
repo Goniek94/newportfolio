@@ -7,6 +7,7 @@ import Hero from "./components/Hero";
 import AboutMe from "./components/AboutMe";
 import Projects from "./components/Projects";
 import Contact from "./components/Contacts";
+import GoldenGlow from "./components/GoldenGlow";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -27,6 +28,9 @@ export default function Home() {
           <InitialLoader finishLoading={() => setIsLoading(false)} />
         )}
       </AnimatePresence>
+
+      {/* Golden cursor glow effect */}
+      {!isLoading && <GoldenGlow />}
 
       {/* Dopiero gdy loader zniknie (lub pod kurtyną), pokazujemy resztę */}
       <div className="relative z-0">
