@@ -1,164 +1,277 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useInView } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import VSCodeViewer from "./VSCodeViewer";
 import {
   autosellFiles,
   newEcomatiFiles,
   portfolioFiles,
 } from "../data/vscode/index";
-import { FaCode, FaTerminal } from "react-icons/fa";
+import { FaCode, FaTerminal, FaLock, FaUnlock } from "react-icons/fa";
 
-const LiveCodeTerminal = ({
+// ─────────────────────────────────────────────
+// CODE PANEL
+// ─────────────────────────────────────────────
+const CodePanel = ({
   snippets,
+  onOpen,
 }: {
   snippets: { name: string; code: string }[];
+  onOpen: () => void;
 }) => {
-  const [index, setIndex] = useState(0);
-  const [displayedCode, setDisplayedCode] = useState("");
-  const containerRef = useRef(null);
-  const isInView = useInView(containerRef, { once: false, amount: 0.5 });
+  const [unlocked, setUnlocked] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const [scanLine, setScanLine] = useState(0);
 
   useEffect(() => {
-    if (!isInView) return;
+    const id = setInterval(() => {
+      setScanLine((p) => (p + 1) % 100);
+    }, 30);
+    return () => clearInterval(id);
+  }, []);
 
-    let i = 0;
-    setDisplayedCode("");
-    const currentSnippet = snippets[index];
+  const handleUnlock = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (unlocked || scanning) return;
+    setScanning(true);
+    setTimeout(() => {
+      setScanning(false);
+      setUnlocked(true);
+      onOpen();
+    }, 1800);
+  };
 
-    const typingInterval = setInterval(() => {
-      setDisplayedCode(currentSnippet.code.slice(0, i));
-      i++;
-      if (i > currentSnippet.code.length) {
-        clearInterval(typingInterval);
-        setTimeout(() => {
-          setIndex((prev) => (prev + 1) % snippets.length);
-        }, 4000);
-      }
-    }, 20);
-
-    return () => clearInterval(typingInterval);
-  }, [index, snippets, isInView]);
+  const files = snippets.map((s) => s.name);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative h-full min-h-[320px] bg-[#0d0d0d] rounded-[1.5rem] overflow-hidden border border-[#222] group-hover:border-[#D4AF37]/50 transition-all duration-700 shadow-2xl flex flex-col font-mono"
-    >
-      <div className="flex items-center justify-between px-4 py-3 bg-[#161616] border-b border-[#222]">
+    <div className="relative h-full min-h-[340px] bg-[#080808] rounded-[1.5rem] overflow-hidden border border-[#1a1a1a] group-hover:border-[#D4AF37]/40 transition-all duration-700 shadow-2xl flex flex-col font-mono">
+      {/* Scanline grid overlay */}
+      <div
+        className="pointer-events-none absolute inset-0 z-10 opacity-[0.04]"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(0deg, transparent, transparent 2px, #D4AF37 2px, #D4AF37 3px)",
+        }}
+      />
+
+      {/* Moving scan beam */}
+      <div
+        className="pointer-events-none absolute left-0 right-0 h-[2px] z-20 transition-none"
+        style={{
+          top: `${scanLine}%`,
+          background:
+            "linear-gradient(90deg, transparent, rgba(212,175,55,0.15), rgba(212,175,55,0.5), rgba(212,175,55,0.15), transparent)",
+          boxShadow: "0 0 12px 2px rgba(212,175,55,0.2)",
+        }}
+      />
+
+      {/* Title bar */}
+      <div className="flex items-center justify-between px-4 py-3 bg-[#0f0f0f] border-b border-[#1a1a1a] shrink-0 relative z-30">
         <div className="flex gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></div>
-          <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></div>
-          <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></div>
+          <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
         </div>
-        <AnimatePresence mode="wait">
-          <motion.span
-            key={snippets[index].name}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 10 }}
-            className="text-neutral-500 text-[10px] uppercase tracking-widest flex items-center gap-2"
-          >
-            <FaTerminal size={10} /> {snippets[index].name}
-          </motion.span>
-        </AnimatePresence>
+        <span className="text-[#444] text-[10px] uppercase tracking-[0.25em] flex items-center gap-2">
+          <FaTerminal size={9} />
+          SOURCE_VAULT
+        </span>
+        <div className="w-12" />
       </div>
 
-      <div className="p-6 flex-1 overflow-hidden relative">
-        <pre className="text-[#ce9178] leading-relaxed text-[11px] md:text-[13px] whitespace-pre">
-          <code>
-            {displayedCode}
-            <span className="animate-pulse bg-[#D4AF37] w-1.5 h-4 inline-block ml-1"></span>
-          </code>
-        </pre>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent opacity-60"></div>
+      {/* Body */}
+      <div className="flex-1 flex flex-col p-6 gap-4 relative z-30">
+        {/* File list */}
+        <div
+          className="flex flex-col gap-2 transition-all duration-700"
+          style={{
+            filter: unlocked ? "none" : "blur(4px)",
+            opacity: unlocked ? 1 : 0.4,
+          }}
+        >
+          {files.map((f, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#111] border border-[#1e1e1e]"
+            >
+              <span className="w-2 h-2 rounded-full bg-[#D4AF37] opacity-70 shrink-0" />
+              <span className="text-[#888] text-xs tracking-wide">{f}</span>
+              <div className="flex-1 h-px bg-[#1e1e1e]" />
+              <span className="text-[10px] text-[#333] uppercase tracking-widest">
+                {unlocked ? "ready" : "locked"}
+              </span>
+            </div>
+          ))}
+          {[...Array(Math.max(0, 3 - files.length))].map((_, i) => (
+            <div
+              key={`fake-${i}`}
+              className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#0d0d0d] border border-[#161616]"
+            >
+              <span className="w-2 h-2 rounded-full bg-[#222] shrink-0" />
+              <div className="h-2 bg-[#1a1a1a] rounded flex-1" />
+            </div>
+          ))}
+        </div>
 
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-[#D4AF37]/5 backdrop-blur-[1px]">
-          <div className="bg-[#1e1e1e] border border-[#333] text-white px-4 py-2 rounded-lg flex items-center gap-3 shadow-xl transform translate-y-2 group-hover:translate-y-0 transition-transform">
-            <FaCode className="text-[#D4AF37]" />
-            <span className="font-bold text-[10px] uppercase tracking-widest">
-              Launch Full Editor
-            </span>
-          </div>
+        {/* CTA center */}
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 py-2">
+          <AnimatePresence mode="wait">
+            {scanning ? (
+              <motion.div
+                key="scanning"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col items-center gap-3"
+              >
+                <div className="relative w-14 h-14">
+                  <svg className="w-full h-full -rotate-90" viewBox="0 0 56 56">
+                    <circle
+                      cx="28"
+                      cy="28"
+                      r="24"
+                      fill="none"
+                      stroke="#1a1a1a"
+                      strokeWidth="2"
+                    />
+                    <motion.circle
+                      cx="28"
+                      cy="28"
+                      r="24"
+                      fill="none"
+                      stroke="#D4AF37"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeDasharray="150"
+                      animate={{ strokeDashoffset: [150, 0] }}
+                      transition={{ duration: 1.8, ease: "easeInOut" }}
+                    />
+                  </svg>
+                  <FaCode
+                    className="absolute inset-0 m-auto text-[#D4AF37]"
+                    size={18}
+                  />
+                </div>
+                <span className="text-[#D4AF37] text-[11px] uppercase tracking-[0.3em] animate-pulse">
+                  Authenticating...
+                </span>
+              </motion.div>
+            ) : unlocked ? (
+              <motion.div
+                key="unlocked"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex flex-col items-center gap-3"
+              >
+                <div className="w-14 h-14 rounded-full border border-[#27c93f]/40 flex items-center justify-center bg-[#27c93f]/10">
+                  <FaUnlock className="text-[#27c93f]" size={20} />
+                </div>
+                <span className="text-[#27c93f] text-[11px] uppercase tracking-[0.3em]">
+                  Access Granted
+                </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpen();
+                  }}
+                  className="flex items-center gap-2 px-5 py-2 bg-[#27c93f]/10 border border-[#27c93f]/40 rounded-lg hover:bg-[#27c93f]/20 hover:border-[#27c93f] transition-all duration-300"
+                >
+                  <FaCode size={12} className="text-[#27c93f]" />
+                  <span className="text-[#27c93f] text-[11px] font-black uppercase tracking-widest">
+                    View Source
+                  </span>
+                </button>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="locked"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex flex-col items-center gap-3 cursor-pointer"
+                onClick={handleUnlock}
+              >
+                <div className="w-14 h-14 rounded-full border border-[#D4AF37]/20 flex items-center justify-center bg-[#D4AF37]/5 group-hover:border-[#D4AF37]/50 transition-colors duration-500">
+                  <FaLock
+                    className="text-[#D4AF37]/60 group-hover:text-[#D4AF37] transition-colors duration-500"
+                    size={20}
+                  />
+                </div>
+                <span className="text-[#555] text-[11px] uppercase tracking-[0.3em]">
+                  Classified
+                </span>
+                <div className="flex items-center gap-2 px-5 py-2 border border-[#D4AF37]/30 rounded-lg group-hover:border-[#D4AF37] group-hover:bg-[#D4AF37]/5 transition-all duration-300">
+                  <span className="text-[#D4AF37]/60 group-hover:text-[#D4AF37] text-[11px] font-black uppercase tracking-widest transition-colors duration-300">
+                    Unlock Access
+                  </span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Status bar */}
+        <div className="flex items-center justify-between text-[#333] text-[9px] uppercase tracking-widest pt-2 border-t border-[#111]">
+          <span className="flex items-center gap-1.5">
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                unlocked
+                  ? "bg-[#27c93f]"
+                  : scanning
+                    ? "bg-[#D4AF37] animate-pulse"
+                    : "bg-[#ff5f56]"
+              }`}
+            />
+            {unlocked ? "Secure" : scanning ? "Verifying" : "Protected"}
+          </span>
+          <span>{files.length} files</span>
+          <span>AES-256</span>
         </div>
       </div>
+
+      {/* Gold corner accents */}
+      <div className="pointer-events-none absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[#D4AF37]/30 rounded-tl-[1.5rem]" />
+      <div className="pointer-events-none absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-[#D4AF37]/30 rounded-tr-[1.5rem]" />
+      <div className="pointer-events-none absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-[#D4AF37]/30 rounded-bl-[1.5rem]" />
+      <div className="pointer-events-none absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-[#D4AF37]/30 rounded-br-[1.5rem]" />
     </div>
   );
 };
 
+// ─────────────────────────────────────────────
+// PROJECTS DATA
+// ─────────────────────────────────────────────
 const projects = [
   {
     id: 1,
     number: "01",
     title: "Autosell.pl",
+    nda: true,
     category: "Enterprise Marketplace",
     year: "2024 — 2025",
     description:
-      "Full-stack automotive marketplace with real-time WebSocket notifications, advanced search engine with 30+ filters, and professional admin dashboard. Built with React, Node.js, MongoDB, and Socket.IO.",
-    tech: ["React 18", "Node.js", "MongoDB", "Socket.IO", "Express", "Redis"],
+      "Production automotive marketplace built entirely solo — live with real users, active listings, and working payments. The React 18 PWA covers advanced multi-criteria search, real-time messaging and notifications via Socket.IO, secure JWT auth (HttpOnly cookies, token rotation & blacklist), listing management with image upload and optimization, ad promotion modules, and a full admin dashboard. The Node.js/Express backend is split across eight domains (users, listings, media, communication, notifications, payments, external, admin) with a strong security layer: Helmet CSP, strict CORS, per-endpoint rate limiting, HMAC-based PII protection, NoSQL sanitization, and automated security test suites. Also delivered a separate commercial project under NDA using the same stack.",
+    tech: [
+      "React 18",
+      "Node.js",
+      "MongoDB",
+      "Socket.IO",
+      "Express",
+      "Supabase",
+    ],
     snippets: [
       {
         name: "SocketContext.js",
         code: `// Real-time WebSocket connection management
 const [socket, setSocket] = useState(null);
 const { isAuthenticated, user } = useAuth();
-const [isConnected, setIsConnected] = useState(false);
-
-useEffect(() => {
-  if (!isAuthenticated) {
-    if (notificationService.isConnected()) {
-      notificationService.disconnect();
-      setSocket(null);
-      setIsConnected(false);
-    }
-    return;
-  }
-
-  const initializeSocket = async () => {
-    await notificationService.connect();
-    const s = notificationService.socket;
-    
-    if (s) {
-      s.on("connect", () => setIsConnected(true));
-      s.on("disconnect", () => setIsConnected(false));
-      setSocket(s);
-    }
-  };
-
-  initializeSocket();
-}, [isAuthenticated]);`,
+const [isConnected, setIsConnected] = useState(false);`,
       },
       {
         name: "adController.js",
         code: `// Advanced search with scoring algorithm
 static async searchAds(req, res, next) {
   const { sortBy = "createdAt", order = "desc" } = req.query;
-  const activeFilter = { status: getActiveStatusFilter() };
-
-  const allAds = await Ad.find(activeFilter);
-
-  const adsWithScore = allAds.map((ad) => {
-    const match_score = calculateMatchScore(ad, req.query);
-    const is_featured = ad.listingType === "wyróżnione" ? 1 : 0;
-    return { ...ad.toObject(), match_score, is_featured };
-  });
-
-  adsWithScore.sort((a, b) => {
-    if (b.is_featured !== a.is_featured)
-      return b.is_featured - a.is_featured;
-    
-    let comparison = 0;
-    switch (sortBy) {
-      case "price": comparison = (a.price || 0) - (b.price || 0); break;
-      case "year": comparison = (a.year || 0) - (b.year || 0); break;
-      default: comparison = new Date(a.createdAt) - new Date(b.createdAt);
-    }
-    
-    return comparison * (order === "desc" ? -1 : 1);
-  });
-
-  res.status(200).json({ ads: adsWithScore });
 }`,
       },
     ],
@@ -170,6 +283,7 @@ static async searchAds(req, res, next) {
     id: 2,
     number: "02",
     title: "Ecomati.pl",
+    nda: false,
     category: "Organic E-Commerce",
     year: "2024 — 2025",
     description:
@@ -179,37 +293,13 @@ static async searchAds(req, res, next) {
       {
         name: "ProductCard.tsx",
         code: `// Dynamic product variants with real-time updates
-const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
-const currentVariant = product.variants?.[selectedVariantIndex];
-const displayPrice = currentVariant?.price || product.price;
-
-const handleQuickAdd = (e: React.MouseEvent) => {
-  e.preventDefault();
-  addToCart(product, displaySize, 1);
-  showToast(\`Dodano: \${product.name}\`);
-};`,
+const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);`,
       },
       {
         name: "products/route.ts",
         code: `// Admin API with rate limiting
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const ip = request.headers.get("x-forwarded-for") ?? "127.0.0.1";
-  const { success, limit, remaining } = await checkRateLimit(\`products_\${ip}\`);
-
-  if (!success) {
-    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
-  }
-
-  const body = await request.json();
-  const validated = createProductSchema.parse(body);
-  
-  const product = await prisma.product.create({ data: validated });
-  return NextResponse.json(product, { status: 201 });
 }`,
       },
     ],
@@ -221,6 +311,7 @@ export async function POST(request: NextRequest) {
     id: 3,
     number: "03",
     title: "Portfolio XP",
+    nda: false,
     category: "Interactive Portfolio",
     year: "2026",
     description:
@@ -230,43 +321,12 @@ export async function POST(request: NextRequest) {
       {
         name: "Hero.tsx",
         code: `// Animated hero with real-time clock
-const [time, setTime] = useState("");
-const [quoteIndex, setQuoteIndex] = useState(0);
-
-useEffect(() => {
-  const updateTime = () => {
-    const now = new Date();
-    setTime(now.toLocaleTimeString("pl-PL", { hour12: false }));
-  };
-  updateTime();
-  const timer = setInterval(updateTime, 1000);
-  return () => clearInterval(timer);
-}, []);
-
-useEffect(() => {
-  const interval = setInterval(() => {
-    setQuoteIndex((prev) => (prev + 1) % quotes.length);
-  }, 5000);
-  return () => clearInterval(interval);
-}, []);`,
+const [time, setTime] = useState("");`,
       },
       {
         name: "InitialLoader.tsx",
         code: `// Tech snow animation with particles
-const [particles, setParticles] = useState<Array<any>>([]);
-
-useEffect(() => {
-  const generated = Array.from({ length: 30 }).map((_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    delay: Math.random() * 5,
-    duration: Math.random() * 10 + 10,
-    symbol: snowSymbols[Math.floor(Math.random() * snowSymbols.length)],
-    size: Math.random() * 14 + 10,
-    opacity: Math.random() * 0.3 + 0.05,
-  }));
-  setParticles(generated);
-}, []);`,
+const [particles, setParticles] = useState<Array<any>>([]);`,
       },
     ],
     website: "https://portfolio-xp.vercel.app",
@@ -275,6 +335,9 @@ useEffect(() => {
   },
 ];
 
+// ─────────────────────────────────────────────
+// MAIN EXPORT
+// ─────────────────────────────────────────────
 export default function Projects() {
   const [isVSCodeOpen, setIsVSCodeOpen] = useState(false);
   const [currentFiles, setCurrentFiles] = useState(autosellFiles);
@@ -307,7 +370,7 @@ export default function Projects() {
       />
 
       <div className="max-w-[1700px] mx-auto relative z-10">
-        {/* --- HEADER --- */}
+        {/* HEADER */}
         <div className="mb-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -346,7 +409,7 @@ export default function Projects() {
           </motion.p>
         </div>
 
-        {/* --- PROJECTS GRID --- */}
+        {/* PROJECTS */}
         <div className="flex flex-col gap-24">
           {projects.map((project, idx) => (
             <motion.div
@@ -364,15 +427,20 @@ export default function Projects() {
                   <span className="text-6xl font-black text-[#151515] group-hover:text-[#D4AF37] transition-colors duration-700">
                     {project.number}
                   </span>
-                  <div className="flex-1 h-[2px] bg-gradient-to-r from-[#222] to-transparent"></div>
+                  <div className="flex-1 h-[2px] bg-gradient-to-r from-[#222] to-transparent" />
                 </div>
 
                 <div className="space-y-2">
                   <span className="text-neutral-600 text-xs uppercase tracking-[0.3em] font-bold block">
                     {project.category} • {project.year}
                   </span>
-                  <h3 className="text-5xl md:text-6xl font-black text-white uppercase tracking-tighter transition-colors group-hover:text-[#D4AF37] leading-none">
+                  <h3 className="flex items-center gap-3 text-5xl md:text-6xl font-black text-white uppercase tracking-tighter transition-colors group-hover:text-[#D4AF37] leading-none">
                     {project.title}
+                    {project.nda && (
+                      <span className="text-sm font-mono font-black tracking-widest bg-red-600 text-white px-2 py-1 rounded align-middle self-center">
+                        NDA
+                      </span>
+                    )}
                   </h3>
                 </div>
 
@@ -407,22 +475,35 @@ export default function Projects() {
                       </span>
                     </a>
                   )}
-                  <button
-                    onClick={() => openVSCode(project.id)}
-                    className="flex items-center gap-2 text-[#4ec9b0] font-mono text-xs uppercase font-black hover:text-white transition-all"
-                  >
-                    <FaCode size={14} /> Explore Code
-                  </button>
+                  {project.github && (
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      className="group/link flex items-center gap-2 text-white font-black uppercase tracking-widest text-xs border-b-2 border-[#D4AF37] pb-2 hover:border-white transition-all"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="w-3.5 h-3.5 fill-current shrink-0"
+                      >
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+                      </svg>
+                      View on GitHub
+                      <span className="group-hover/link:translate-x-1 transition-transform">
+                        →
+                      </span>
+                    </a>
+                  )}
                 </div>
               </div>
 
-              {/* RIGHT: TERMINAL */}
+              {/* RIGHT: CODE PANEL */}
               <div className="lg:col-span-5 relative h-full">
-                <LiveCodeTerminal snippets={project.snippets} />
-
-                {/* Glowing shadow effect */}
-                <div className="absolute -z-10 -inset-1 bg-gradient-to-r from-[#D4AF37]/20 to-transparent rounded-[1.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
-                <div className="absolute -z-10 -top-4 -right-4 w-full h-full border border-[#D4AF37]/20 rounded-[1.5rem] rotate-2 group-hover:rotate-3 transition-all duration-700"></div>
+                <CodePanel
+                  snippets={project.snippets}
+                  onOpen={() => openVSCode(project.id)}
+                />
+                <div className="absolute -z-10 -inset-1 bg-gradient-to-r from-[#D4AF37]/20 to-transparent rounded-[1.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
+                <div className="absolute -z-10 -top-4 -right-4 w-full h-full border border-[#D4AF37]/20 rounded-[1.5rem] rotate-2 group-hover:rotate-3 transition-all duration-700" />
               </div>
             </motion.div>
           ))}
