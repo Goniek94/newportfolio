@@ -10,6 +10,16 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* ── Fluid Typography ── */
+  --text-fluid-sm: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --text-fluid-base: clamp(0.875rem, 0.8rem + 0.4vw, 1.125rem);
+  --text-fluid-lg: clamp(1rem, 0.9rem + 0.5vw, 1.375rem);
+  --text-fluid-xl: clamp(1.25rem, 1rem + 1.25vw, 1.875rem);
+  --text-fluid-h3: clamp(1.5rem, 1.1rem + 2vw, 2.5rem);
+  --text-fluid-h2: clamp(2rem, 1.2rem + 4vw, 4.5rem);
+  --text-fluid-h1: clamp(3rem, 1.5rem + 7.5vw, 9rem);
+  --text-fluid-display: clamp(3.5rem, 2rem + 9vw, 11rem);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,4 +33,31 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  font-size: var(--text-fluid-base);
+}
+
+/* ── Fluid Typography Utility Classes ── */
+.text-fluid-sm {
+  font-size: var(--text-fluid-sm);
+}
+.text-fluid-base {
+  font-size: var(--text-fluid-base);
+}
+.text-fluid-lg {
+  font-size: var(--text-fluid-lg);
+}
+.text-fluid-xl {
+  font-size: var(--text-fluid-xl);
+}
+.text-fluid-h3 {
+  font-size: var(--text-fluid-h3);
+}
+.text-fluid-h2 {
+  font-size: var(--text-fluid-h2);
+}
+.text-fluid-h1 {
+  font-size: var(--text-fluid-h1);
+}
+.text-fluid-display {
+  font-size: var(--text-fluid-display);
 }

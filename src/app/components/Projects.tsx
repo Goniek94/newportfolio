@@ -262,14 +262,21 @@ const projects = [
     category: "Enterprise Marketplace",
     year: "2024 — 2025",
     description:
-      "Production automotive marketplace built entirely solo — live with real users, active listings, and working payments. The React 18 PWA covers advanced multi-criteria search, real-time messaging and notifications via Socket.IO, secure JWT auth (HttpOnly cookies, token rotation & blacklist), listing management with image upload and optimization, ad promotion modules, and a full admin dashboard. The Node.js/Express backend is split across eight domains (users, listings, media, communication, notifications, payments, external, admin) with a strong security layer: Helmet CSP, strict CORS, per-endpoint rate limiting, HMAC-based PII protection, NoSQL sanitization, and automated security test suites. Also delivered a separate commercial project under NDA using the same stack.",
+      "Production automotive marketplace with real users, active listings, and integrated payments — built entirely solo in 12 months. Features real-time messaging, advanced search, JWT auth, and a full admin dashboard. Also delivered a separate commercial project under NDA.",
     tech: [
       "React 18",
       "Node.js",
-      "MongoDB",
-      "Socket.IO",
       "Express",
+      "MongoDB",
+      "Mongoose",
+      "Socket.IO",
+      "JWT Auth",
       "Supabase",
+      "Helmet",
+      "Sharp",
+      "Jest",
+      "Winston",
+      "Nodemailer",
     ],
     snippets: [
       {
@@ -299,7 +306,7 @@ static async searchAds(req, res, next) {
     category: "Organic E-Commerce",
     year: "2024 — 2025",
     description:
-      "Two-app full-stack organic food platform built solo — currently in active development and deployment phase. The Next.js 16 storefront features cold-pressed oil listings with dynamic size/price variants, a persistent cart (React Context + LocalStorage), Framer Motion animations, and Supabase image storage. The separate admin panel adds NextAuth credentials auth, Zod-validated API routes, Recharts sales analytics, Upstash Redis rate limiting, and bcrypt password hashing — both apps sharing one PostgreSQL database via Prisma ORM.",
+      "Two-app organic food e-commerce — storefront + admin panel sharing one PostgreSQL database via Prisma ORM. Features dynamic product variants, persistent cart, sales analytics, and Zod-validated API routes. Currently in active deployment.",
     tech: [
       "Next.js 16",
       "TypeScript",
@@ -340,8 +347,14 @@ const validation = productSchema.safeParse(body);`,
     category: "Interactive OS Portfolio",
     year: "2026",
     description:
-      "An interactive web portfolio built as a fully functional Windows XP simulation. Features a custom window manager handling z-index, focus, and minimize/maximize/fullscreen states. It includes a complete boot sequence (boot → welcome → desktop → narrative glitch) and meticulously recreated retro apps like Winamp (with active audio lifecycle management) and Gadu-Gadu. Designed to showcase advanced React state management and modular frontend architecture disguised as a nostalgic operating system.",
-    tech: ["Next.js (App Router)", "React", "TypeScript", "Tailwind CSS v4"],
+      "Fully functional Windows XP simulation as an interactive portfolio. Custom window manager, complete boot sequence, and recreated retro apps (Winamp, Gadu-Gadu). Showcases advanced React state management disguised as a nostalgic OS.",
+    tech: [
+      "Next.js 16",
+      "React 19",
+      "TypeScript",
+      "Tailwind CSS v4",
+      "CSS Animations",
+    ],
     snippets: [
       {
         name: "useWindowManager.ts",
@@ -387,7 +400,7 @@ export default function Projects() {
   return (
     <section
       id="projects"
-      className="relative w-full bg-[#050505] text-[#e1e1e1] py-14 md:py-20 px-4 md:px-12 overflow-hidden"
+      className="relative w-full bg-[#050505] text-[#e1e1e1] py-14 md:py-20 px-4 sm:px-6 md:px-8 lg:px-12 overflow-hidden"
     >
       <VSCodeViewer
         isOpen={isVSCodeOpen}
@@ -408,7 +421,7 @@ export default function Projects() {
               </span>
             </div>
 
-            <h2 className="text-6xl sm:text-7xl md:text-[7rem] font-black tracking-tighter text-white uppercase leading-none">
+            <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tighter text-white uppercase leading-none">
               Featured
               <br />
               <span
@@ -423,14 +436,14 @@ export default function Projects() {
           {/* Right — description + quote */}
           <div className="lg:col-span-7 space-y-6 md:space-y-8 flex flex-col justify-between h-full">
             <div className="space-y-3 md:space-y-4">
-              <p className="text-xl sm:text-2xl md:text-3xl text-neutral-300 font-light leading-relaxed border-l-4 border-[#D4AF37] pl-5 md:pl-8">
+              <p className="text-fluid-h3 text-neutral-300 font-light leading-relaxed border-l-4 border-[#D4AF37] pl-5 md:pl-8">
                 Real-world applications built{" "}
                 <span className="text-white font-semibold">
                   from concept to deployment
                 </span>
                 .
               </p>
-              <p className="text-neutral-500 text-base md:text-lg leading-relaxed pl-5 md:pl-8">
+              <p className="text-neutral-500 text-fluid-base leading-relaxed pl-5 md:pl-8">
                 Every project is production-grade — live users, real data,
                 working payments. Click any card to explore the source code.
               </p>
@@ -441,12 +454,45 @@ export default function Projects() {
               <span className="absolute -top-5 left-5 md:left-8 text-[#D4AF37]/15 text-6xl md:text-7xl font-serif leading-none select-none">
                 &ldquo;
               </span>
-              <p className="text-neutral-400 text-base md:text-xl italic font-light leading-relaxed">
+              <p className="text-neutral-400 text-fluid-lg italic font-light leading-relaxed">
                 Every problem has a solution. And if there is no solution, then
                 perhaps it was never a problem to begin with.
               </p>
             </div>
           </div>
+        </div>
+
+        {/* BUSINESS IMPACT */}
+        <div className="mb-12 md:mb-20 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+          {[
+            { value: "3", label: "Production Apps", sub: "shipped solo" },
+            {
+              value: "12",
+              label: "Months to MVP",
+              sub: "enterprise marketplace",
+            },
+            { value: "100%", label: "Solo Built", sub: "design → deploy" },
+            {
+              value: "4+",
+              label: "Years Learning",
+              sub: "shipping since 2024",
+            },
+          ].map((stat) => (
+            <div
+              key={stat.label}
+              className="relative bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl md:rounded-2xl p-4 md:p-6 text-center hover:border-[#D4AF37]/40 transition-colors duration-500"
+            >
+              <div className="text-3xl md:text-5xl font-black text-[#D4AF37] tracking-tighter leading-none mb-1 md:mb-2">
+                {stat.value}
+              </div>
+              <div className="text-xs md:text-sm font-bold text-white uppercase tracking-wider mb-0.5">
+                {stat.label}
+              </div>
+              <div className="text-[10px] md:text-xs text-neutral-500 font-mono">
+                {stat.sub}
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* PROJECTS */}
@@ -470,7 +516,7 @@ export default function Projects() {
                   <span className="text-neutral-600 text-[10px] md:text-xs uppercase tracking-[0.3em] font-bold block">
                     {project.category} • {project.year}
                   </span>
-                  <h3 className="flex flex-wrap items-center gap-2 md:gap-3 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tighter transition-colors group-hover:text-[#D4AF37] leading-none">
+                  <h3 className="flex flex-wrap items-center gap-2 md:gap-3 text-fluid-h2 font-black text-white uppercase tracking-tighter transition-colors group-hover:text-[#D4AF37] leading-none">
                     {project.title}
                     {project.nda && (
                       <span className="text-xs md:text-sm font-mono font-black tracking-widest bg-red-600 text-white px-2 py-1 rounded align-middle self-center">
@@ -480,7 +526,7 @@ export default function Projects() {
                   </h3>
                 </div>
 
-                <p className="text-neutral-400 text-sm md:text-lg leading-relaxed max-w-2xl font-light">
+                <p className="text-neutral-400 text-fluid-base leading-relaxed max-w-2xl font-light">
                   {project.description}
                 </p>
 

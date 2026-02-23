@@ -56,14 +56,15 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-screen w-full bg-[#050505] text-[#e1e1e1] flex flex-col justify-center px-5 sm:px-8 md:px-12 overflow-hidden pt-8 pb-12 md:pt-14 md:pb-20">
+    <section className="relative min-h-svh md:min-h-screen w-full bg-[#050505] text-[#e1e1e1] flex flex-col px-4 sm:px-6 md:px-8 lg:px-12 overflow-hidden pt-4 pb-4 md:pt-14 md:pb-20">
       {/* Background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_50%,#1a1a1a,transparent)] pointer-events-none opacity-60" />
 
-      <div className="z-10 w-full max-w-[1800px] mx-auto flex flex-col justify-center gap-0">
-        {/* TOP BAR */}
-        <div className="flex items-center justify-between mb-8 md:mb-6 gap-3">
+      {/* Inner wrapper — fills the section, distributes space on mobile */}
+      <div className="z-10 w-full max-w-[1800px] mx-auto flex flex-col flex-1 justify-between md:justify-center">
+        {/* TOP BAR — pinned to top on mobile */}
+        <div className="flex items-center justify-between mb-4 md:mb-6 gap-3 shrink-0">
           {/* Label */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -108,49 +109,56 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* TITLE */}
-        <div className="relative z-20 mix-blend-difference">
-          <h1
-            className="font-black tracking-tighter text-white uppercase leading-[0.85]"
-            style={{ fontSize: "clamp(3.5rem, 14vw, 12rem)" }}
-          >
-            <motion.span
-              initial={{ y: "100%", opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
-              className="block"
+        {/* CENTER — name + quotes (flex-1 on mobile to fill space) */}
+        <div className="flex-1 md:flex-none flex flex-col justify-center">
+          {/* TITLE */}
+          <div className="relative z-20 mix-blend-difference">
+            <h1
+              className="font-black tracking-tighter text-white uppercase leading-[0.85]"
+              style={{ fontSize: "clamp(2.2rem, 11vw, 12rem)" }}
             >
-              Mateusz
-            </motion.span>
-            <motion.span
-              initial={{ y: "100%", opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1, delay: 0.1, ease: [0.76, 0, 0.24, 1] }}
-              className="block text-neutral-500"
-            >
-              Goszczycki
-            </motion.span>
-          </h1>
+              <motion.span
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
+                className="block"
+              >
+                Mateusz
+              </motion.span>
+              <motion.span
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{
+                  duration: 1,
+                  delay: 0.1,
+                  ease: [0.76, 0, 0.24, 1],
+                }}
+                className="block text-neutral-500"
+              >
+                Goszczycki
+              </motion.span>
+            </h1>
+          </div>
+
+          {/* ROTATING QUOTES */}
+          <div className="mt-4 md:mt-12 max-w-3xl border-t border-[#222] pt-4 md:pt-10">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={quoteIndex}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+                className="text-fluid-xl italic text-neutral-400 font-light leading-relaxed border-l-2 border-[#D4AF37] pl-4 md:pl-8"
+              >
+                {quotes[quoteIndex].text}
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
 
-        {/* ROTATING QUOTES */}
-        <div className="mt-6 md:mt-12 max-w-3xl border-t border-[#222] pt-5 md:pt-10">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={quoteIndex}
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
-              className="text-sm sm:text-base md:text-xl lg:text-2xl italic text-neutral-400 font-light leading-relaxed border-l-2 border-[#D4AF37] pl-4 md:pl-8"
-            >
-              {quotes[quoteIndex].text}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* MARQUEE */}
-        <div className="mt-8 md:mt-16 w-full overflow-hidden whitespace-nowrap pointer-events-none">
+        {/* MARQUEE — pinned to bottom on mobile */}
+        <div className="mt-4 md:mt-16 w-full overflow-hidden whitespace-nowrap pointer-events-none shrink-0">
           <motion.div
             className="flex gap-6 md:gap-10 font-black text-transparent uppercase"
             style={{

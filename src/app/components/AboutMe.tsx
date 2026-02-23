@@ -105,7 +105,7 @@ function AboutPanel() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
       {/* Left — large statement */}
       <div className="space-y-8">
-        <p className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] text-neutral-200 font-light leading-[1.3] tracking-tight">
+        <p className="text-fluid-h3 text-neutral-200 font-light leading-[1.3] tracking-tight">
           Since 2020, I have been building my path in{" "}
           <em className="text-[#D4AF37] font-normal not-italic">
             software development

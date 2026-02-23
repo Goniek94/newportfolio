@@ -55,6 +55,23 @@ export default function Contact() {
                 <span className="text-white">Immediate start</span>
               </span>
             </div>
+
+            {/* Availability & work model */}
+            <div className="flex flex-wrap gap-2 md:gap-3 pt-2">
+              {[
+                { icon: "🕐", text: "Full-time / Contract / B2B" },
+                { icon: "🌍", text: "Remote · CET timezone" },
+                { icon: "⚡", text: "Available now" },
+              ].map((tag) => (
+                <span
+                  key={tag.text}
+                  className="inline-flex items-center gap-1.5 px-3 md:px-4 py-1.5 md:py-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg text-[10px] md:text-xs font-mono text-neutral-400"
+                >
+                  <span>{tag.icon}</span>
+                  {tag.text}
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* RIGHT */}
