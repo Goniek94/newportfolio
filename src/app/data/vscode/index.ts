@@ -1,6 +1,12 @@
 export type FileNode = {
   name: string;
-  language: "javascript" | "typescript" | "json" | "markdown" | "image";
+  language:
+    | "javascript"
+    | "typescript"
+    | "json"
+    | "markdown"
+    | "image"
+    | "prisma";
   content?: string;
   imageSrc?: string;
   isOpen?: boolean;

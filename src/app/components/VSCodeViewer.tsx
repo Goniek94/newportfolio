@@ -82,12 +82,12 @@ const findFirstFile = (nodes: FileNode[]): FileNode | null => {
   return null;
 };
 
-const collectAllFolderNames = (nodes: FileNode[]): Set<string> => {
+// Only collect root-level folder names (depth 0) — keeps sidebar clean on open
+const collectRootFolderNames = (nodes: FileNode[]): Set<string> => {
   const names = new Set<string>();
   for (const node of nodes) {
     if (node.children) {
       names.add(node.name);
-      collectAllFolderNames(node.children).forEach((n) => names.add(n));
     }
   }
   return names;
@@ -120,7 +120,7 @@ export default function VSCodeViewer({
 
   useEffect(() => {
     if (isOpen) {
-      setOpenFolders(collectAllFolderNames(files));
+      setOpenFolders(collectRootFolderNames(files));
       if (!activeFile) {
         setActiveFile(findFirstFile(files));
       }
@@ -219,7 +219,13 @@ export default function VSCodeViewer({
                   ? "bg-purple-400"
                   : node.language === "markdown"
                     ? "bg-blue-300"
-                    : "bg-yellow-400"
+                    : node.language === "prisma"
+                      ? "bg-green-400"
+                      : node.name.endsWith(".tsx") || node.name.endsWith(".jsx")
+                        ? "bg-blue-400"
+                        : node.name.endsWith(".js")
+                          ? "bg-yellow-400"
+                          : "bg-yellow-300"
               }`}
             />
           )}
@@ -304,7 +310,14 @@ export default function VSCodeViewer({
                             ? "bg-purple-400"
                             : activeFile.language === "markdown"
                               ? "bg-blue-300"
-                              : "bg-yellow-400"
+                              : activeFile.language === "prisma"
+                                ? "bg-green-400"
+                                : activeFile.name.endsWith(".tsx") ||
+                                    activeFile.name.endsWith(".jsx")
+                                  ? "bg-blue-400"
+                                  : activeFile.name.endsWith(".js")
+                                    ? "bg-yellow-400"
+                                    : "bg-yellow-300"
                         }`}
                       />
                       {activeFile.name}

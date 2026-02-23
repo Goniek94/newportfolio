@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import InitialLoader from "./components/InitialLoader";
 import Hero from "./components/Hero";
+import AboutMe from "./components/AboutMe";
 import Projects from "./components/Projects";
 import Contact from "./components/Contacts";
 
@@ -30,6 +31,7 @@ export default function Home() {
       {/* Dopiero gdy loader zniknie (lub pod kurtyną), pokazujemy resztę */}
       <div className="relative z-0">
         <Hero />
+        <AboutMe />
         <Projects />
         <Contact />
       </div>

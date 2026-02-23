@@ -95,7 +95,17 @@ const CodePanel = ({
               key={i}
               className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#111] border border-[#1e1e1e]"
             >
-              <span className="w-2 h-2 rounded-full bg-[#D4AF37] opacity-70 shrink-0" />
+              <span
+                className={`w-2 h-2 rounded-full opacity-70 shrink-0 ${
+                  f.endsWith(".tsx") || f.endsWith(".jsx")
+                    ? "bg-blue-400"
+                    : f.endsWith(".js")
+                      ? "bg-yellow-400"
+                      : f.endsWith(".ts")
+                        ? "bg-yellow-300"
+                        : "bg-[#D4AF37]"
+                }`}
+              />
               <span className="text-[#888] text-xs tracking-wide">{f}</span>
               <div className="flex-1 h-px bg-[#1e1e1e]" />
               <span className="text-[10px] text-[#333] uppercase tracking-widest">
@@ -287,20 +297,33 @@ static async searchAds(req, res, next) {
     category: "Organic E-Commerce",
     year: "2024 — 2025",
     description:
-      "Full-stack organic food e-commerce platform with dynamic product variants, admin dashboard, and Supabase storage. Features shopping cart management, Prisma ORM, and NextAuth authentication.",
-    tech: ["Next.js 14", "TypeScript", "Prisma", "PostgreSQL", "NextAuth"],
+      "Two-app full-stack organic food platform built solo — currently in active development and deployment phase. The Next.js 16 storefront features cold-pressed oil listings with dynamic size/price variants, a persistent cart (React Context + LocalStorage), Framer Motion animations, and Supabase image storage. The separate admin panel adds NextAuth credentials auth, Zod-validated API routes, Recharts sales analytics, Upstash Redis rate limiting, and bcrypt password hashing — both apps sharing one PostgreSQL database via Prisma ORM.",
+    tech: [
+      "Next.js 16",
+      "TypeScript",
+      "Prisma ORM",
+      "PostgreSQL",
+      "NextAuth",
+      "Supabase",
+      "Framer Motion",
+      "Zod",
+      "Recharts",
+      "Upstash Redis",
+      "Tailwind CSS v4",
+    ],
     snippets: [
       {
         name: "ProductCard.tsx",
-        code: `// Dynamic product variants with real-time updates
-const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);`,
+        code: `// Dynamic product variants with animated price updates
+const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
+const currentVariant = product.variants?.[selectedVariantIndex];`,
       },
       {
         name: "products/route.ts",
-        code: `// Admin API with rate limiting
-export async function POST(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-}`,
+        code: `// Zod-validated admin API with auth guard
+const session = await auth();
+if (!session) return new NextResponse("Unauthorized", { status: 401 });
+const validation = productSchema.safeParse(body);`,
       },
     ],
     website: "https://ecomati.pl",
@@ -371,42 +394,54 @@ export default function Projects() {
 
       <div className="max-w-[1700px] mx-auto relative z-10">
         {/* HEADER */}
-        <div className="mb-24">
+        <div className="mb-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
+          {/* Left — label + big title */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="flex items-center gap-4 mb-8"
+            transition={{ duration: 0.7 }}
+            className="lg:col-span-5 space-y-6"
           >
-            <div className="h-[2px] w-16 bg-[#D4AF37]" />
-            <span className="text-xs font-mono tracking-[0.3em] text-[#D4AF37] uppercase font-bold">
-              Systems & Products
-            </span>
+            <div className="flex items-center gap-4">
+              <div className="h-[2px] w-16 bg-[#D4AF37]" />
+              <span className="text-xs font-mono tracking-[0.3em] text-[#D4AF37] uppercase font-bold">
+                Systems & Products
+              </span>
+            </div>
+
+            <h2 className="text-7xl md:text-[7rem] font-black tracking-tighter text-white uppercase leading-none">
+              Featured
+              <br />
+              <span
+                className="text-transparent"
+                style={{ WebkitTextStroke: "2px #D4AF37" }}
+              >
+                Projects
+              </span>
+            </h2>
           </motion.div>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+          {/* Right — description */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-6xl md:text-8xl font-black tracking-tighter text-white uppercase leading-none mb-8"
+            transition={{ duration: 0.7, delay: 0.15 }}
+            className="lg:col-span-7 space-y-4"
           >
-            Featured
-            <br />
-            Projects
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-xl md:text-2xl text-neutral-500 font-light leading-relaxed"
-          >
-            Real-world applications built from concept to deployment.
-            <br />
-            Click any project to explore the source code.
-          </motion.p>
+            <p className="text-2xl md:text-3xl text-neutral-300 font-light leading-relaxed border-l-4 border-[#D4AF37] pl-8">
+              Real-world applications built{" "}
+              <span className="text-white font-semibold">
+                from concept to deployment
+              </span>
+              .
+            </p>
+            <p className="text-neutral-500 text-lg leading-relaxed pl-8">
+              Every project is production-grade — live users, real data, working
+              payments. Click any card to explore the source code.
+            </p>
+          </motion.div>
         </div>
 
         {/* PROJECTS */}
