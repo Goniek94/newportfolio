@@ -286,7 +286,7 @@ static async searchAds(req, res, next) {
       },
     ],
     website: "https://www.autosell.pl",
-    github: "https://github.com/Goniek94",
+    github: "https://github.com/Goniek94/Autosell_selected_files",
     isInteractive: true,
   },
   {
@@ -352,7 +352,7 @@ const [time, setTime] = useState("");`,
 const [particles, setParticles] = useState<Array<any>>([]);`,
       },
     ],
-    website: "https://portfolio-xp.vercel.app",
+    website: "https://mateusz-goszczycki-portfolio.vercel.app/",
     github: "https://github.com/Goniek94/Portfolio",
     isInteractive: true,
   },
@@ -383,7 +383,7 @@ export default function Projects() {
   return (
     <section
       id="projects"
-      className="relative w-full bg-[#050505] text-[#e1e1e1] py-32 px-4 md:px-12 overflow-hidden"
+      className="relative w-full bg-[#050505] text-[#e1e1e1] py-20 md:py-32 px-4 md:px-12 overflow-hidden"
     >
       <VSCodeViewer
         isOpen={isVSCodeOpen}
@@ -394,23 +394,23 @@ export default function Projects() {
 
       <div className="max-w-[1700px] mx-auto relative z-10">
         {/* HEADER */}
-        <div className="mb-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
+        <div className="mb-14 md:mb-24 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-start">
           {/* Left — label + big title */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="lg:col-span-5 space-y-6"
+            className="lg:col-span-5 space-y-5 md:space-y-6"
           >
-            <div className="flex items-center gap-4">
-              <div className="h-[2px] w-16 bg-[#D4AF37]" />
-              <span className="text-xs font-mono tracking-[0.3em] text-[#D4AF37] uppercase font-bold">
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="h-[2px] w-10 md:w-16 bg-[#D4AF37] shrink-0" />
+              <span className="text-[10px] md:text-xs font-mono tracking-[0.2em] md:tracking-[0.3em] text-[#D4AF37] uppercase font-bold">
                 Systems & Products
               </span>
             </div>
 
-            <h2 className="text-7xl md:text-[7rem] font-black tracking-tighter text-white uppercase leading-none">
+            <h2 className="text-6xl sm:text-7xl md:text-[7rem] font-black tracking-tighter text-white uppercase leading-none">
               Featured
               <br />
               <span
@@ -428,16 +428,16 @@ export default function Projects() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="lg:col-span-7 space-y-4"
+            className="lg:col-span-7 space-y-3 md:space-y-4"
           >
-            <p className="text-2xl md:text-3xl text-neutral-300 font-light leading-relaxed border-l-4 border-[#D4AF37] pl-8">
+            <p className="text-xl sm:text-2xl md:text-3xl text-neutral-300 font-light leading-relaxed border-l-4 border-[#D4AF37] pl-5 md:pl-8">
               Real-world applications built{" "}
               <span className="text-white font-semibold">
                 from concept to deployment
               </span>
               .
             </p>
-            <p className="text-neutral-500 text-lg leading-relaxed pl-8">
+            <p className="text-neutral-500 text-base md:text-lg leading-relaxed pl-5 md:pl-8">
               Every project is production-grade — live users, real data, working
               payments. Click any card to explore the source code.
             </p>
@@ -445,7 +445,7 @@ export default function Projects() {
         </div>
 
         {/* PROJECTS */}
-        <div className="flex flex-col gap-24">
+        <div className="flex flex-col gap-12 md:gap-24">
           {projects.map((project, idx) => (
             <motion.div
               key={project.id}
@@ -453,41 +453,41 @@ export default function Projects() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ delay: idx * 0.1 }}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center group cursor-pointer border border-[#222] p-8 rounded-[2rem] bg-[#0a0a0a] transition-all duration-500 hover:border-[#D4AF37]/60 hover:bg-[#0f0f0f] hover:shadow-[0_0_40px_rgba(212,175,55,0.15)]"
+              className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-12 items-center group cursor-pointer border border-[#222] p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-[#0a0a0a] transition-all duration-500 hover:border-[#D4AF37]/60 hover:bg-[#0f0f0f] hover:shadow-[0_0_40px_rgba(212,175,55,0.15)]"
               onClick={() => openVSCode(project.id)}
             >
               {/* LEFT: INFO */}
-              <div className="lg:col-span-7 space-y-6">
-                <div className="flex items-center gap-6 font-mono">
-                  <span className="text-6xl font-black text-[#151515] group-hover:text-[#D4AF37] transition-colors duration-700">
+              <div className="lg:col-span-7 space-y-4 md:space-y-6">
+                <div className="flex items-center gap-4 md:gap-6 font-mono">
+                  <span className="text-4xl md:text-6xl font-black text-[#151515] group-hover:text-[#D4AF37] transition-colors duration-700">
                     {project.number}
                   </span>
                   <div className="flex-1 h-[2px] bg-gradient-to-r from-[#222] to-transparent" />
                 </div>
 
-                <div className="space-y-2">
-                  <span className="text-neutral-600 text-xs uppercase tracking-[0.3em] font-bold block">
+                <div className="space-y-1.5 md:space-y-2">
+                  <span className="text-neutral-600 text-[10px] md:text-xs uppercase tracking-[0.3em] font-bold block">
                     {project.category} • {project.year}
                   </span>
-                  <h3 className="flex items-center gap-3 text-5xl md:text-6xl font-black text-white uppercase tracking-tighter transition-colors group-hover:text-[#D4AF37] leading-none">
+                  <h3 className="flex flex-wrap items-center gap-2 md:gap-3 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tighter transition-colors group-hover:text-[#D4AF37] leading-none">
                     {project.title}
                     {project.nda && (
-                      <span className="text-sm font-mono font-black tracking-widest bg-red-600 text-white px-2 py-1 rounded align-middle self-center">
+                      <span className="text-xs md:text-sm font-mono font-black tracking-widest bg-red-600 text-white px-2 py-1 rounded align-middle self-center">
                         NDA
                       </span>
                     )}
                   </h3>
                 </div>
 
-                <p className="text-neutral-400 text-lg md:text-xl leading-relaxed max-w-2xl font-light">
+                <p className="text-neutral-400 text-sm md:text-lg leading-relaxed max-w-2xl font-light">
                   {project.description}
                 </p>
 
-                <div className="flex flex-wrap gap-2 pt-4">
+                <div className="flex flex-wrap gap-1.5 md:gap-2 pt-2 md:pt-4">
                   {project.tech.map((t) => (
                     <span
                       key={t}
-                      className="px-4 py-2 bg-[#050505] border border-[#222] text-[10px] font-mono text-[#D4AF37] uppercase tracking-widest rounded-lg hover:border-[#D4AF37] transition-colors"
+                      className="px-2.5 md:px-4 py-1.5 md:py-2 bg-[#050505] border border-[#222] text-[9px] md:text-[10px] font-mono text-[#D4AF37] uppercase tracking-widest rounded-lg hover:border-[#D4AF37] transition-colors"
                     >
                       {t}
                     </span>
@@ -495,14 +495,14 @@ export default function Projects() {
                 </div>
 
                 <div
-                  className="flex items-center gap-6 pt-6"
+                  className="flex flex-wrap items-center gap-4 md:gap-6 pt-3 md:pt-6"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {project.website && (
                     <a
                       href={project.website}
                       target="_blank"
-                      className="group/link flex items-center gap-2 text-white font-black uppercase tracking-widest text-xs border-b-2 border-[#D4AF37] pb-2 hover:border-white transition-all"
+                      className="group/link flex items-center gap-2 text-white font-black uppercase tracking-widest text-[10px] md:text-xs border-b-2 border-[#D4AF37] pb-1.5 md:pb-2 hover:border-white transition-all"
                     >
                       View Live Site
                       <span className="group-hover/link:translate-x-1 transition-transform">
@@ -514,11 +514,12 @@ export default function Projects() {
                     <a
                       href={project.github}
                       target="_blank"
-                      className="group/link flex items-center gap-2 text-white font-black uppercase tracking-widest text-xs border-b-2 border-[#D4AF37] pb-2 hover:border-white transition-all"
+                      rel="noopener noreferrer"
+                      className="group/link flex items-center gap-2 text-white font-black uppercase tracking-widest text-[10px] md:text-xs border-b-2 border-[#D4AF37] pb-1.5 md:pb-2 hover:border-white transition-all"
                     >
                       <svg
                         viewBox="0 0 24 24"
-                        className="w-3.5 h-3.5 fill-current shrink-0"
+                        className="w-3 h-3 md:w-3.5 md:h-3.5 fill-current shrink-0"
                       >
                         <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
                       </svg>
@@ -538,7 +539,7 @@ export default function Projects() {
                   onOpen={() => openVSCode(project.id)}
                 />
                 <div className="absolute -z-10 -inset-1 bg-gradient-to-r from-[#D4AF37]/20 to-transparent rounded-[1.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
-                <div className="absolute -z-10 -top-4 -right-4 w-full h-full border border-[#D4AF37]/20 rounded-[1.5rem] rotate-2 group-hover:rotate-3 transition-all duration-700" />
+                <div className="absolute -z-10 -top-4 -right-4 w-full h-full border border-[#D4AF37]/20 rounded-[1.5rem] rotate-2 group-hover:rotate-3 transition-all duration-700 hidden md:block" />
               </div>
             </motion.div>
           ))}
