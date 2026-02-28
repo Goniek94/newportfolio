@@ -13,11 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mateusz Goszczycki — Full Stack Engineer",
+  title: "Mateusz Goszczycki — Junior/Mid Full Stack Developer",
   description:
-    "Production-grade web apps built solo — from concept to deployment. React, Next.js, Node.js, TypeScript. Open for full-time & contract roles.",
+    "Junior/Mid Full Stack Developer building production-ready web apps from concept to deployment. React, Next.js, Node.js, TypeScript.",
   keywords: [
-    "Full Stack Developer",
+    "Junior Full Stack Developer",
+    "Mid Full Stack Developer",
     "React",
     "Next.js",
     "Node.js",
@@ -32,15 +33,15 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://mateusz-goszczycki.vercel.app",
     siteName: "Mateusz Goszczycki — Portfolio",
-    title: "Mateusz Goszczycki — Full Stack Engineer",
+    title: "Mateusz Goszczycki — Junior/Mid Full Stack Developer",
     description:
-      "3 production apps shipped solo. Enterprise marketplace with real users & payments. React · Next.js · Node.js · TypeScript.",
+      "Transitioned from Head Chef to Full Stack Developer. Built and shipped 3 production apps. React · Next.js · Node.js · TypeScript.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mateusz Goszczycki — Full Stack Engineer",
+    title: "Mateusz Goszczycki — Junior/Mid Full Stack Developer",
     description:
-      "3 production apps shipped solo. Enterprise marketplace with real users & payments. React · Next.js · Node.js · TypeScript.",
+      "Transitioned from Head Chef to Full Stack Developer. Built and shipped 3 production apps. React · Next.js · Node.js · TypeScript.",
   },
   robots: {
     index: true,

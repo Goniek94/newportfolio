@@ -1,6 +1,6 @@
 "use client";
 
-import { FaGithub, FaLinkedin, FaEnvelope, FaPhone } from "react-icons/fa";
+import { FaGithub, FaEnvelope, FaPhone } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 export default function Contact() {
@@ -14,7 +14,7 @@ export default function Contact() {
         <div className="flex items-center gap-3 md:gap-4 mb-10 md:mb-12">
           <div className="h-[2px] w-10 md:w-16 bg-[#D4AF37] shrink-0" />
           <span className="text-[10px] md:text-xs font-mono tracking-[0.2em] md:tracking-[0.3em] text-[#D4AF37] uppercase font-bold">
-            Let's Connect
+            Let&apos;s Connect
           </span>
         </div>
 
@@ -37,11 +37,11 @@ export default function Contact() {
             </h2>
 
             <p className="text-lg md:text-xl lg:text-2xl text-neutral-400 font-light leading-relaxed max-w-xl">
-              I'm currently{" "}
+              I&apos;m currently{" "}
               <span className="text-[#D4AF37] font-bold">
-                open to full-time opportunities
+                open to Junior/Mid Full-Stack opportunities
               </span>{" "}
-              and challenging freelance projects. Let's create something
+              and challenging projects. Let&apos;s create something
               extraordinary together.
             </p>
 
@@ -79,7 +79,7 @@ export default function Contact() {
             {/* EMAIL */}
             <a
               href="mailto:mateusz.goszczycki1994@gmail.com"
-              className="relative block bg-[#0a0a0a] border border-[#D4AF37] p-5 md:p-8 rounded-2xl md:rounded-3xl overflow-hidden"
+              className="relative block bg-[#0a0a0a] border border-[#D4AF37] p-5 md:p-8 rounded-2xl md:rounded-3xl overflow-hidden group hover:bg-[#111] transition-all"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/5 to-transparent" />
               <div className="relative z-10 flex items-start justify-between gap-3">
@@ -92,14 +92,14 @@ export default function Contact() {
                       Primary Contact
                     </span>
                   </div>
-                  <h3 className="text-base md:text-2xl font-black text-[#D4AF37] mb-1 md:mb-2 break-all">
+                  <h3 className="text-base md:text-2xl font-black text-[#D4AF37] mb-1 md:mb-2 break-all group-hover:underline">
                     mateusz.goszczycki1994@gmail.com
                   </h3>
                   <p className="text-xs md:text-sm text-neutral-500">
                     Fastest response time • Usually within 24h
                   </p>
                 </div>
-                <span className="text-[#D4AF37] text-lg md:text-xl shrink-0">
+                <span className="text-[#D4AF37] text-lg md:text-xl shrink-0 group-hover:translate-x-1 transition-transform">
                   →
                 </span>
               </div>
@@ -108,7 +108,7 @@ export default function Contact() {
             {/* PHONE */}
             <a
               href="tel:+48516223029"
-              className="relative block bg-[#0a0a0a] border border-[#D4AF37] p-5 md:p-8 rounded-2xl md:rounded-3xl overflow-hidden"
+              className="relative block bg-[#0a0a0a] border border-[#D4AF37] p-5 md:p-8 rounded-2xl md:rounded-3xl overflow-hidden group hover:bg-[#111] transition-all"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/5 to-transparent" />
               <div className="relative z-10 flex items-start justify-between gap-3">
@@ -121,39 +121,29 @@ export default function Contact() {
                       Direct Line
                     </span>
                   </div>
-                  <h3 className="text-xl md:text-2xl font-black text-[#D4AF37] mb-1 md:mb-2 font-mono tracking-wider">
+                  <h3 className="text-xl md:text-2xl font-black text-[#D4AF37] mb-1 md:mb-2 font-mono tracking-wider group-hover:underline">
                     +48 516 223 029
                   </h3>
                   <p className="text-xs md:text-sm text-neutral-500">
                     Available Mon-Fri • 9:00 - 18:00 CET
                   </p>
                 </div>
-                <span className="text-[#D4AF37] text-lg md:text-xl shrink-0">
+                <span className="text-[#D4AF37] text-lg md:text-xl shrink-0 group-hover:translate-x-1 transition-transform">
                   →
                 </span>
               </div>
             </a>
 
-            {/* SOCIAL */}
-            <div className="grid grid-cols-2 gap-3 md:gap-4 pt-1 md:pt-2">
+            {/* SOCIAL (Tylko GitHub) */}
+            <div className="pt-1 md:pt-2">
               <a
                 href="https://github.com/Goniek94"
                 target="_blank"
-                className="flex items-center justify-center gap-2 md:gap-3 bg-[#0a0a0a] border border-[#D4AF37] px-4 md:px-6 py-4 md:py-5 rounded-xl md:rounded-2xl"
+                className="flex items-center justify-center gap-2 md:gap-3 bg-[#0a0a0a] border border-[#D4AF37] px-4 md:px-6 py-4 md:py-5 rounded-xl md:rounded-2xl hover:bg-[#D4AF37]/10 hover:shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all"
               >
                 <FaGithub className="text-[#D4AF37]" size={20} />
                 <span className="text-xs md:text-sm font-black uppercase tracking-widest text-white">
-                  GitHub
-                </span>
-              </a>
-              <a
-                href="https://linkedin.com/in/mateusz-goszczycki"
-                target="_blank"
-                className="flex items-center justify-center gap-2 md:gap-3 bg-[#0a0a0a] border border-[#D4AF37] px-4 md:px-6 py-4 md:py-5 rounded-xl md:rounded-2xl"
-              >
-                <FaLinkedin className="text-[#D4AF37]" size={20} />
-                <span className="text-xs md:text-sm font-black uppercase tracking-widest text-white">
-                  LinkedIn
+                  GitHub Profile
                 </span>
               </a>
             </div>
@@ -168,9 +158,9 @@ export default function Contact() {
             animate={{ x: [0, -1500] }}
             transition={{ repeat: Infinity, duration: 30, ease: "linear" }}
           >
-            LET'S WORK TOGETHER • OPEN FOR OPPORTUNITIES • LET'S WORK TOGETHER •
-            OPEN FOR OPPORTUNITIES • LET'S WORK TOGETHER • OPEN FOR
-            OPPORTUNITIES •
+            LET&apos;S WORK TOGETHER • OPEN FOR JUNIOR/MID ROLES • LET&apos;S
+            WORK TOGETHER • OPEN FOR JUNIOR/MID ROLES • LET&apos;S WORK TOGETHER
+            • OPEN FOR JUNIOR/MID ROLES •
           </motion.div>
         </div>
       </div>

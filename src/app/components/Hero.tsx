@@ -12,8 +12,17 @@ import {
   FaBriefcase,
   FaEnvelope,
   FaPhoneAlt,
-  FaLinkedin,
+  FaFolderOpen,
+  FaChevronRight,
 } from "react-icons/fa";
+
+// Importy potrzebne do uruchomienia VSCode wprost z Hero
+import VSCodeViewer from "./VSCodeViewer";
+import {
+  autosellFiles,
+  newEcomatiFiles,
+  windowsXpFiles,
+} from "../data/vscode/index";
 
 const quotes = [
   {
@@ -50,16 +59,40 @@ const quotes = [
 export default function Hero() {
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [time, setTime] = useState("");
-  const [isCVModalOpen, setIsCVModalOpen] = useState(false);
 
-  // Blokowanie scrolla gdy modal CV jest otwarty
+  // Stany Modali
+  const [isCVModalOpen, setIsCVModalOpen] = useState(false);
+  const [isProjectsModalOpen, setIsProjectsModalOpen] = useState(false);
+
+  // Stany dla VSCode
+  const [isVSCodeOpen, setIsVSCodeOpen] = useState(false);
+  const [currentFiles, setCurrentFiles] = useState(autosellFiles);
+  const [currentTitle, setCurrentTitle] = useState("Autosell-Repo");
+
+  // Obsługa otwierania konkretnego projektu
+  const handleOpenVSCode = (projectId: number) => {
+    if (projectId === 1) {
+      setCurrentFiles(autosellFiles);
+      setCurrentTitle("Autosell-Repo");
+    } else if (projectId === 2) {
+      setCurrentFiles(newEcomatiFiles);
+      setCurrentTitle("Ecomati-Repo");
+    } else if (projectId === 3) {
+      setCurrentFiles(windowsXpFiles);
+      setCurrentTitle("Windows-XP-Repo");
+    }
+    setIsProjectsModalOpen(false); // Zamknij modal z listą
+    setIsVSCodeOpen(true); // Otwórz edytor VSCode
+  };
+
+  // Blokowanie scrolla gdy którykolwiek modal jest otwarty
   useEffect(() => {
-    if (isCVModalOpen) {
+    if (isCVModalOpen || isProjectsModalOpen || isVSCodeOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-  }, [isCVModalOpen]);
+  }, [isCVModalOpen, isProjectsModalOpen, isVSCodeOpen]);
 
   useEffect(() => {
     const updateTime = () => {
@@ -179,12 +212,13 @@ export default function Hero() {
                 <FaGithub size={16} /> GitHub
               </a>
 
-              <a
-                href="#projects"
+              {/* Zmiana na otwarcie modala projektów */}
+              <button
+                onClick={() => setIsProjectsModalOpen(true)}
                 className="flex items-center gap-2 px-5 py-2.5 md:px-8 md:py-4 bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#D4AF37] rounded-full text-xs md:text-sm font-mono uppercase tracking-widest transition-all hover:text-[#D4AF37] hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] cursor-pointer"
               >
                 <FaCode size={16} /> Code Viewer
-              </a>
+              </button>
 
               <button
                 onClick={() => setIsCVModalOpen(true)}
@@ -230,7 +264,102 @@ export default function Hero() {
         </div>
       </section>
 
-      {/* INTERACTIVE CV MODAL */}
+      {/* ------------------------------------------------------------------ */}
+      {/* 1. MODAL: WYBÓR PROJEKTÓW DLA CODE VIEWER */}
+      {/* ------------------------------------------------------------------ */}
+      <AnimatePresence>
+        {isProjectsModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md"
+            onClick={() => setIsProjectsModalOpen(false)}
+          >
+            <motion.div
+              initial={{ y: 50, scale: 0.95 }}
+              animate={{ y: 0, scale: 1 }}
+              exit={{ y: 20, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-lg bg-[#050505] border border-[#D4AF37]/30 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden"
+            >
+              <button
+                onClick={() => setIsProjectsModalOpen(false)}
+                className="absolute top-4 right-4 text-neutral-500 hover:text-[#D4AF37] transition-colors p-2 bg-[#0a0a0a] rounded-full border border-[#1a1a1a] cursor-pointer z-50"
+              >
+                <FaTimes size={16} />
+              </button>
+
+              <div className="p-6 md:p-8">
+                <div className="mb-6">
+                  <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-2 flex items-center gap-3">
+                    <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Select
+                    Source
+                  </h3>
+                  <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-white">
+                    Code <span className="text-[#D4AF37]">Vault</span>
+                  </h2>
+                </div>
+
+                <div className="space-y-3">
+                  {[
+                    {
+                      id: 1,
+                      name: "Autosell.pl",
+                      desc: "Production Marketplace • Node.js, Express, Socket.IO",
+                    },
+                    {
+                      id: 2,
+                      name: "Ecomati.pl",
+                      desc: "Organic E-Commerce • Next.js, Prisma, PostgreSQL",
+                    },
+                    {
+                      id: 3,
+                      name: "Windows XP",
+                      desc: "Interactive Portfolio • React, TS, Tailwind",
+                    },
+                  ].map((proj) => (
+                    <div
+                      key={proj.id}
+                      onClick={() => handleOpenVSCode(proj.id)}
+                      className="group flex items-center justify-between p-4 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl hover:border-[#D4AF37] hover:bg-[#D4AF37]/5 cursor-pointer transition-all duration-300"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-lg bg-[#111] border border-[#222] group-hover:border-[#D4AF37]/50 flex items-center justify-center text-neutral-500 group-hover:text-[#D4AF37] transition-colors">
+                          <FaFolderOpen size={16} />
+                        </div>
+                        <div>
+                          <h4 className="text-white font-bold group-hover:text-[#D4AF37] transition-colors">
+                            {proj.name}
+                          </h4>
+                          <p className="text-[10px] md:text-xs text-neutral-500 font-mono mt-0.5">
+                            {proj.desc}
+                          </p>
+                        </div>
+                      </div>
+                      <FaChevronRight className="text-neutral-700 group-hover:text-[#D4AF37] transition-colors" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* 2. KOMPONENT VSCODE VIEWER (Wysuwa się po kliknięciu w projekt) */}
+      {/* ------------------------------------------------------------------ */}
+      <VSCodeViewer
+        isOpen={isVSCodeOpen}
+        onClose={() => setIsVSCodeOpen(false)}
+        files={currentFiles}
+        title={currentTitle}
+      />
+
+      {/* ------------------------------------------------------------------ */}
+      {/* 3. INTERACTIVE CV MODAL */}
+      {/* ------------------------------------------------------------------ */}
       <AnimatePresence>
         {isCVModalOpen && (
           <motion.div
@@ -295,14 +424,6 @@ export default function Hero() {
                       className="flex items-center gap-2 text-sm font-mono text-[#D4AF37] hover:underline bg-[#D4AF37]/10 px-4 py-2 rounded-lg cursor-pointer"
                     >
                       <FaPhoneAlt /> +48 516 223 029
-                    </a>
-                    <a
-                      href="https://linkedin.com/in/twoj-profil"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-2 text-sm font-mono text-[#D4AF37] hover:underline bg-[#D4AF37]/10 px-4 py-2 rounded-lg cursor-pointer"
-                    >
-                      <FaLinkedin /> LinkedIn
                     </a>
                   </div>
                 </div>

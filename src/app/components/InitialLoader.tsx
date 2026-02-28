@@ -54,22 +54,21 @@ export default function InitialLoader({ finishLoading }: LoaderProps) {
     return () => clearInterval(timerInterval);
   }, []);
 
-  // 2. Licznik zsynchronizowany na 3 sekundy (30ms * 100 = 3000ms)
+  // 2. Licznik zsynchronizowany na 3 sekundy (30ms * 100 = 3000ms) - TYLKO czysta funkcja aktualizująca
   useEffect(() => {
     const interval = setInterval(() => {
-      setCounter((prev) => {
-        if (prev < 100) {
-          return prev + 1;
-        } else {
-          clearInterval(interval);
-          finishLoading();
-          return 100;
-        }
-      });
+      setCounter((prev) => (prev < 100 ? prev + 1 : 100));
     }, 30);
 
     return () => clearInterval(interval);
-  }, [finishLoading]);
+  }, []);
+
+  // 3. Nasłuchiwacz zakończenia ładowania (uruchamia się jako osobny, bezpieczny efekt)
+  useEffect(() => {
+    if (counter >= 100) {
+      finishLoading();
+    }
+  }, [counter, finishLoading]);
 
   return (
     <motion.div
