@@ -54,7 +54,7 @@ export default function InitialLoader({ finishLoading }: LoaderProps) {
     return () => clearInterval(timerInterval);
   }, []);
 
-  // 2. Licznik (Teraz wolniejszy - ok. 5 sekund)
+  // 2. Licznik zsynchronizowany na 3 sekundy (30ms * 100 = 3000ms)
   useEffect(() => {
     const interval = setInterval(() => {
       setCounter((prev) => {
@@ -66,7 +66,7 @@ export default function InitialLoader({ finishLoading }: LoaderProps) {
           return 100;
         }
       });
-    }, 50); // ZMIANA: 50ms * 100 = 5000ms (5 sekund)
+    }, 30);
 
     return () => clearInterval(interval);
   }, [finishLoading]);
@@ -152,7 +152,7 @@ export default function InitialLoader({ finishLoading }: LoaderProps) {
           </motion.h1>
         </div>
 
-        {/* SZLACZEK SVG */}
+        {/* SZLACZEK SVG - Zsynchronizowany z 3 sekundami */}
         <div className="w-full max-w-2xl my-4 md:my-8 relative h-6 md:h-10 flex items-center justify-center">
           <motion.svg
             width="100%"
@@ -184,7 +184,7 @@ export default function InitialLoader({ finishLoading }: LoaderProps) {
               </filter>
             </defs>
 
-            {/* Static pulse line */}
+            {/* Static pulse line - rysuje się równe 2.8 sekundy (startuje w 0.2s) */}
             <motion.use
               href="#pulsePath"
               stroke="#D4AF37"
@@ -192,20 +192,28 @@ export default function InitialLoader({ finishLoading }: LoaderProps) {
               fill="none"
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ duration: 2, ease: "easeInOut", delay: 0.5 }}
+              transition={{ duration: 2.8, ease: "easeInOut", delay: 0.2 }}
             />
 
-            {/* Glowing dot that follows the pulse path – starts after line is drawn */}
+            {/* Glowing dot - biegnie raz z tą samą prędkością co linia */}
             <circle r="4" fill="#facc15" filter="url(#pulseGlow)" opacity="0">
-              <animateMotion dur="3s" repeatCount="indefinite" begin="2.5s">
+              <animateMotion
+                dur="2.8s"
+                repeatCount="1"
+                begin="0.2s"
+                calcMode="spline"
+                keyTimes="0;1"
+                keySplines="0.42 0 0.58 1"
+              >
                 <mpath href="#pulsePath" />
               </animateMotion>
               <animate
                 attributeName="opacity"
                 values="0;0.9;0.9;0"
-                dur="3s"
-                repeatCount="indefinite"
-                begin="2.5s"
+                keyTimes="0;0.1;0.9;1"
+                dur="2.8s"
+                repeatCount="1"
+                begin="0.2s"
               />
             </circle>
           </motion.svg>
