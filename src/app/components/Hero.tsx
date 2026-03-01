@@ -14,6 +14,7 @@ import {
   FaPhoneAlt,
   FaFolderOpen,
   FaChevronRight,
+  FaDownload,
 } from "react-icons/fa";
 
 // Importy potrzebne do uruchomienia VSCode wprost z Hero
@@ -29,9 +30,9 @@ const quotes = [
     id: 1,
     text: (
       <>
-        I independently built a{" "}
-        <span className="text-[#D4AF37]">full-stack marketplace</span> with
-        real-time features and scalable architecture.
+        I built and delivered a production-ready{" "}
+        <span className="text-[#D4AF37]">full-stack marketplace</span> for a
+        client, handling everything from requirements to deployment.
       </>
     ),
   },
@@ -212,7 +213,6 @@ export default function Hero() {
                 <FaGithub size={16} /> GitHub
               </a>
 
-              {/* Zmiana na otwarcie modala projektów */}
               <button
                 onClick={() => setIsProjectsModalOpen(true)}
                 className="flex items-center gap-2 px-5 py-2.5 md:px-8 md:py-4 bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#D4AF37] rounded-full text-xs md:text-sm font-mono uppercase tracking-widest transition-all hover:text-[#D4AF37] hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] cursor-pointer"
@@ -425,6 +425,13 @@ export default function Hero() {
                     >
                       <FaPhoneAlt /> +48 516 223 029
                     </a>
+                    <a
+                      href="/Mateusz_Goszczycki_CV.pdf"
+                      download="Mateusz_Goszczycki_CV.pdf"
+                      className="flex items-center gap-2 text-sm font-bold font-mono text-[#050505] bg-[#D4AF37] hover:bg-white px-5 py-2 rounded-lg cursor-pointer transition-colors shadow-[0_0_15px_rgba(212,175,55,0.4)]"
+                    >
+                      <FaDownload /> Download PDF
+                    </a>
                   </div>
                 </div>
 
@@ -471,76 +478,104 @@ export default function Hero() {
                   </section>
                 </div>
 
-                {/* 3. TECH STACK (Categorized) */}
+                {/* 3. TECH STACK */}
                 <section>
                   <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-6 flex items-center gap-3">
                     <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Tech Stack
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {/* Frontend */}
                     <div>
                       <h4 className="text-neutral-500 font-mono text-xs uppercase mb-3">
                         Frontend
                       </h4>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-col gap-2">
                         {[
                           "React 18",
                           "Next.js",
                           "TypeScript",
-                          "Tailwind CSS",
+                          "Tailwind CSS v4",
                           "Framer Motion",
+                          "Zod",
                         ].map((tech) => (
                           <span
                             key={tech}
-                            className="px-2 py-1 bg-[#0a0a0a] border border-[#1a1a1a] rounded text-xs text-neutral-300"
+                            className="px-3 py-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg text-xs font-mono text-neutral-300 hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/5 transition-all cursor-default flex items-center justify-between group"
                           >
                             {tech}
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#1a1a1a] group-hover:bg-[#D4AF37] transition-colors" />
                           </span>
                         ))}
                       </div>
                     </div>
+                    {/* Backend */}
                     <div>
                       <h4 className="text-neutral-500 font-mono text-xs uppercase mb-3">
                         Backend
                       </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {["Node.js", "NestJS", "Express.js", "Socket.IO"].map(
-                          (tech) => (
-                            <span
-                              key={tech}
-                              className="px-2 py-1 bg-[#0a0a0a] border border-[#1a1a1a] rounded text-xs text-neutral-300"
-                            >
-                              {tech}
-                            </span>
-                          ),
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <h4 className="text-neutral-500 font-mono text-xs uppercase mb-3">
-                        Database
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {["PostgreSQL", "MongoDB", "Prisma ORM"].map((tech) => (
+                      <div className="flex flex-col gap-2">
+                        {[
+                          "Node.js",
+                          "NestJS",
+                          "Express.js",
+                          "Socket.IO",
+                          "REST APIs",
+                          "JWT Auth",
+                        ].map((tech) => (
                           <span
                             key={tech}
-                            className="px-2 py-1 bg-[#0a0a0a] border border-[#1a1a1a] rounded text-xs text-neutral-300"
+                            className="px-3 py-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg text-xs font-mono text-neutral-300 hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/5 transition-all cursor-default flex items-center justify-between group"
                           >
                             {tech}
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#1a1a1a] group-hover:bg-[#D4AF37] transition-colors" />
                           </span>
                         ))}
                       </div>
                     </div>
+                    {/* Database */}
+                    <div>
+                      <h4 className="text-neutral-500 font-mono text-xs uppercase mb-3">
+                        Database
+                      </h4>
+                      <div className="flex flex-col gap-2">
+                        {[
+                          "PostgreSQL",
+                          "MongoDB",
+                          "Prisma ORM",
+                          "Supabase",
+                          "Redis (Upstash)",
+                          "Mongoose",
+                        ].map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-3 py-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg text-xs font-mono text-neutral-300 hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/5 transition-all cursor-default flex items-center justify-between group"
+                          >
+                            {tech}
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#1a1a1a] group-hover:bg-[#D4AF37] transition-colors" />
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    {/* DevOps & Tools */}
                     <div>
                       <h4 className="text-neutral-500 font-mono text-xs uppercase mb-3">
                         DevOps & Tools
                       </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {["Docker", "Git", "REST APIs", "Linux"].map((tech) => (
+                      <div className="flex flex-col gap-2">
+                        {[
+                          "Docker",
+                          "Git",
+                          "Linux VPS",
+                          "NGINX & PM2",
+                          "SendGrid",
+                          "Stripe API",
+                        ].map((tech) => (
                           <span
                             key={tech}
-                            className="px-2 py-1 bg-[#0a0a0a] border border-[#1a1a1a] rounded text-xs text-neutral-300"
+                            className="px-3 py-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg text-xs font-mono text-neutral-300 hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/5 transition-all cursor-default flex items-center justify-between group"
                           >
                             {tech}
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#1a1a1a] group-hover:bg-[#D4AF37] transition-colors" />
                           </span>
                         ))}
                       </div>
@@ -548,10 +583,10 @@ export default function Hero() {
                   </div>
                 </section>
 
-                {/* 4. EXPERIENCE & PROJECTS */}
+                {/* 4. PROJECTS */}
                 <section>
                   <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-8 flex items-center gap-3">
-                    <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Experience
+                    <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Projects
                   </h3>
                   <div className="space-y-10">
                     {/* Ecomati */}
@@ -593,13 +628,68 @@ export default function Hero() {
                         </span>
                       </div>
                       <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
-                        Independently built and deployed a production-ready
-                        vehicle marketplace. Implemented real-time messaging
-                        using <strong>Socket.IO</strong>, complex search
-                        filters, secure JWT authentication, and designed a
-                        robust relational database schema using{" "}
-                        <strong>PostgreSQL</strong> and{" "}
-                        <strong>Prisma ORM</strong>.
+                        Built an end-to-end production vehicle marketplace for a
+                        client. Gathered requirements, managed feedback, and
+                        delivered a scalable platform. Implemented real-time
+                        messaging using <strong>Socket.IO</strong>, complex
+                        search filters, secure JWT authentication, and designed
+                        a robust database schema.
+                      </p>
+                    </div>
+
+                    {/* Windows XP Portfolio */}
+                    <div className="relative pl-6 border-l-2 border-[#D4AF37]/50">
+                      <div className="absolute w-3 h-3 bg-[#D4AF37] rounded-full -left-[7px] top-1.5 shadow-[0_0_10px_#D4AF37]" />
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                        <h4 className="text-white font-bold text-lg md:text-xl">
+                          Windows XP Portfolio{" "}
+                          <span className="text-neutral-400 font-normal text-sm ml-2">
+                            — Interactive OS Simulation
+                          </span>
+                        </h4>
+                        <span className="text-[#D4AF37] font-mono text-xs border border-[#D4AF37]/30 px-2 py-1 rounded">
+                          2026
+                        </span>
+                      </div>
+                      <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
+                        Built a fully functional Windows XP simulation acting as
+                        an interactive portfolio. Engineered a custom window
+                        manager, boot sequence, and recreated retro apps.
+                        Showcases advanced <strong>React</strong> state
+                        management and complex UI architecture.
+                      </p>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 5. WORK EXPERIENCE */}
+                <section>
+                  <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-8 flex items-center gap-3">
+                    <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Work
+                    Experience
+                  </h3>
+                  <div className="space-y-10">
+                    {/* Freelance Full Stack Developer */}
+                    <div className="relative pl-6 border-l-2 border-[#1a1a1a]">
+                      <div className="absolute w-3 h-3 bg-[#333] rounded-full -left-[7px] top-1.5" />
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                        <h4 className="text-neutral-300 font-bold text-lg md:text-xl">
+                          Freelance Full Stack Developer
+                        </h4>
+                        <span className="text-neutral-600 font-mono text-xs border border-[#1a1a1a] px-2 py-1 rounded">
+                          2023 - Present
+                        </span>
+                      </div>
+                      <p className="text-neutral-500 text-sm font-mono mb-3">
+                        Client Collaboration (Remote)
+                      </p>
+                      <p className="text-neutral-400 text-sm md:text-base leading-relaxed mt-2">
+                        2 years of commercial experience working directly with
+                        clients: gathering requirements, managing feedback
+                        loops, and delivering production-ready applications.
+                        Built and deployed Autosell.pl as a client project —
+                        full lifecycle ownership from specification and
+                        architecture through production deployment.
                       </p>
                     </div>
 
@@ -630,27 +720,59 @@ export default function Hero() {
                   </div>
                 </section>
 
-                {/* 5. HOBBIES & INTERESTS */}
+                {/* 6. LANGUAGES & INTERESTS */}
                 <section>
-                  <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-5 flex items-center gap-3">
-                    <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Interests
-                  </h3>
-                  <div className="flex flex-wrap gap-3">
-                    {[
-                      "Sports",
-                      "Traveling",
-                      "Music",
-                      "Video Games",
-                      "Artificial Intelligence",
-                    ].map((interest, i) => (
-                      <span
-                        key={i}
-                        className="px-3 py-1.5 border border-[#1a1a1a] bg-[#0a0a0a] rounded-lg text-xs md:text-sm text-neutral-400 font-light flex items-center gap-2"
-                      >
-                        <div className="w-1.5 h-1.5 bg-[#D4AF37] rounded-full" />
-                        {interest}
-                      </span>
-                    ))}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    {/* Languages */}
+                    <div>
+                      <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-5 flex items-center gap-3">
+                        <div className="h-[1px] w-8 bg-[#D4AF37]/50" />{" "}
+                        Languages
+                      </h3>
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center justify-between bg-[#0a0a0a] border border-[#1a1a1a] px-4 py-3 rounded-xl hover:border-[#D4AF37]/40 transition-colors">
+                          <span className="text-white font-bold text-sm">
+                            Polish
+                          </span>
+                          <span className="text-[#D4AF37] font-mono text-xs tracking-widest uppercase">
+                            Native
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between bg-[#0a0a0a] border border-[#1a1a1a] px-4 py-3 rounded-xl hover:border-[#D4AF37]/40 transition-colors">
+                          <span className="text-white font-bold text-sm">
+                            English
+                          </span>
+                          <span className="text-[#D4AF37] font-mono text-xs tracking-widest uppercase">
+                            B1 / Communicative
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Interests */}
+                    <div>
+                      <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-5 flex items-center gap-3">
+                        <div className="h-[1px] w-8 bg-[#D4AF37]/50" />{" "}
+                        Interests
+                      </h3>
+                      <div className="flex flex-wrap gap-3">
+                        {[
+                          "Sports",
+                          "Traveling",
+                          "Music",
+                          "Video Games",
+                          "Artificial Intelligence",
+                        ].map((interest, i) => (
+                          <span
+                            key={i}
+                            className="px-3 py-1.5 border border-[#1a1a1a] bg-[#0a0a0a] rounded-lg text-xs md:text-sm text-neutral-400 font-light flex items-center gap-2 hover:border-[#D4AF37]/40 transition-colors"
+                          >
+                            <div className="w-1.5 h-1.5 bg-[#D4AF37] rounded-full" />
+                            {interest}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </section>
               </div>
