@@ -425,6 +425,7 @@ export default function Hero() {
                     >
                       <FaPhoneAlt /> +48 516 223 029
                     </a>
+                    {/* LINK DO POBRANIA - wymaga by plik na dysku nazywał się Mateusz_Goszczycki_CV.pdf */}
                     <a
                       href="/Mateusz_Goszczycki_CV.pdf"
                       download="Mateusz_Goszczycki_CV.pdf"
@@ -478,7 +479,7 @@ export default function Hero() {
                   </section>
                 </div>
 
-                {/* 3. TECH STACK */}
+                {/* 3. TECH STACK (Categorized) - Równiutkie 6 elementów na kolumnę */}
                 <section>
                   <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-6 flex items-center gap-3">
                     <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Tech Stack
@@ -491,12 +492,12 @@ export default function Hero() {
                       </h4>
                       <div className="flex flex-col gap-2">
                         {[
+                          "JavaScript",
+                          "TypeScript",
                           "React 18",
                           "Next.js",
-                          "TypeScript",
                           "Tailwind CSS v4",
                           "Framer Motion",
-                          "Zod",
                         ].map((tech) => (
                           <span
                             key={tech}
@@ -518,8 +519,8 @@ export default function Hero() {
                           "Node.js",
                           "NestJS",
                           "Express.js",
-                          "Socket.IO",
                           "REST APIs",
+                          "Socket.IO",
                           "JWT Auth",
                         ].map((tech) => (
                           <span
@@ -542,9 +543,9 @@ export default function Hero() {
                           "PostgreSQL",
                           "MongoDB",
                           "Prisma ORM",
-                          "Supabase",
-                          "Redis (Upstash)",
                           "Mongoose",
+                          "Redis",
+                          "Supabase",
                         ].map((tech) => (
                           <span
                             key={tech}
@@ -566,9 +567,9 @@ export default function Hero() {
                           "Docker",
                           "Git",
                           "Linux VPS",
-                          "NGINX & PM2",
-                          "SendGrid",
-                          "Stripe API",
+                          "NGINX",
+                          "PM2",
+                          "Jest",
                         ].map((tech) => (
                           <span
                             key={tech}
@@ -592,7 +593,7 @@ export default function Hero() {
                     {/* Ecomati */}
                     <div className="relative pl-6 border-l-2 border-[#D4AF37]/50">
                       <div className="absolute w-3 h-3 bg-[#D4AF37] rounded-full -left-[7px] top-1.5 shadow-[0_0_10px_#D4AF37]" />
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
                         <h4 className="text-white font-bold text-lg md:text-xl">
                           Ecomati.pl{" "}
                           <span className="text-neutral-400 font-normal text-sm ml-2">
@@ -603,6 +604,26 @@ export default function Hero() {
                           2025 - 2026
                         </span>
                       </div>
+
+                      {/* TECH BADGES */}
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {[
+                          "Next.js",
+                          "NestJS",
+                          "TypeScript",
+                          "PostgreSQL",
+                          "Prisma",
+                          "Docker",
+                        ].map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-2 py-0.5 bg-[#0a0a0a] border border-[#222] rounded text-[9px] md:text-[10px] font-mono text-[#D4AF37]/80 uppercase tracking-wider"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+
                       <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
                         Designed and developed a modern e-commerce solution from
                         scratch. Architected a scalable backend using{" "}
@@ -616,7 +637,7 @@ export default function Hero() {
                     {/* Autosell */}
                     <div className="relative pl-6 border-l-2 border-[#D4AF37]/50">
                       <div className="absolute w-3 h-3 bg-[#D4AF37] rounded-full -left-[7px] top-1.5 shadow-[0_0_10px_#D4AF37]" />
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
                         <h4 className="text-white font-bold text-lg md:text-xl">
                           Autosell.pl{" "}
                           <span className="text-neutral-400 font-normal text-sm ml-2">
@@ -627,6 +648,26 @@ export default function Hero() {
                           2024
                         </span>
                       </div>
+
+                      {/* TECH BADGES */}
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {[
+                          "React 18",
+                          "Node.js",
+                          "Express",
+                          "MongoDB",
+                          "Socket.IO",
+                          "JWT",
+                        ].map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-2 py-0.5 bg-[#0a0a0a] border border-[#222] rounded text-[9px] md:text-[10px] font-mono text-[#D4AF37]/80 uppercase tracking-wider"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+
                       <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
                         Built an end-to-end production vehicle marketplace for a
                         client. Gathered requirements, managed feedback, and
@@ -640,7 +681,7 @@ export default function Hero() {
                     {/* Windows XP Portfolio */}
                     <div className="relative pl-6 border-l-2 border-[#D4AF37]/50">
                       <div className="absolute w-3 h-3 bg-[#D4AF37] rounded-full -left-[7px] top-1.5 shadow-[0_0_10px_#D4AF37]" />
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
                         <h4 className="text-white font-bold text-lg md:text-xl">
                           Windows XP Portfolio{" "}
                           <span className="text-neutral-400 font-normal text-sm ml-2">
@@ -651,6 +692,24 @@ export default function Hero() {
                           2026
                         </span>
                       </div>
+
+                      {/* TECH BADGES */}
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {[
+                          "React 19",
+                          "TypeScript",
+                          "Tailwind CSS v4",
+                          "CSS Animations",
+                        ].map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-2 py-0.5 bg-[#0a0a0a] border border-[#222] rounded text-[9px] md:text-[10px] font-mono text-[#D4AF37]/80 uppercase tracking-wider"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+
                       <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
                         Built a fully functional Windows XP simulation acting as
                         an interactive portfolio. Engineered a custom window
