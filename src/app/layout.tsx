@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mateusz Goszczycki — Junior/Mid Full Stack Developer",
+  title: "Mateusz Goszczycki — Mid Full Stack Developer",
   description:
     "Junior/Mid Full Stack Developer building production-ready web apps from concept to deployment. React, Next.js, Node.js, TypeScript.",
   keywords: [
