@@ -2,12 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-// Note: scroll-triggered animations removed — only marquee/scanning animations kept
 import VSCodeViewer from "./VSCodeViewer";
 import {
   autosellFiles,
-  newEcomatiFiles,
-  portfolioFiles,
+  matchdaysFiles,
   windowsXpFiles,
 } from "../data/vscode/index";
 import { FaCode, FaTerminal, FaLock, FaUnlock } from "react-icons/fa";
@@ -251,7 +249,7 @@ const CodePanel = ({
 };
 
 // ─────────────────────────────────────────────
-// PROJECTS DATA
+// PROJECTS DATA — rewritten with professional tone
 // ─────────────────────────────────────────────
 const projects = [
   {
@@ -262,21 +260,22 @@ const projects = [
     category: "Enterprise Marketplace",
     year: "2024 — 2025",
     description:
-      "Production automotive marketplace with real users, active listings, and integrated payments — built entirely solo in 12 months. Features real-time messaging, advanced search, JWT auth, and a full admin dashboard. Also delivered a separate commercial project under NDA.",
+      "Designed and delivered a production automotive marketplace for a client, taking full ownership from requirements gathering through architecture, development, and deployment. Implemented real-time messaging via Socket.IO, a scoring-based search engine with 30+ configurable filters, secure JWT authentication with role-based access control, a full admin dashboard, image processing via Sharp, and comprehensive test coverage with Jest. A separate commercial project was also delivered under NDA during the same period.",
     tech: [
       "React 18",
+      "JavaScript",
+      "Tailwind CSS",
+      "REST API",
       "Node.js",
       "Express",
       "MongoDB",
       "Mongoose",
       "Socket.IO",
-      "JWT Auth",
+      "JWT",
       "Supabase",
       "Helmet",
       "Sharp",
       "Jest",
-      "Winston",
-      "Nodemailer",
     ],
     snippets: [
       {
@@ -301,42 +300,52 @@ static async searchAds(req, res, next) {
   {
     id: 2,
     number: "02",
-    title: "Ecomati.pl",
+    title: "Matchdays",
     nda: false,
-    category: "Organic E-Commerce",
-    year: "2024 — 2025",
+    category: "Sports Auction Marketplace",
+    year: "2025 — 2026",
     description:
-      "Two-app organic food e-commerce — storefront + admin panel sharing one PostgreSQL database via Prisma ORM. Features dynamic product variants, persistent cart, sales analytics, and Zod-validated API routes. Currently in active deployment.",
+      "Architected and built a full-stack sports memorabilia auction platform from the ground up. Engineered a real-time bidding system using NestJS WebSocket Gateway with isolated per-auction rooms and atomic Prisma transactions to prevent race conditions. Implemented a multi-step listing form with API-driven auto-fill for team, league, and season data. Integrated Google Gemini for AI-powered jersey authenticity verification, Stripe Connect for seller payouts, and Redis-backed Bull queues for background job processing. The platform is live and open to real users. Demo credentials are available directly in the login modal.",
     tech: [
-      "Next.js 16",
+      "Next.js 14",
       "TypeScript",
+      "Zustand",
+      "TanStack Query",
+      "Axios",
+      "Socket.IO",
+      "shadcn/ui",
+      "Tailwind CSS",
+      "NestJS 10",
       "Prisma ORM",
       "PostgreSQL",
-      "NextAuth",
-      "Supabase",
-      "Framer Motion",
-      "Zod",
-      "Recharts",
-      "Upstash Redis",
-      "Tailwind CSS v4",
+      "Redis",
+      "Bull",
+      "Supabase Storage",
+      "Swagger",
     ],
     snippets: [
       {
-        name: "ProductCard.tsx",
-        code: `// Dynamic product variants with animated price updates
-const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
-const currentVariant = product.variants?.[selectedVariantIndex];`,
+        name: "useAuctionSocket.ts",
+        code: `// Custom hook — connects to NestJS WebSocket Gateway
+export function useAuctionSocket(auctionId: string) {
+  const { updateBid, setConnected } = useAuctionStore();
+  // Joins auction room, syncs Zustand on every bid
+}`,
       },
       {
-        name: "products/route.ts",
-        code: `// Zod-validated admin API with auth guard
-const session = await auth();
-if (!session) return new NextResponse("Unauthorized", { status: 401 });
-const validation = productSchema.safeParse(body);`,
+        name: "auctions.service.ts",
+        code: `// Bid placement with Prisma transaction
+async placeBid(auctionId: string, bidderId: string, amount: number) {
+  return this.prisma.$transaction(async (tx) => {
+    // Atomic update — prevents race conditions
+  });
+}`,
       },
     ],
-    website: "https://ecomati.pl",
-    github: "https://github.com/Goniek94/ecomati",
+    website: "https://www.matchdaysproject.vercel.app",
+    github: null,
+    codeNote:
+      "Source code is under investor NDA. Selected architecture samples are available on request.",
     isInteractive: true,
   },
   {
@@ -347,7 +356,7 @@ const validation = productSchema.safeParse(body);`,
     category: "Interactive OS Portfolio",
     year: "2026",
     description:
-      "Fully functional Windows XP simulation as an interactive portfolio. Custom window manager, complete boot sequence, and recreated retro apps (Winamp, Gadu-Gadu). Showcases advanced React state management disguised as a nostalgic OS.",
+      "Designed and built a fully functional Windows XP simulation as an interactive portfolio experience. Engineered a custom window manager with z-index stacking, drag-and-drop positioning, and minimize/maximize state. Implemented a complete boot sequence and recreated retro applications including Winamp and Gadu-Gadu. Demonstrates advanced React state management, complex component composition, and creative UI architecture.",
     tech: [
       "Next.js 16",
       "React 19",
@@ -376,6 +385,51 @@ const [visualizerData, setVisualizerData] = useState([]);`,
 ];
 
 // ─────────────────────────────────────────────
+// CASE STUDY DATA
+// ─────────────────────────────────────────────
+const caseStudy = {
+  project: "Matchdays — Sports Auction Platform",
+  sections: [
+    {
+      label: "Challenge",
+      icon: "🎯",
+      content:
+        "Design and build a real-time auction platform for sports memorabilia that handles concurrent bidding from multiple users without data inconsistencies, while integrating AI-powered product verification and a full payment infrastructure for marketplace sellers.",
+    },
+    {
+      label: "Architecture",
+      icon: "🏗️",
+      content:
+        "Separated concerns into a Next.js 14 frontend with Zustand for client state and TanStack Query for server state, backed by a NestJS monolith exposing both REST and WebSocket endpoints. PostgreSQL with Prisma ORM handles relational data. Redis and Bull manage background jobs and auction expiry timers.",
+    },
+    {
+      label: "Real-time bidding",
+      icon: "⚡",
+      content:
+        "Implemented a NestJS WebSocket Gateway where each auction occupies an isolated room. Bid placement uses a Prisma database transaction to atomically validate the amount, update the current price, and broadcast the new state to all connected clients — eliminating race conditions under concurrent load.",
+    },
+    {
+      label: "AI verification",
+      icon: "🤖",
+      content:
+        "Integrated Google Gemini Vision API into the listing creation flow. When a seller uploads a jersey photo, the system sends it to Gemini for authenticity analysis and returns a structured confidence score. Listings flagged as suspicious are held for manual review before going live.",
+    },
+    {
+      label: "Payments",
+      icon: "💳",
+      content:
+        "Implemented Stripe Connect for marketplace payouts. Sellers complete an onboarding flow to create a connected account. When an auction closes, funds are held and released to the seller via a webhook-driven state machine that tracks payment confirmation before transferring.",
+    },
+    {
+      label: "Outcome",
+      icon: "✅",
+      content:
+        "Delivered a fully operational platform live at matchdaysproject.vercel.app. The system handles real users, real auctions, and real payments. The architecture is modular and designed to support horizontal scaling as user volume grows.",
+    },
+  ],
+};
+
+// ─────────────────────────────────────────────
 // MAIN EXPORT
 // ─────────────────────────────────────────────
 export default function Projects() {
@@ -388,8 +442,8 @@ export default function Projects() {
       setCurrentFiles(autosellFiles);
       setCurrentTitle("Autosell-Repo");
     } else if (projectId === 2) {
-      setCurrentFiles(newEcomatiFiles);
-      setCurrentTitle("Ecomati-Repo");
+      setCurrentFiles(matchdaysFiles);
+      setCurrentTitle("Matchdays-Repo");
     } else if (projectId === 3) {
       setCurrentFiles(windowsXpFiles);
       setCurrentTitle("Windows-XP-Repo");
@@ -412,7 +466,7 @@ export default function Projects() {
       <div className="max-w-[1700px] mx-auto relative z-10">
         {/* HEADER */}
         <div className="mb-10 md:mb-16 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-start">
-          {/* Left — label + big title */}
+          {/* Left */}
           <div className="lg:col-span-5 space-y-5 md:space-y-6">
             <div className="flex items-center gap-3 md:gap-4">
               <div className="h-[2px] w-10 md:w-16 bg-[#D4AF37] shrink-0" />
@@ -433,23 +487,23 @@ export default function Projects() {
             </h2>
           </div>
 
-          {/* Right — description + quote */}
+          {/* Right */}
           <div className="lg:col-span-7 space-y-6 md:space-y-8 flex flex-col justify-between h-full">
             <div className="space-y-3 md:space-y-4">
               <p className="text-fluid-h3 text-neutral-300 font-light leading-relaxed border-l-4 border-[#D4AF37] pl-5 md:pl-8">
-                Real-world applications built{" "}
+                Production applications built{" "}
                 <span className="text-white font-semibold">
                   from concept to deployment
                 </span>
                 .
               </p>
               <p className="text-neutral-500 text-fluid-base leading-relaxed pl-5 md:pl-8">
-                Every project is production-grade — live users, real data,
-                working payments. Click any card to explore the source code.
+                Every project is production-grade with live users, real data,
+                and working payments. Click any card to explore the source code.
               </p>
             </div>
 
-            {/* Inspirational quote */}
+            {/* Quote */}
             <div className="relative pl-5 md:pl-8 pt-4 md:pt-6 border-t border-[#1a1a1a]">
               <span className="absolute -top-5 left-5 md:left-8 text-[#D4AF37]/15 text-6xl md:text-7xl font-serif leading-none select-none">
                 &ldquo;
@@ -462,20 +516,20 @@ export default function Projects() {
           </div>
         </div>
 
-        {/* BUSINESS IMPACT */}
+        {/* STATS */}
         <div className="mb-12 md:mb-20 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
           {[
             { value: "3", label: "Production Apps", sub: "shipped solo" },
             {
-              value: "12",
-              label: "Months to MVP",
+              value: "12mo",
+              label: "Time to MVP",
               sub: "enterprise marketplace",
             },
-            { value: "100%", label: "Solo Built", sub: "design → deploy" },
+            { value: "100%", label: "Solo Built", sub: "design to deploy" },
             {
-              value: "4+",
-              label: "Years Learning",
-              sub: "shipping since 2024",
+              value: "2+",
+              label: "Years Commercial",
+              sub: "client projects delivered",
             },
           ].map((stat) => (
             <div
@@ -495,7 +549,7 @@ export default function Projects() {
           ))}
         </div>
 
-        {/* PROJECTS */}
+        {/* PROJECTS LIST */}
         <div className="flex flex-col gap-12 md:gap-24">
           {projects.map((project) => (
             <div
@@ -514,7 +568,7 @@ export default function Projects() {
 
                 <div className="space-y-1.5 md:space-y-2">
                   <span className="text-neutral-600 text-[10px] md:text-xs uppercase tracking-[0.3em] font-bold block">
-                    {project.category} • {project.year}
+                    {project.category} · {project.year}
                   </span>
                   <h3 className="flex flex-wrap items-center gap-2 md:gap-3 text-fluid-h2 font-black text-white uppercase tracking-tighter transition-colors group-hover:text-[#D4AF37] leading-none">
                     {project.title}
@@ -542,39 +596,46 @@ export default function Projects() {
                 </div>
 
                 <div
-                  className="flex flex-wrap items-center gap-4 md:gap-6 pt-3 md:pt-6"
+                  className="flex flex-col gap-3 pt-3 md:pt-6"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {project.website && (
-                    <a
-                      href={project.website}
-                      target="_blank"
-                      className="group/link flex items-center gap-2 text-white font-black uppercase tracking-widest text-[10px] md:text-xs border-b-2 border-[#D4AF37] pb-1.5 md:pb-2 hover:border-white transition-all"
-                    >
-                      View Live Site
-                      <span className="group-hover/link:translate-x-1 transition-transform">
-                        →
-                      </span>
-                    </a>
-                  )}
-                  {project.github && (
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group/link flex items-center gap-2 text-white font-black uppercase tracking-widest text-[10px] md:text-xs border-b-2 border-[#D4AF37] pb-1.5 md:pb-2 hover:border-white transition-all"
-                    >
-                      <svg
-                        viewBox="0 0 24 24"
-                        className="w-3 h-3 md:w-3.5 md:h-3.5 fill-current shrink-0"
+                  <div className="flex flex-wrap items-center gap-4 md:gap-6">
+                    {project.website && (
+                      <a
+                        href={project.website}
+                        target="_blank"
+                        className="group/link flex items-center gap-2 text-white font-black uppercase tracking-widest text-[10px] md:text-xs border-b-2 border-[#D4AF37] pb-1.5 md:pb-2 hover:border-white transition-all"
                       >
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
-                      </svg>
-                      View on GitHub
-                      <span className="group-hover/link:translate-x-1 transition-transform">
-                        →
-                      </span>
-                    </a>
+                        View Live Site
+                        <span className="group-hover/link:translate-x-1 transition-transform">
+                          →
+                        </span>
+                      </a>
+                    )}
+                    {project.github && (
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group/link flex items-center gap-2 text-white font-black uppercase tracking-widest text-[10px] md:text-xs border-b-2 border-[#D4AF37] pb-1.5 md:pb-2 hover:border-white transition-all"
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          className="w-3 h-3 md:w-3.5 md:h-3.5 fill-current shrink-0"
+                        >
+                          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+                        </svg>
+                        View on GitHub
+                        <span className="group-hover/link:translate-x-1 transition-transform">
+                          →
+                        </span>
+                      </a>
+                    )}
+                  </div>
+                  {"codeNote" in project && project.codeNote && (
+                    <p className="text-[10px] md:text-xs text-neutral-600 font-mono italic border-l-2 border-[#D4AF37]/20 pl-3">
+                      🔒 {project.codeNote}
+                    </p>
                   )}
                 </div>
               </div>
@@ -590,6 +651,73 @@ export default function Projects() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* ─────────────────────────────────────────────
+            CASE STUDY SECTION
+        ───────────────────────────────────────────── */}
+        <div className="mt-20 md:mt-32 pt-12 md:pt-16">
+          {/* Header */}
+          <div className="flex items-center gap-4 mb-10 md:mb-14">
+            <div className="h-[2px] w-10 md:w-16 bg-[#D4AF37] shrink-0" />
+            <span className="text-[10px] md:text-xs font-mono tracking-[0.25em] text-[#D4AF37] uppercase font-bold">
+              Selected Project
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-start">
+            {/* Left: title */}
+            <div className="lg:col-span-4 space-y-4">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none">
+                Case{" "}
+                <span
+                  className="text-transparent"
+                  style={{ WebkitTextStroke: "2px #D4AF37" }}
+                >
+                  Study
+                </span>
+              </h2>
+              <p className="text-neutral-500 text-sm md:text-base leading-relaxed font-light">
+                A technical breakdown of the most architecturally complex
+                project in this portfolio.
+              </p>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#0a0a0a] border border-[#D4AF37]/30 rounded-xl">
+                <div className="w-2 h-2 bg-[#27c93f] rounded-full animate-pulse" />
+                <span className="text-[#D4AF37] font-mono text-xs uppercase tracking-widest">
+                  {caseStudy.project}
+                </span>
+              </div>
+            </div>
+
+            {/* Right: sections grid */}
+            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
+              {caseStudy.sections.map((section, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.45, delay: i * 0.07 }}
+                  className="group relative p-5 md:p-6 rounded-2xl bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#D4AF37]/40 hover:bg-[#0d0d0d] transition-all duration-500 overflow-hidden"
+                >
+                  {/* Corner accent */}
+                  <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-[#D4AF37]/10 group-hover:border-[#D4AF37]/40 rounded-tr-2xl transition-colors duration-500" />
+
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-xl">{section.icon}</span>
+                      <h4 className="text-white font-black text-sm uppercase tracking-tight">
+                        {section.label}
+                      </h4>
+                    </div>
+                    <p className="text-neutral-500 text-sm leading-relaxed font-light group-hover:text-neutral-400 transition-colors duration-300">
+                      {section.content}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

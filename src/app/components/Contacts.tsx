@@ -37,12 +37,12 @@ export default function Contact() {
             </h2>
 
             <p className="text-lg md:text-xl lg:text-2xl text-neutral-400 font-light leading-relaxed max-w-xl">
-              I&apos;m currently{" "}
+              I am currently{" "}
               <span className="text-[#D4AF37] font-bold">
-                open to Junior/Mid Full-Stack opportunities
+                open to Mid-Level Full-Stack opportunities
               </span>{" "}
-              and challenging projects. Let&apos;s create something
-              extraordinary together.
+              and technically challenging projects. Let&apos;s build something
+              exceptional together.
             </p>
 
             <div className="inline-flex items-center gap-3 bg-[#0a0a0a] border border-[#222] px-4 md:px-6 py-2.5 md:py-3 rounded-full">
@@ -158,9 +158,9 @@ export default function Contact() {
             animate={{ x: [0, -1500] }}
             transition={{ repeat: Infinity, duration: 30, ease: "linear" }}
           >
-            LET&apos;S WORK TOGETHER • OPEN FOR JUNIOR/MID ROLES • LET&apos;S
-            WORK TOGETHER • OPEN FOR JUNIOR/MID ROLES • LET&apos;S WORK TOGETHER
-            • OPEN FOR JUNIOR/MID ROLES •
+            LET&apos;S WORK TOGETHER • OPEN TO MID-LEVEL ROLES • LET&apos;S WORK
+            TOGETHER • OPEN TO MID-LEVEL ROLES • LET&apos;S WORK TOGETHER • OPEN
+            TO MID-LEVEL ROLES •
           </motion.div>
         </div>
       </div>

@@ -2,7 +2,13 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaCode, FaServer, FaDatabase, FaRocket } from "react-icons/fa";
+import {
+  FaCode,
+  FaServer,
+  FaDatabase,
+  FaRocket,
+  FaTrophy,
+} from "react-icons/fa";
 
 // ─────────────────────────────────────────────
 // PANEL TABS
@@ -11,25 +17,32 @@ const tabs = ["About", "Skills", "Journey", "Philosophy"] as const;
 type Tab = (typeof tabs)[number];
 
 // ─────────────────────────────────────────────
-// SKILL PILLARS
+// SKILL PILLARS — updated to mid-level stack
 // ─────────────────────────────────────────────
 const pillars = [
   {
     icon: FaCode,
     label: "Frontend",
     items: [
-      "JavaScript",
-      "React 18",
-      "Next.js",
       "TypeScript",
-      "Tailwind CSS",
+      "React 18 / 19",
+      "Next.js 14+",
+      "Tailwind CSS v4",
+      "Zustand / TanStack Query",
       "Framer Motion",
     ],
   },
   {
     icon: FaServer,
     label: "Backend",
-    items: ["Node.js", "Express", "NestJS", "REST APIs", "Socket.IO"],
+    items: [
+      "Node.js",
+      "NestJS",
+      "Express.js",
+      "REST APIs",
+      "WebSocket / Socket.IO",
+      "Stripe Connect",
+    ],
   },
   {
     icon: FaDatabase,
@@ -38,40 +51,84 @@ const pillars = [
       "PostgreSQL",
       "MongoDB",
       "Prisma ORM",
-      "Supabase",
+      "Redis / Bull",
       "JWT / NextAuth",
+      "Supabase",
     ],
   },
   {
     icon: FaRocket,
     label: "DevOps & Tools",
-    items: ["Docker", "Git", "Vercel", "Railway", "Redis"],
+    items: [
+      "Docker",
+      "Linux VPS / NGINX",
+      "PM2",
+      "Git",
+      "Jest",
+      "Vercel / Railway",
+    ],
   },
 ];
 
 // ─────────────────────────────────────────────
-// TIMELINE
+// TIMELINE — rewritten with professional tone
 // ─────────────────────────────────────────────
 const timeline = [
   {
     year: "2020",
-    title: "The spark",
-    desc: "Started learning programming through Udemy courses — HTML, CSS, JavaScript. Balancing 60-70h work weeks as a head chef with evening coding sessions.",
+    title: "Foundation",
+    desc: "Dedicated evenings and weekends to mastering JavaScript, HTML, CSS, and core programming fundamentals while managing 60 to 70 hour work weeks as a head chef.",
   },
   {
     year: "2023",
     title: "Full commitment",
-    desc: "Left gastronomy to go all-in on development. Transitioned from learning to building real projects with modern frameworks.",
+    desc: "Transitioned fully into software engineering. Shifted focus from learning to building — architecting real systems with modern frameworks and production-grade tooling.",
   },
   {
     year: "2024",
     title: "First production app",
-    desc: "Launched Autosell.pl — a full marketplace with real users, payments, and real-time messaging.",
+    desc: "Designed and deployed Autosell.pl — a full automotive marketplace with real users, real-time messaging, and a scoring-based search engine. Delivered solo for a client.",
   },
   {
-    year: "2025–26",
-    title: "Full-stack & beyond",
-    desc: "Built Ecomati.pl e-commerce platform. Mastered NestJS, Docker, PostgreSQL. Open to work and ready to grow with a team.",
+    year: "2025 to 26",
+    title: "Advanced systems",
+    desc: "Architected Matchdays — a sports auction platform with real-time bidding, AI-powered verification, Stripe Connect payouts, and Redis-backed job queues.",
+  },
+];
+
+// ─────────────────────────────────────────────
+// KEY ACHIEVEMENTS DATA
+// ─────────────────────────────────────────────
+const achievements = [
+  {
+    icon: "🏗️",
+    title: "Architected 3 production systems",
+    desc: "Designed and deployed three full-stack applications from scratch, each with real users, live data, and working payment flows.",
+  },
+  {
+    icon: "⚡",
+    title: "Real-time bidding engine",
+    desc: "Implemented a WebSocket-based auction system using NestJS Gateway with per-auction rooms, atomic Prisma transactions, and Redis-backed queues to prevent race conditions.",
+  },
+  {
+    icon: "🤖",
+    title: "AI-powered verification pipeline",
+    desc: "Integrated Google Gemini API to automatically verify sports jersey authenticity during listing creation, reducing manual moderation overhead.",
+  },
+  {
+    icon: "💳",
+    title: "Stripe Connect payment infrastructure",
+    desc: "Implemented a full Stripe Connect marketplace flow including seller onboarding, escrow-style payouts, and webhook-driven order state management.",
+  },
+  {
+    icon: "🔍",
+    title: "Scoring-based search engine",
+    desc: "Built a custom relevance-scoring algorithm with 30+ filters for Autosell.pl, enabling precise vehicle discovery across thousands of listings.",
+  },
+  {
+    icon: "🚀",
+    title: "Solo end-to-end delivery",
+    desc: "Gathered client requirements, designed the database schema, built the API, developed the frontend, and deployed to production independently and on schedule.",
   },
 ];
 
@@ -106,54 +163,52 @@ function AboutPanel() {
       {/* Left — large statement */}
       <div className="space-y-8">
         <p className="text-fluid-h3 text-neutral-200 font-light leading-[1.3] tracking-tight">
-          Since 2020, I have been building my path in{" "}
+          I build{" "}
           <em className="text-[#D4AF37] font-normal not-italic">
-            software development
+            production-grade full-stack systems
           </em>{" "}
-          — starting from online courses and hands-on practice, gradually moving
-          toward full-stack development and production systems.
+          from database schema and API architecture to pixel-perfect UI and
+          cloud deployment.
         </p>
         <p className="text-neutral-500 text-base md:text-lg leading-relaxed">
-          My journey was not linear. For several years, I combined intensive
-          self-education with full-time work as a{" "}
+          My background is unconventional. For years, I combined intensive
+          self-directed engineering study with full-time work as a{" "}
           <span className="text-neutral-300 font-medium">
-            culinary instructor and head chef
+            head chef and culinary instructor
           </span>
-          , teaching professionally and working with people with disabilities.
-          At times, I worked 60–70 hours per week while continuing to learn and
-          build projects in the evenings and weekends.
+          , managing teams and working with individuals with disabilities. That
+          environment demanded precision, crisis management, and the ability to
+          deliver under pressure — skills I bring directly into software
+          engineering.
         </p>
       </div>
 
       {/* Right — details */}
       <div className="space-y-8 lg:pt-4">
         <p className="text-neutral-400 text-lg md:text-xl leading-relaxed">
-          Working in gastronomy shaped more than my work ethic. It taught me{" "}
+          Since 2023, I have been fully focused on{" "}
           <span className="text-neutral-200 font-medium">
-            discipline, humility, and empathy
-          </span>
-          . I learned humility from the people I worked with — individuals who
-          showed up every day with determination despite the adversity they had
-          faced. Their resilience changed my perspective and strengthened my
-          character.
-        </p>
-        <p className="text-neutral-500 text-base md:text-lg leading-relaxed">
-          Since 2023, I have been fully focused on building, shipping, and
-          refining production applications. Based in{" "}
+            designing, building, and shipping
+          </span>{" "}
+          production applications. I take end-to-end ownership from requirements
+          and architecture decisions through deployment and monitoring. Based in{" "}
           <span className="text-[#D4AF37] font-medium">
             Łowicz / Warsaw, Poland
           </span>
-          . Open to remote or hybrid roles across Europe. I believe in
-          end-to-end thinking — taking responsibility for the entire product
-          lifecycle.
+          . Open to remote or hybrid roles across Europe.
+        </p>
+        <p className="text-neutral-500 text-base md:text-lg leading-relaxed">
+          I believe that the best code is not just functional. It is
+          maintainable, scalable, and built with the next developer in mind.
+          Every system I deliver is designed to last.
         </p>
 
         {/* Stats row */}
         <div className="flex gap-10 pt-6 border-t border-[#1a1a1a]">
           {[
-            { value: "4+", label: "Years (since 2020)" },
             { value: "3+", label: "Production apps" },
-            { value: "100%", label: "Self-taught" },
+            { value: "2+", label: "Years commercial" },
+            { value: "100%", label: "End-to-end owned" },
           ].map((s, i) => (
             <div key={i} className="space-y-1">
               <div className="text-3xl md:text-4xl font-black text-[#D4AF37] tracking-tighter leading-none">
@@ -175,12 +230,12 @@ function SkillsPanel() {
     <div className="space-y-10">
       {/* Intro text */}
       <p className="text-2xl sm:text-3xl md:text-4xl text-neutral-200 font-light leading-[1.3] tracking-tight max-w-4xl">
-        I bring ownership and attention to detail to{" "}
+        I bring ownership and precision to{" "}
         <em className="text-[#D4AF37] font-normal not-italic">
           every layer of the stack
         </em>{" "}
-        — from database schema design and backend architecture to pixel-perfect
-        UI and deployment pipelines.
+        from database schema design and backend architecture to responsive UI
+        and production deployment pipelines.
       </p>
 
       {/* Skill cards */}
@@ -234,21 +289,21 @@ function JourneyPanel() {
       <p className="text-2xl sm:text-3xl md:text-4xl text-neutral-200 font-light leading-[1.3] tracking-tight max-w-4xl">
         Every milestone is a{" "}
         <em className="text-[#D4AF37] font-normal not-italic">
-          stepping stone
+          deliberate step forward
         </em>{" "}
-        — from the first line of code to production-ready applications serving
-        real users.
+        from the first line of code to production systems serving real users at
+        scale.
       </p>
 
       {/* Timeline */}
       <div className="relative">
-        {/* Horizontal connector — desktop */}
+        {/* Horizontal connector on desktop */}
         <div className="hidden lg:block absolute top-6 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37]/20 to-transparent" />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {timeline.map((item, i) => (
             <div key={i} className="relative flex flex-col gap-4">
-              {/* Dot — desktop */}
+              {/* Dot on desktop */}
               <div className="hidden lg:flex items-center gap-3 mb-1">
                 <div className="w-12 h-12 rounded-full border-2 border-[#D4AF37]/40 bg-[#050505] flex items-center justify-center shrink-0">
                   <div className="w-3 h-3 rounded-full bg-[#D4AF37]" />
@@ -279,20 +334,20 @@ function JourneyPanel() {
 function PhilosophyPanel() {
   const values = [
     {
-      title: "Ownership",
-      desc: "I don't just write code — I take full responsibility for the product. From concept to deployment, I treat every project as my own.",
+      title: "Architecture first",
+      desc: "Before writing a single line of code, I design the system. A well-thought-out architecture prevents technical debt and enables teams to scale confidently.",
     },
     {
-      title: "Quality over speed",
-      desc: "Clean, maintainable code is not a luxury — it's a necessity. I invest time in architecture and testing to build things that last.",
+      title: "End-to-end ownership",
+      desc: "I do not just implement features. I own the product. From requirements and database design to deployment and monitoring, I take full responsibility for what I ship.",
     },
     {
-      title: "Continuous growth",
-      desc: "Technology evolves fast. I dedicate time every day to learning new tools, patterns, and best practices to stay sharp.",
+      title: "Quality over shortcuts",
+      desc: "Clean, maintainable code is not optional. I invest time in proper abstractions, testing, and documentation to build systems that last beyond the first release.",
     },
     {
-      title: "Authenticity",
-      desc: "I believe in honest communication and transparent work. No shortcuts, no excuses — just care, hard work, and real results.",
+      title: "Continuous improvement",
+      desc: "Technology evolves fast. I dedicate time every day to studying new patterns, tools, and architectural approaches to stay sharp and deliver modern solutions.",
     },
   ];
 
@@ -300,11 +355,11 @@ function PhilosophyPanel() {
     <div className="space-y-10">
       {/* Intro */}
       <p className="text-2xl sm:text-3xl md:text-4xl text-neutral-200 font-light leading-[1.3] tracking-tight max-w-4xl">
-        My approach to development is based on{" "}
+        My approach to engineering is built on{" "}
         <em className="text-[#D4AF37] font-normal not-italic">
-          care, authenticity, and hard work
+          deliberate architecture, ownership, and craft
         </em>
-        . These are the principles that guide every decision I make.
+        . These principles guide every technical decision I make.
       </p>
 
       {/* Values grid */}
@@ -331,6 +386,53 @@ function PhilosophyPanel() {
         ))}
       </div>
     </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// KEY ACHIEVEMENTS — standalone section below tabs
+// ─────────────────────────────────────────────
+function KeyAchievementsSection() {
+  return (
+    <section className="mt-16 md:mt-24 pt-12 md:pt-16">
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-10 md:mb-14">
+        <div className="h-[2px] w-10 md:w-16 bg-[#D4AF37] shrink-0" />
+        <span className="text-[10px] md:text-xs font-mono tracking-[0.25em] text-[#D4AF37] uppercase font-bold">
+          Key Achievements
+        </span>
+        <div className="flex-1 h-[1px] bg-[#1a1a1a]" />
+        <FaTrophy className="text-[#D4AF37]/40" size={18} />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        {achievements.map((item, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5, delay: i * 0.08 }}
+            className="group relative p-6 md:p-7 rounded-2xl bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#D4AF37]/40 hover:bg-[#0d0d0d] transition-all duration-500 overflow-hidden"
+          >
+            {/* Corner accent */}
+            <div className="absolute top-0 right-0 w-10 h-10 border-t-2 border-r-2 border-[#D4AF37]/10 group-hover:border-[#D4AF37]/40 rounded-tr-2xl transition-colors duration-500" />
+
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{item.icon}</span>
+                <h4 className="text-white font-black text-sm md:text-base uppercase tracking-tight leading-tight">
+                  {item.title}
+                </h4>
+              </div>
+              <p className="text-neutral-500 text-sm leading-relaxed font-light group-hover:text-neutral-400 transition-colors duration-300">
+                {item.desc}
+              </p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -421,9 +523,8 @@ export default function AboutMe() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] bg-[#D4AF37]/[0.03] rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-[1700px] mx-auto relative z-10">
-        {/* ── HEADER ── */}
+        {/* HEADER */}
         <div className="space-y-6 mb-10 md:mb-16 text-center">
-          {/* Label */}
           <div className="flex items-center justify-center gap-4">
             <div className="h-[2px] w-12 md:w-16 bg-[#D4AF37] shrink-0" />
             <span className="text-[10px] md:text-xs font-mono tracking-[0.25em] text-[#D4AF37] uppercase font-bold">
@@ -432,7 +533,6 @@ export default function AboutMe() {
             <div className="h-[2px] w-12 md:w-16 bg-[#D4AF37] shrink-0" />
           </div>
 
-          {/* Big title — inspired by Travelling Distribution serif style */}
           <h2 className="text-7xl sm:text-8xl md:text-[9rem] lg:text-[11rem] font-black tracking-tighter text-white leading-[0.85] uppercase">
             About{" "}
             <span
@@ -444,9 +544,8 @@ export default function AboutMe() {
           </h2>
         </div>
 
-        {/* ── TAB NAVIGATION with progress bars ── */}
+        {/* TAB NAVIGATION with progress bars */}
         <div className="relative mb-8 md:mb-12">
-          {/* Tab bar */}
           <div className="relative flex items-center gap-1 md:gap-2 border-b border-[#1a1a1a] pb-0">
             {tabs.map((tab) => {
               const isActive = activeTab === tab;
@@ -473,7 +572,7 @@ export default function AboutMe() {
               );
             })}
 
-            {/* Animated underline indicator (background track) */}
+            {/* Animated underline indicator */}
             <motion.div
               className="absolute bottom-0 h-[2px] bg-[#D4AF37]/15"
               animate={{ left: indicator.left, width: indicator.width }}
@@ -482,7 +581,7 @@ export default function AboutMe() {
           </div>
         </div>
 
-        {/* ── PANEL CONTENT ── */}
+        {/* PANEL CONTENT */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -494,6 +593,9 @@ export default function AboutMe() {
             <ActivePanel />
           </motion.div>
         </AnimatePresence>
+
+        {/* KEY ACHIEVEMENTS */}
+        <KeyAchievementsSection />
       </div>
     </section>
   );

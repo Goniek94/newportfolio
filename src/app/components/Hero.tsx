@@ -15,13 +15,14 @@ import {
   FaFolderOpen,
   FaChevronRight,
   FaDownload,
+  FaLayerGroup,
 } from "react-icons/fa";
 
 // Importy potrzebne do uruchomienia VSCode wprost z Hero
 import VSCodeViewer from "./VSCodeViewer";
 import {
   autosellFiles,
-  newEcomatiFiles,
+  matchdaysFiles,
   windowsXpFiles,
 } from "../data/vscode/index";
 
@@ -30,9 +31,10 @@ const quotes = [
     id: 1,
     text: (
       <>
-        I built and delivered a production-ready{" "}
-        <span className="text-[#D4AF37]">full-stack marketplace</span> for a
-        client, handling everything from requirements to deployment.
+        Designed and deployed a{" "}
+        <span className="text-[#D4AF37]">production-grade marketplace</span> —
+        architected from scratch, handling real users, payments, and real-time
+        communication.
       </>
     ),
   },
@@ -40,8 +42,9 @@ const quotes = [
     id: 2,
     text: (
       <>
-        I believe in <span className="text-[#D4AF37]">End-to-End</span> thinking
-        — I take ownership of the entire product lifecycle.
+        I architect <span className="text-[#D4AF37]">end-to-end systems</span> —
+        taking full ownership from database schema and API design to deployment
+        and monitoring.
       </>
     ),
   },
@@ -49,9 +52,19 @@ const quotes = [
     id: 3,
     text: (
       <>
-        From <span className="text-[#D4AF37]">Head Chef</span> to Developer — I
-        know how to handle heat, deliver under pressure, and organize complex
-        processes.
+        Built <span className="text-[#D4AF37]">3 production applications</span>{" "}
+        — real users, live data, working payments. Every line of code shipped
+        with purpose.
+      </>
+    ),
+  },
+  {
+    id: 4,
+    text: (
+      <>
+        Implemented <span className="text-[#D4AF37]">real-time bidding</span>,
+        AI-powered verification, and Stripe Connect payouts — in a single
+        full-stack platform.
       </>
     ),
   },
@@ -76,14 +89,14 @@ export default function Hero() {
       setCurrentFiles(autosellFiles);
       setCurrentTitle("Autosell-Repo");
     } else if (projectId === 2) {
-      setCurrentFiles(newEcomatiFiles);
-      setCurrentTitle("Ecomati-Repo");
+      setCurrentFiles(matchdaysFiles);
+      setCurrentTitle("Matchdays-Repo");
     } else if (projectId === 3) {
       setCurrentFiles(windowsXpFiles);
       setCurrentTitle("Windows-XP-Repo");
     }
-    setIsProjectsModalOpen(false); // Zamknij modal z listą
-    setIsVSCodeOpen(true); // Otwórz edytor VSCode
+    setIsProjectsModalOpen(false);
+    setIsVSCodeOpen(true);
   };
 
   // Blokowanie scrolla gdy którykolwiek modal jest otwarty
@@ -213,6 +226,13 @@ export default function Hero() {
                 <FaGithub size={16} /> GitHub
               </a>
 
+              <a
+                href="#projects"
+                className="flex items-center gap-2 px-5 py-2.5 md:px-8 md:py-4 bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#D4AF37] rounded-full text-xs md:text-sm font-mono uppercase tracking-widest transition-all hover:text-[#D4AF37] hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] cursor-pointer"
+              >
+                <FaLayerGroup size={16} /> Projects
+              </a>
+
               <button
                 onClick={() => setIsProjectsModalOpen(true)}
                 className="flex items-center gap-2 px-5 py-2.5 md:px-8 md:py-4 bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#D4AF37] rounded-full text-xs md:text-sm font-mono uppercase tracking-widest transition-all hover:text-[#D4AF37] hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] cursor-pointer"
@@ -306,17 +326,17 @@ export default function Hero() {
                     {
                       id: 1,
                       name: "Autosell.pl",
-                      desc: "Production Marketplace • Node.js, Express, Socket.IO",
+                      desc: "Enterprise Marketplace • Node.js, Express, Socket.IO",
                     },
                     {
                       id: 2,
-                      name: "Ecomati.pl",
-                      desc: "Organic E-Commerce • Next.js, Prisma, PostgreSQL",
+                      name: "Matchdays",
+                      desc: "Sports Auction Platform • NestJS, PostgreSQL, Stripe",
                     },
                     {
                       id: 3,
                       name: "Windows XP",
-                      desc: "Interactive Portfolio • React, TS, Tailwind",
+                      desc: "Interactive OS Portfolio • React 19, TypeScript",
                     },
                   ].map((proj) => (
                     <div
@@ -392,7 +412,7 @@ export default function Hero() {
                     Mateusz <span className="text-[#D4AF37]">Goszczycki</span>
                   </h2>
                   <h3 className="text-xl md:text-2xl text-neutral-300 mt-3 font-light tracking-wide">
-                    Full Stack Developer
+                    Full Stack Developer · 3+ Production Applications Shipped
                   </h3>
 
                   {/* Personal Info Grid */}
@@ -407,7 +427,7 @@ export default function Hero() {
                     </div>
                     <div className="flex items-center gap-3 text-sm text-neutral-400">
                       <FaBriefcase className="text-[#D4AF37]" />{" "}
-                      <span>Junior / Mid Position</span>
+                      <span>Mid-Level Position</span>
                     </div>
                   </div>
 
@@ -590,30 +610,33 @@ export default function Hero() {
                     <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Projects
                   </h3>
                   <div className="space-y-10">
-                    {/* Ecomati */}
+                    {/* Matchdays */}
                     <div className="relative pl-6 border-l-2 border-[#D4AF37]/50">
                       <div className="absolute w-3 h-3 bg-[#D4AF37] rounded-full -left-[7px] top-1.5 shadow-[0_0_10px_#D4AF37]" />
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
                         <h4 className="text-white font-bold text-lg md:text-xl">
-                          Ecomati.pl{" "}
+                          Matchdays{" "}
                           <span className="text-neutral-400 font-normal text-sm ml-2">
-                            — E-commerce Platform
+                            — Sports Auction Marketplace
                           </span>
                         </h4>
                         <span className="text-[#D4AF37] font-mono text-xs border border-[#D4AF37]/30 px-2 py-1 rounded">
-                          2025 - 2026
+                          2025 — 2026
                         </span>
                       </div>
 
                       {/* TECH BADGES */}
                       <div className="flex flex-wrap gap-2 mb-3">
                         {[
-                          "Next.js",
+                          "Next.js 14",
                           "NestJS",
                           "TypeScript",
                           "PostgreSQL",
-                          "Prisma",
-                          "Docker",
+                          "Prisma ORM",
+                          "Socket.IO",
+                          "Redis",
+                          "Stripe Connect",
+                          "Google Gemini",
                         ].map((tech) => (
                           <span
                             key={tech}
@@ -625,12 +648,13 @@ export default function Hero() {
                       </div>
 
                       <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
-                        Designed and developed a modern e-commerce solution from
-                        scratch. Architected a scalable backend using{" "}
-                        <strong>NestJS</strong> and containerized the
-                        application with <strong>Docker</strong>. Engineered an
-                        optimized, responsive frontend providing a seamless user
-                        experience.
+                        Full-stack sports memorabilia auction platform with
+                        real-time bidding via{" "}
+                        <strong>NestJS WebSocket Gateway</strong>, JWT auth with
+                        account lockout, AI-powered jersey verification (
+                        <strong>Google Gemini</strong>),{" "}
+                        <strong>Stripe Connect</strong> payouts, and a smart
+                        listing engine. Live and accepting real users.
                       </p>
                     </div>
 
