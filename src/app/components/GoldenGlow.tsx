@@ -2,11 +2,6 @@
 
 import { useEffect, useRef } from "react";
 
-/**
- * GoldenGlow – a subtle golden smudge/trail that follows the cursor.
- * Uses a simple CSS radial gradient approach with smooth interpolation
- * for a barely-visible, elegant golden trail effect.
- */
 export default function GoldenGlow() {
   const glowRef = useRef<HTMLDivElement>(null);
   const pos = useRef({ x: 0, y: 0 });
@@ -15,12 +10,14 @@ export default function GoldenGlow() {
   const visible = useRef(false);
 
   useEffect(() => {
+    // Na urządzeniach dotykowych nie odpalamy nic
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+
     const handleMouseMove = (e: MouseEvent) => {
       target.current = { x: e.clientX, y: e.clientY };
       if (!visible.current && glowRef.current) {
         glowRef.current.style.opacity = "1";
         visible.current = true;
-        // Snap to position on first move
         pos.current = { x: e.clientX, y: e.clientY };
       }
     };
@@ -32,9 +29,7 @@ export default function GoldenGlow() {
       }
     };
 
-    // Smooth interpolation loop
     const animate = () => {
-      // Lerp towards target for smooth trailing
       pos.current.x += (target.current.x - pos.current.x) * 0.15;
       pos.current.y += (target.current.y - pos.current.y) * 0.15;
 

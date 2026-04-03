@@ -10,24 +10,19 @@ import Terminal from "./about/Terminal";
 import ChallengeTab from "./about/ChallengeTab";
 import { buildItems, allStack } from "./about/data";
 
-// ─────────────────────────────────────────────
-// RIGHT COLUMN — Expertise cards + Stack pills
-// ─────────────────────────────────────────────
 function RightColumn() {
   return (
     <div className="flex flex-col gap-8 lg:pl-10">
-      {/* Expertise header */}
       <div className="flex items-center gap-3">
-        <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#D4AF37]/60">
+        <span className="text-[11px] font-mono uppercase tracking-[0.3em] text-[#D4AF37]/60">
           02
         </span>
         <div className="h-px flex-1 bg-[#111]" />
-        <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-neutral-600">
+        <span className="text-[11px] font-mono uppercase tracking-[0.3em] text-neutral-600">
           Expertise
         </span>
       </div>
 
-      {/* Build items grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {buildItems.map((item, i) => (
           <motion.div
@@ -36,27 +31,26 @@ function RightColumn() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.35, delay: i * 0.07 }}
-            className="group p-4 rounded-2xl border border-[#111] bg-[#080808] hover:border-[#D4AF37]/25 hover:bg-[#0c0c0a] transition-all duration-300 flex flex-col"
+            className="group p-5 rounded-2xl border border-[#111] bg-[#080808] hover:border-[#D4AF37]/25 hover:bg-[#0c0c0a] transition-all duration-300 flex flex-col"
           >
-            <div className="text-xl mb-2">{item.icon}</div>
-            <h4 className="text-white font-bold text-xs mb-1.5 group-hover:text-[#D4AF37] transition-colors duration-300">
+            <div className="text-2xl mb-2">{item.icon}</div>
+            <h4 className="text-white font-bold text-sm mb-2 group-hover:text-[#D4AF37] transition-colors duration-300">
               {item.title}
             </h4>
-            <p className="text-neutral-500 text-[11px] leading-relaxed flex-1">
+            <p className="text-neutral-500 text-[13px] leading-relaxed flex-1">
               {item.desc}
             </p>
           </motion.div>
         ))}
       </div>
 
-      {/* Stack pills */}
       <div className="rounded-2xl border border-[#1a1a1a] bg-[#080808] p-5">
         <div className="flex items-center gap-3 mb-4">
-          <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#D4AF37]/60">
+          <span className="text-[11px] font-mono uppercase tracking-[0.3em] text-[#D4AF37]/60">
             03
           </span>
           <div className="h-px flex-1 bg-[#111]" />
-          <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-neutral-600">
+          <span className="text-[11px] font-mono uppercase tracking-[0.3em] text-neutral-600">
             Hover to scramble
           </span>
         </div>
@@ -70,9 +64,6 @@ function RightColumn() {
   );
 }
 
-// ─────────────────────────────────────────────
-// TAB NAV — shared between profile and challenge layouts
-// ─────────────────────────────────────────────
 function TabNav({
   activeTab,
   onTabChange,
@@ -102,7 +93,6 @@ function TabNav({
             0{i + 1}
           </span>
 
-          {/* Challenge tab gets a glowing badge when profile is active */}
           {tab === "challenge" && showChallengeGlow && activeTab !== tab ? (
             <span className="relative inline-flex items-center">
               <span
@@ -143,9 +133,6 @@ function TabNav({
   );
 }
 
-// ─────────────────────────────────────────────
-// MAIN EXPORT
-// ─────────────────────────────────────────────
 export default function AboutMe() {
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -164,18 +151,12 @@ export default function AboutMe() {
       id="about"
       className="relative w-full bg-[#050505] text-[#e1e1e1] border-t border-[#111]"
     >
-      {/* Subtle grid background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-      {/* Gold glow — top-left */}
       <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-[#D4AF37]/[0.025] rounded-full blur-[140px] pointer-events-none" />
-      {/* Gold glow — bottom-right */}
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#D4AF37]/[0.015] rounded-full blur-[120px] pointer-events-none" />
 
-      {/* ══════════════════════════════════════════
-          HERO BLOCK — giant title + stats
-      ══════════════════════════════════════════ */}
-      <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 pt-20 md:pt-32 pb-0">
-        {/* Section label */}
+      {/* HERO BLOCK */}
+      <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 pt-10 md:pt-16 pb-0">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -189,9 +170,7 @@ export default function AboutMe() {
           </span>
         </motion.div>
 
-        {/* Title + stats row */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-0 items-end">
-          {/* Giant animated title — pb-8 ensures descenders (R, P, etc.) are never clipped */}
           <motion.div
             style={{ y: titleY, overflow: "visible" }}
             className="pb-8"
@@ -201,7 +180,7 @@ export default function AboutMe() {
             <GlitchWord text="DEVELOPER" outlined entryDelay={0.3} />
           </motion.div>
 
-          {/* Stats — vertical stack with gold divider */}
+          {/* Desktop stats */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -211,7 +190,7 @@ export default function AboutMe() {
           >
             <div className="flex gap-10 items-stretch">
               <div className="w-[1px] bg-gradient-to-b from-transparent via-[#D4AF37]/40 to-transparent self-stretch" />
-              <div className="flex flex-col gap-8 justify-center">
+              <div className="flex flex-col gap-10 justify-center">
                 <Counter
                   value={3}
                   suffix="+"
@@ -222,13 +201,19 @@ export default function AboutMe() {
                   value={2}
                   suffix="+"
                   label="Years commercial"
-                  delay={150}
+                  delay={200}
+                />
+                <Counter
+                  value={15}
+                  suffix="+"
+                  label="Technologies mastered"
+                  delay={400}
                 />
                 <Counter
                   value={100}
                   suffix="%"
                   label="Solo built"
-                  delay={300}
+                  delay={600}
                 />
               </div>
             </div>
@@ -241,19 +226,27 @@ export default function AboutMe() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="flex lg:hidden gap-8 mt-10 pt-8 border-t border-[#111]"
+          className="flex lg:hidden flex-wrap gap-8 mt-10 pt-8 border-t border-[#111]"
         >
-          <Counter value={3} suffix="+" label="Production apps shipped" />
-          <Counter value={2} suffix="+" label="Years commercial" />
-          <Counter value={100} suffix="%" label="Solo built" />
+          <Counter
+            value={3}
+            suffix="+"
+            label="Production apps shipped"
+            delay={0}
+          />
+          <Counter value={2} suffix="+" label="Years commercial" delay={200} />
+          <Counter
+            value={15}
+            suffix="+"
+            label="Technologies mastered"
+            delay={400}
+          />
+          <Counter value={100} suffix="%" label="Solo built" delay={600} />
         </motion.div>
       </div>
 
-      {/* ══════════════════════════════════════════
-          CONTENT BLOCK — tabs + expertise
-      ══════════════════════════════════════════ */}
-      <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 mt-16 md:mt-20 pb-20 md:pb-32">
-        {/* Section divider */}
+      {/* CONTENT BLOCK */}
+      <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 mt-8 md:mt-12 pb-10 md:pb-16">
         <div className="flex items-center gap-4 mb-12">
           <div className="h-px flex-1 bg-[#111]" />
           <span className="text-[9px] font-mono uppercase tracking-[0.4em] text-neutral-700">
@@ -262,10 +255,8 @@ export default function AboutMe() {
           <div className="h-px flex-1 bg-[#111]" />
         </div>
 
-        {/* Profile tab — 2-column layout with Expertise on the right */}
         {activeTab === "profile" ? (
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1px_1fr] gap-8 lg:gap-0">
-            {/* LEFT — terminal */}
             <div className="flex flex-col lg:pr-10">
               <TabNav activeTab={activeTab} onTabChange={setActiveTab} />
               <div className="flex-1">
@@ -281,10 +272,8 @@ export default function AboutMe() {
               </div>
             </div>
 
-            {/* CENTER divider */}
             <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-[#1a1a1a] to-transparent" />
 
-            {/* RIGHT — expertise + stack */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -295,7 +284,6 @@ export default function AboutMe() {
             </motion.div>
           </div>
         ) : (
-          /* Challenge tab — full width */
           <div className="flex flex-col">
             <TabNav
               activeTab={activeTab}

@@ -3,7 +3,6 @@
 import { useRef, useEffect, useState } from "react";
 import { terminalScript, type TermLine } from "./data";
 
-// Animated terminal that types out the profile script when scrolled into view
 export default function Terminal() {
   const [visibleLines, setVisibleLines] = useState<TermLine[]>([]);
   const [typingLine, setTypingLine] = useState("");
@@ -14,7 +13,6 @@ export default function Terminal() {
   const containerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  // Start animation when terminal enters viewport
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
@@ -31,7 +29,6 @@ export default function Terminal() {
     return () => obs.disconnect();
   }, []);
 
-  // Advance one character / line at a time
   useEffect(() => {
     if (!running || done) return;
     if (lineIdx >= terminalScript.length) {
@@ -65,7 +62,6 @@ export default function Terminal() {
     }
   }, [running, done, lineIdx, charIdx]);
 
-  // Auto-scroll to bottom as lines appear
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
@@ -82,7 +78,7 @@ export default function Terminal() {
             <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
             <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
           </div>
-          <span className="text-[#444] text-[10px] uppercase tracking-[0.25em]">
+          <span className="text-[#444] text-[11px] uppercase tracking-[0.25em]">
             mateusz@portfolio ~ %
           </span>
           <div className="w-16" />
@@ -91,7 +87,7 @@ export default function Terminal() {
         {/* Terminal body */}
         <div
           ref={containerRef}
-          className="flex-1 overflow-hidden p-5 text-[12px] leading-[1.8]"
+          className="flex-1 overflow-hidden p-5 text-[14px] leading-[1.9]"
         >
           {visibleLines.map((line, i) => {
             if (line.type === "blank") return <div key={i} className="h-2" />;
@@ -109,22 +105,20 @@ export default function Terminal() {
             );
           })}
 
-          {/* Currently typing command */}
           {typingLine && (
             <div className="flex items-start gap-2">
               <span className="text-[#27c93f] shrink-0">❯</span>
               <span className="text-white">
                 {typingLine}
-                <span className="inline-block w-2 h-4 bg-white align-middle ml-0.5 animate-pulse" />
+                <span className="inline-block w-2 h-[14px] bg-white align-middle ml-0.5 animate-pulse" />
               </span>
             </div>
           )}
 
-          {/* Idle cursor when done */}
           {done && (
             <div className="flex items-start gap-2 mt-1">
               <span className="text-[#27c93f] shrink-0">❯</span>
-              <span className="inline-block w-2 h-4 bg-[#27c93f] align-middle animate-pulse" />
+              <span className="inline-block w-2 h-[14px] bg-[#27c93f] align-middle animate-pulse" />
             </div>
           )}
         </div>

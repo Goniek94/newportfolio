@@ -2,10 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/**
- * CustomCursor — a golden crosshair cursor with trailing dot particles.
- * Replaces the default browser cursor with a high-end agency-style effect.
- */
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
@@ -18,33 +14,37 @@ export default function CustomCursor() {
     Array.from({ length: TRAIL_COUNT }, () => ({ x: -200, y: -200 })),
   );
   const rafRef = useRef<number>(0);
+  const isHoveringRef = useRef(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(true); // domyślnie true — nie renderuj przed sprawdzeniem
 
   useEffect(() => {
-    // Detect touch/coarse pointer — hide cursor on mobile
     const isTouch =
       window.matchMedia("(pointer: coarse)").matches ||
       "ontouchstart" in window;
+
     setIsTouchDevice(isTouch);
+
+    // Na mobilnych — kończymy tutaj, żaden rAF nie startuje
     if (isTouch) return;
 
     const onMove = (e: MouseEvent) => {
       mouse.current = { x: e.clientX, y: e.clientY };
-      if (!isVisible) setIsVisible(true);
+      setIsVisible(true);
     };
 
     const onLeave = () => setIsVisible(false);
     const onEnter = () => setIsVisible(true);
 
-    // Detect hoverable elements for cursor scale effect
     const onMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const hoverable = target.closest(
         "a, button, [role='button'], [data-cursor='pointer']",
       );
-      setIsHovering(!!hoverable);
+      const val = !!hoverable;
+      isHoveringRef.current = val;
+      setIsHovering(val);
     };
 
     window.addEventListener("mousemove", onMove);
@@ -53,11 +53,9 @@ export default function CustomCursor() {
     document.addEventListener("mouseover", onMouseOver);
 
     const animate = () => {
-      // Smooth ring follow
       ring.current.x += (mouse.current.x - ring.current.x) * 0.12;
       ring.current.y += (mouse.current.y - ring.current.y) * 0.12;
 
-      // Cascade trail positions
       for (let i = TRAIL_COUNT - 1; i > 0; i--) {
         trails.current[i].x +=
           (trails.current[i - 1].x - trails.current[i].x) * 0.35;
@@ -67,12 +65,12 @@ export default function CustomCursor() {
       trails.current[0].x += (mouse.current.x - trails.current[0].x) * 0.5;
       trails.current[0].y += (mouse.current.y - trails.current[0].y) * 0.5;
 
-      // Apply positions
       if (cursorRef.current) {
         cursorRef.current.style.transform = `translate(${mouse.current.x}px, ${mouse.current.y}px)`;
       }
       if (ringRef.current) {
-        ringRef.current.style.transform = `translate(${ring.current.x}px, ${ring.current.y}px) scale(${isHovering ? 1.8 : 1})`;
+        const scale = isHoveringRef.current ? 1.8 : 1;
+        ringRef.current.style.transform = `translate(${ring.current.x}px, ${ring.current.y}px) scale(${scale})`;
       }
       trailsRef.current.forEach((el, i) => {
         if (el) {
@@ -93,10 +91,9 @@ export default function CustomCursor() {
       document.removeEventListener("mouseover", onMouseOver);
       cancelAnimationFrame(rafRef.current);
     };
-  }, [isVisible, isHovering]);
+  }, []); // ← pusta tablica — rAF odpala się RAZ, isHovering przez ref
 
-  // Don't render on touch/mobile devices
-  if (typeof window === "undefined" || isTouchDevice) return null;
+  if (isTouchDevice) return null;
 
   return (
     <div
@@ -104,7 +101,6 @@ export default function CustomCursor() {
       style={{ opacity: isVisible ? 1 : 0, transition: "opacity 0.3s ease" }}
       aria-hidden="true"
     >
-      {/* Trailing dots */}
       {Array.from({ length: TRAIL_COUNT }).map((_, i) => (
         <div
           key={i}
@@ -122,7 +118,6 @@ export default function CustomCursor() {
         />
       ))}
 
-      {/* Outer ring */}
       <div
         ref={ringRef}
         className="fixed top-0 left-0 rounded-full border border-[#D4AF37]/50"
@@ -136,13 +131,11 @@ export default function CustomCursor() {
         }}
       />
 
-      {/* Crosshair dot */}
       <div
         ref={cursorRef}
         className="fixed top-0 left-0"
         style={{ willChange: "transform" }}
       >
-        {/* Center dot */}
         <div
           className="absolute rounded-full bg-[#D4AF37]"
           style={{
@@ -153,7 +146,6 @@ export default function CustomCursor() {
             boxShadow: "0 0 6px rgba(212,175,55,0.8)",
           }}
         />
-        {/* Crosshair lines */}
         <div
           className="absolute bg-[#D4AF37]/70"
           style={{ width: 10, height: 1, marginLeft: -5, marginTop: -0.5 }}
