@@ -120,11 +120,11 @@ function GridBackground() {
         />
       </svg>
 
-      {/* Large ghost number "03" in background */}
+      {/* Large ghost number "03" in background — hidden on small screens */}
       <div
-        className="absolute right-[-2%] top-1/2 -translate-y-1/2 font-black select-none"
+        className="absolute right-[-2%] top-1/2 -translate-y-1/2 font-black select-none hidden sm:block"
         style={{
-          fontSize: "clamp(16rem, 35vw, 42rem)",
+          fontSize: "clamp(10rem, 28vw, 42rem)",
           lineHeight: 1,
           color: "transparent",
           WebkitTextStroke: "1px rgba(212,175,55,0.06)",
@@ -208,7 +208,7 @@ function ProjectsHeader() {
       {/* ── Decorative background ── */}
       <GridBackground />
 
-      <div className="relative max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 pt-16 md:pt-24 pb-14 md:pb-20">
+      <div className="relative max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 pt-10 md:pt-14 pb-8 md:pb-12">
         {/* ── Label ── */}
         <motion.div
           initial={{ opacity: 0, x: -24 }}
@@ -233,8 +233,8 @@ function ProjectsHeader() {
         <motion.div ref={titleRef} style={{ y: titleY }}>
           {/* FEATURED — white fill */}
           <h1
-            className="font-black tracking-tighter uppercase leading-[0.88] mb-0"
-            style={{ fontSize: "clamp(4rem, 10vw, 11rem)" }}
+            className="font-black tracking-tighter uppercase mb-0"
+            style={{ fontSize: "clamp(4rem, 10vw, 11rem)", lineHeight: 1 }}
           >
             <motion.span
               className="inline-flex"
@@ -246,8 +246,8 @@ function ProjectsHeader() {
               {featuredLetters.map((char, i) => (
                 <span
                   key={i}
-                  className="inline-block overflow-hidden"
-                  style={{ lineHeight: 0.9 }}
+                  className="inline-block overflow-visible"
+                  style={{ lineHeight: 1, paddingBottom: "0.06em" }}
                 >
                   <motion.span
                     className="inline-block text-white"
@@ -262,8 +262,8 @@ function ProjectsHeader() {
 
           {/* PROJECTS — gold outline */}
           <h1
-            className="font-black tracking-tighter uppercase leading-[0.88] mb-10"
-            style={{ fontSize: "clamp(4rem, 10vw, 11rem)" }}
+            className="font-black tracking-tighter uppercase mb-10"
+            style={{ fontSize: "clamp(4rem, 10vw, 11rem)", lineHeight: 1 }}
           >
             <motion.span
               className="inline-flex"
@@ -275,8 +275,8 @@ function ProjectsHeader() {
               {projectsLetters.map((char, i) => (
                 <span
                   key={i}
-                  className="inline-block overflow-hidden"
-                  style={{ lineHeight: 0.9 }}
+                  className="inline-block overflow-visible"
+                  style={{ lineHeight: 1, paddingBottom: "0.06em" }}
                 >
                   <motion.span
                     className="inline-block"
@@ -431,11 +431,11 @@ export default function Projects() {
                 {/* ── Project header row (always visible) ── */}
                 <button
                   onClick={() => handleProjectClick(project.id)}
-                  className="w-full flex items-center gap-6 px-8 py-6 md:py-7 text-left group"
+                  className="w-full flex items-center gap-3 md:gap-6 px-4 sm:px-6 md:px-8 py-5 md:py-7 text-left group"
                 >
-                  {/* Number */}
+                  {/* Number — hidden on xs, visible from sm */}
                   <span
-                    className="font-mono text-5xl md:text-6xl font-black leading-none shrink-0 transition-colors duration-300 tabular-nums"
+                    className="hidden sm:block font-mono text-4xl md:text-6xl font-black leading-none shrink-0 transition-colors duration-300 tabular-nums"
                     style={{
                       color: isOpen
                         ? "rgba(212,175,55,0.25)"
@@ -447,9 +447,9 @@ export default function Projects() {
 
                   {/* Title + meta */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-1">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span
-                        className="text-[10px] font-mono uppercase tracking-[0.3em] transition-colors duration-300"
+                        className="text-[9px] sm:text-[10px] font-mono uppercase tracking-[0.25em] transition-colors duration-300"
                         style={{
                           color: isOpen
                             ? "rgba(212,175,55,0.6)"
@@ -465,7 +465,7 @@ export default function Projects() {
                       )}
                     </div>
                     <h3
-                      className="text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight leading-none transition-colors duration-300"
+                      className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight leading-none transition-colors duration-300"
                       style={{ color: isOpen ? "#ffffff" : "#3a3a3a" }}
                     >
                       {project.title}
@@ -473,9 +473,9 @@ export default function Projects() {
                   </div>
 
                   {/* Right side: year + expand indicator */}
-                  <div className="flex items-center gap-6 shrink-0">
+                  <div className="flex items-center gap-3 md:gap-6 shrink-0">
                     <span
-                      className="font-mono text-sm hidden md:block transition-colors duration-300"
+                      className="font-mono text-xs md:text-sm hidden md:block transition-colors duration-300"
                       style={{
                         color: isOpen
                           ? "rgba(212,175,55,0.5)"
@@ -487,7 +487,7 @@ export default function Projects() {
 
                     {/* Expand/collapse icon */}
                     <div
-                      className="w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300"
+                      className="w-8 h-8 md:w-10 md:h-10 rounded-full border flex items-center justify-center transition-all duration-300 shrink-0"
                       style={{
                         borderColor: isOpen
                           ? "rgba(212,175,55,0.4)"
@@ -500,7 +500,7 @@ export default function Projects() {
                       <motion.span
                         animate={{ rotate: isOpen ? 45 : 0 }}
                         transition={{ duration: 0.25 }}
-                        className="text-xl leading-none font-light"
+                        className="text-lg leading-none font-light"
                         style={{
                           color: isOpen ? "#D4AF37" : "rgba(255,255,255,0.3)",
                         }}
@@ -522,8 +522,8 @@ export default function Projects() {
                       className="overflow-hidden"
                     >
                       <div className="border-t border-[#1a1a1a]">
-                        {/* Tab bar — Overview / Journey / Stack / Code (highlighted) */}
-                        <div className="flex items-center gap-0 px-8 border-b border-[#1a1a1a]">
+                        {/* Tab bar — scrollable on mobile */}
+                        <div className="flex items-center gap-0 px-4 sm:px-6 md:px-8 border-b border-[#1a1a1a] overflow-x-auto scrollbar-none">
                           {TABS.map((tab) => {
                             const isActive = activeTab === tab.id;
 
@@ -533,7 +533,7 @@ export default function Projects() {
                                 <button
                                   key={tab.id}
                                   onClick={() => openVSCode(project.id)}
-                                  className="relative ml-2 flex items-center gap-2 px-5 py-2 my-2 rounded-lg text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-200"
+                                  className="relative ml-2 flex items-center gap-2 px-4 py-2 my-2 rounded-lg text-[10px] sm:text-[11px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all duration-200 shrink-0"
                                   style={{
                                     background: "rgba(212,175,55,0.08)",
                                     border: "1px solid rgba(212,175,55,0.25)",
@@ -571,7 +571,7 @@ export default function Projects() {
                               <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className="relative px-6 py-4 text-[11px] font-black uppercase tracking-[0.2em] transition-colors duration-200"
+                                className="relative px-4 sm:px-6 py-4 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-colors duration-200 shrink-0"
                                 style={{
                                   color: isActive
                                     ? "#D4AF37"
@@ -592,7 +592,7 @@ export default function Projects() {
                         </div>
 
                         {/* Tab content */}
-                        <div className="px-8 py-8">
+                        <div className="px-4 sm:px-6 md:px-8 py-6 md:py-8">
                           <AnimatePresence mode="wait">
                             {activeTab === "overview" && (
                               <OverviewTab

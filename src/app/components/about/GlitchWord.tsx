@@ -24,6 +24,8 @@ function SplitLetter({
     : { color: "#ffffff" };
 
   const fontSize = "clamp(4.5rem, 10vw, 11rem)";
+  // lineHeight 1.2 gives enough room so descenders (bottom of R, P, etc.) are never clipped
+  const lh = "1.2";
 
   if (letter === " ") {
     return (
@@ -37,7 +39,7 @@ function SplitLetter({
   return (
     <span
       className="relative inline-block cursor-default select-none"
-      style={{ fontSize, lineHeight: "0.85" }}
+      style={{ fontSize, lineHeight: lh }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -54,20 +56,21 @@ function SplitLetter({
           delay: entryDelay,
           ease: [0.16, 1, 0.3, 1],
         }}
-        className="relative inline-block overflow-hidden"
-        style={{ fontSize, lineHeight: "0.85" }}
+        // display:block + position:relative so it takes up the full lineHeight space
+        className="block relative"
+        style={{ fontSize, lineHeight: lh }}
       >
-        {/* TOP HALF — clips upper 50% and slides up */}
+        {/* TOP HALF — clips upper 50% and slides up on hover */}
         <motion.span
           animate={
             hovered ? { y: "-35%", opacity: 0.6 } : { y: "0%", opacity: 1 }
           }
           transition={{ type: "spring", stiffness: 500, damping: 22 }}
-          className="absolute inset-0 font-black uppercase tracking-tighter"
+          className="absolute top-0 left-0 w-full font-black uppercase tracking-tighter"
           style={{
             ...baseStyle,
             fontSize,
-            lineHeight: "0.85",
+            lineHeight: lh,
             clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)",
           }}
           aria-hidden="true"
@@ -75,17 +78,17 @@ function SplitLetter({
           {letter}
         </motion.span>
 
-        {/* BOTTOM HALF — clips lower 50% and slides down */}
+        {/* BOTTOM HALF — clips lower 50% and slides down on hover */}
         <motion.span
           animate={
             hovered ? { y: "35%", opacity: 0.6 } : { y: "0%", opacity: 1 }
           }
           transition={{ type: "spring", stiffness: 500, damping: 22 }}
-          className="absolute inset-0 font-black uppercase tracking-tighter"
+          className="absolute top-0 left-0 w-full font-black uppercase tracking-tighter"
           style={{
             ...baseStyle,
             fontSize,
-            lineHeight: "0.85",
+            lineHeight: lh,
             clipPath: "polygon(0 50%, 100% 50%, 100% 100%, 0 100%)",
           }}
           aria-hidden="true"
@@ -93,10 +96,10 @@ function SplitLetter({
           {letter}
         </motion.span>
 
-        {/* Invisible spacer to preserve layout width */}
+        {/* Invisible spacer — sets the width of the container */}
         <span
-          className="font-black uppercase tracking-tighter invisible"
-          style={{ fontSize, lineHeight: "0.85" }}
+          className="font-black uppercase tracking-tighter invisible block"
+          style={{ fontSize, lineHeight: lh }}
         >
           {letter}
         </span>
@@ -132,18 +135,14 @@ export default function GlitchWord({
           obs.disconnect();
         }
       },
-      { threshold: 0.2 },
+      { threshold: 0, rootMargin: "0px 0px -20px 0px" },
     );
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
 
   return (
-    <div
-      ref={ref}
-      className={`flex leading-[0.85] ${className}`}
-      style={{ fontWeight: 900 }}
-    >
+    <div ref={ref} className={`flex ${className}`} style={{ fontWeight: 900 }}>
       {text.split("").map((letter, i) => (
         <SplitLetter
           key={i}

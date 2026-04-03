@@ -162,7 +162,7 @@ export default function AboutMe() {
     <section
       ref={sectionRef}
       id="about"
-      className="relative w-full bg-[#050505] text-[#e1e1e1] overflow-hidden border-t border-[#111]"
+      className="relative w-full bg-[#050505] text-[#e1e1e1] border-t border-[#111]"
     >
       {/* Subtle grid background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
@@ -191,8 +191,11 @@ export default function AboutMe() {
 
         {/* Title + stats row */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-0 items-end">
-          {/* Giant animated title */}
-          <motion.div style={{ y: titleY }}>
+          {/* Giant animated title — pb-8 ensures descenders (R, P, etc.) are never clipped */}
+          <motion.div
+            style={{ y: titleY, overflow: "visible" }}
+            className="pb-8"
+          >
             <GlitchWord text="FULL" entryDelay={0} />
             <GlitchWord text="STACK" entryDelay={0.15} />
             <GlitchWord text="DEVELOPER" outlined entryDelay={0.3} />

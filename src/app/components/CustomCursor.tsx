@@ -20,8 +20,16 @@ export default function CustomCursor() {
   const rafRef = useRef<number>(0);
   const [isVisible, setIsVisible] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
+    // Detect touch/coarse pointer — hide cursor on mobile
+    const isTouch =
+      window.matchMedia("(pointer: coarse)").matches ||
+      "ontouchstart" in window;
+    setIsTouchDevice(isTouch);
+    if (isTouch) return;
+
     const onMove = (e: MouseEvent) => {
       mouse.current = { x: e.clientX, y: e.clientY };
       if (!isVisible) setIsVisible(true);
@@ -87,7 +95,8 @@ export default function CustomCursor() {
     };
   }, [isVisible, isHovering]);
 
-  if (typeof window === "undefined") return null;
+  // Don't render on touch/mobile devices
+  if (typeof window === "undefined" || isTouchDevice) return null;
 
   return (
     <div
