@@ -5,11 +5,11 @@ import { motion } from "framer-motion";
 
 export default function Contact() {
   return (
-    <section className="relative w-full bg-[#050505] text-white py-20 md:py-32 px-4 md:px-12 overflow-hidden border-t border-[#222]">
+    <section className="relative w-full bg-[#050505] text-white py-20 md:py-32 px-6 md:px-10 lg:px-16 overflow-hidden border-t border-[#222]">
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_1200px_at_50%_50%,#1a1a1a,transparent)] opacity-60" />
 
-      <div className="max-w-[1800px] mx-auto relative z-10">
+      <div className="max-w-[1600px] mx-auto relative z-10">
         {/* HEADER */}
         <div className="flex items-center gap-3 md:gap-4 mb-10 md:mb-12">
           <div className="h-[2px] w-10 md:w-16 bg-[#D4AF37] shrink-0" />
@@ -166,7 +166,7 @@ export default function Contact() {
       </div>
 
       {/* FOOTER */}
-      <div className="max-w-[1800px] mx-auto mt-12 md:mt-16 pt-6 md:pt-8 border-t border-[#222] relative z-10">
+      <div className="max-w-[1600px] mx-auto mt-12 md:mt-16 pt-6 md:pt-8 border-t border-[#222] relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4 text-xs md:text-sm text-neutral-600 text-center md:text-left">
           <p>© 2026 Mateusz Goszczycki • All rights reserved</p>
           <p className="font-mono">

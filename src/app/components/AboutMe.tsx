@@ -1,601 +1,314 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  FaCode,
-  FaServer,
-  FaDatabase,
-  FaRocket,
-  FaTrophy,
-} from "react-icons/fa";
+import { useRef, useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+
+import GlitchWord from "./about/GlitchWord";
+import Counter from "./about/Counter";
+import StackPill from "./about/StackPill";
+import Terminal from "./about/Terminal";
+import ChallengeTab from "./about/ChallengeTab";
+import { buildItems, allStack } from "./about/data";
 
 // ─────────────────────────────────────────────
-// PANEL TABS
+// RIGHT COLUMN — Expertise cards + Stack pills
 // ─────────────────────────────────────────────
-const tabs = ["About", "Skills", "Journey", "Philosophy"] as const;
-type Tab = (typeof tabs)[number];
-
-// ─────────────────────────────────────────────
-// SKILL PILLARS — updated to mid-level stack
-// ─────────────────────────────────────────────
-const pillars = [
-  {
-    icon: FaCode,
-    label: "Frontend",
-    items: [
-      "TypeScript",
-      "React 18 / 19",
-      "Next.js 14+",
-      "Tailwind CSS v4",
-      "Zustand / TanStack Query",
-      "Framer Motion",
-    ],
-  },
-  {
-    icon: FaServer,
-    label: "Backend",
-    items: [
-      "Node.js",
-      "NestJS",
-      "Express.js",
-      "REST APIs",
-      "WebSocket / Socket.IO",
-      "Stripe Connect",
-    ],
-  },
-  {
-    icon: FaDatabase,
-    label: "Data & Auth",
-    items: [
-      "PostgreSQL",
-      "MongoDB",
-      "Prisma ORM",
-      "Redis / Bull",
-      "JWT / NextAuth",
-      "Supabase",
-    ],
-  },
-  {
-    icon: FaRocket,
-    label: "DevOps & Tools",
-    items: [
-      "Docker",
-      "Linux VPS / NGINX",
-      "PM2",
-      "Git",
-      "Jest",
-      "Vercel / Railway",
-    ],
-  },
-];
-
-// ─────────────────────────────────────────────
-// TIMELINE — rewritten with professional tone
-// ─────────────────────────────────────────────
-const timeline = [
-  {
-    year: "2020",
-    title: "Foundation",
-    desc: "Dedicated evenings and weekends to mastering JavaScript, HTML, CSS, and core programming fundamentals while managing 60 to 70 hour work weeks as a head chef.",
-  },
-  {
-    year: "2023",
-    title: "Full commitment",
-    desc: "Transitioned fully into software engineering. Shifted focus from learning to building — architecting real systems with modern frameworks and production-grade tooling.",
-  },
-  {
-    year: "2024",
-    title: "First production app",
-    desc: "Designed and deployed Autosell.pl — a full automotive marketplace with real users, real-time messaging, and a scoring-based search engine. Delivered solo for a client.",
-  },
-  {
-    year: "2025 to 26",
-    title: "Advanced systems",
-    desc: "Architected Matchdays — a sports auction platform with real-time bidding, AI-powered verification, Stripe Connect payouts, and Redis-backed job queues.",
-  },
-];
-
-// ─────────────────────────────────────────────
-// KEY ACHIEVEMENTS DATA
-// ─────────────────────────────────────────────
-const achievements = [
-  {
-    icon: "🏗️",
-    title: "Architected 3 production systems",
-    desc: "Designed and deployed three full-stack applications from scratch, each with real users, live data, and working payment flows.",
-  },
-  {
-    icon: "⚡",
-    title: "Real-time bidding engine",
-    desc: "Implemented a WebSocket-based auction system using NestJS Gateway with per-auction rooms, atomic Prisma transactions, and Redis-backed queues to prevent race conditions.",
-  },
-  {
-    icon: "🤖",
-    title: "AI-powered verification pipeline",
-    desc: "Integrated Google Gemini API to automatically verify sports jersey authenticity during listing creation, reducing manual moderation overhead.",
-  },
-  {
-    icon: "💳",
-    title: "Stripe Connect payment infrastructure",
-    desc: "Implemented a full Stripe Connect marketplace flow including seller onboarding, escrow-style payouts, and webhook-driven order state management.",
-  },
-  {
-    icon: "🔍",
-    title: "Scoring-based search engine",
-    desc: "Built a custom relevance-scoring algorithm with 30+ filters for Autosell.pl, enabling precise vehicle discovery across thousands of listings.",
-  },
-  {
-    icon: "🚀",
-    title: "Solo end-to-end delivery",
-    desc: "Gathered client requirements, designed the database schema, built the API, developed the frontend, and deployed to production independently and on schedule.",
-  },
-];
-
-// ─────────────────────────────────────────────
-// TAB INDICATOR HOOK
-// ─────────────────────────────────────────────
-function useTabIndicator(activeTab: Tab) {
-  const tabRefs = useRef<Map<Tab, HTMLButtonElement>>(new Map());
-  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
-
-  useEffect(() => {
-    const el = tabRefs.current.get(activeTab);
-    if (el) {
-      setIndicator({ left: el.offsetLeft, width: el.offsetWidth });
-    }
-  }, [activeTab]);
-
-  const setRef = (tab: Tab) => (el: HTMLButtonElement | null) => {
-    if (el) tabRefs.current.set(tab, el);
-  };
-
-  return { indicator, setRef };
-}
-
-// ─────────────────────────────────────────────
-// PANEL CONTENT COMPONENTS
-// ─────────────────────────────────────────────
-
-function AboutPanel() {
+function RightColumn() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-      {/* Left — large statement */}
-      <div className="space-y-8">
-        <p className="text-fluid-h3 text-neutral-200 font-light leading-[1.3] tracking-tight">
-          I build{" "}
-          <em className="text-[#D4AF37] font-normal not-italic">
-            production-grade full-stack systems
-          </em>{" "}
-          from database schema and API architecture to pixel-perfect UI and
-          cloud deployment.
-        </p>
-        <p className="text-neutral-500 text-base md:text-lg leading-relaxed">
-          My background is unconventional. For years, I combined intensive
-          self-directed engineering study with full-time work as a{" "}
-          <span className="text-neutral-300 font-medium">
-            head chef and culinary instructor
-          </span>
-          , managing teams and working with individuals with disabilities. That
-          environment demanded precision, crisis management, and the ability to
-          deliver under pressure — skills I bring directly into software
-          engineering.
-        </p>
-      </div>
-
-      {/* Right — details */}
-      <div className="space-y-8 lg:pt-4">
-        <p className="text-neutral-400 text-lg md:text-xl leading-relaxed">
-          Since 2023, I have been fully focused on{" "}
-          <span className="text-neutral-200 font-medium">
-            designing, building, and shipping
-          </span>{" "}
-          production applications. I take end-to-end ownership from requirements
-          and architecture decisions through deployment and monitoring. Based in{" "}
-          <span className="text-[#D4AF37] font-medium">
-            Łowicz / Warsaw, Poland
-          </span>
-          . Open to remote or hybrid roles across Europe.
-        </p>
-        <p className="text-neutral-500 text-base md:text-lg leading-relaxed">
-          I believe that the best code is not just functional. It is
-          maintainable, scalable, and built with the next developer in mind.
-          Every system I deliver is designed to last.
-        </p>
-
-        {/* Stats row */}
-        <div className="flex gap-10 pt-6 border-t border-[#1a1a1a]">
-          {[
-            { value: "3+", label: "Production apps" },
-            { value: "2+", label: "Years commercial" },
-            { value: "100%", label: "End-to-end owned" },
-          ].map((s, i) => (
-            <div key={i} className="space-y-1">
-              <div className="text-3xl md:text-4xl font-black text-[#D4AF37] tracking-tighter leading-none">
-                {s.value}
-              </div>
-              <div className="text-[10px] md:text-xs text-neutral-600 uppercase tracking-[0.2em] font-mono">
-                {s.label}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SkillsPanel() {
-  return (
-    <div className="space-y-10">
-      {/* Intro text */}
-      <p className="text-2xl sm:text-3xl md:text-4xl text-neutral-200 font-light leading-[1.3] tracking-tight max-w-4xl">
-        I bring ownership and precision to{" "}
-        <em className="text-[#D4AF37] font-normal not-italic">
-          every layer of the stack
-        </em>{" "}
-        from database schema design and backend architecture to responsive UI
-        and production deployment pipelines.
-      </p>
-
-      {/* Skill cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-        {pillars.map((pillar, i) => {
-          const Icon = pillar.icon;
-          return (
-            <div
-              key={i}
-              className="group relative p-5 md:p-7 rounded-2xl bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#D4AF37]/50 hover:bg-[#0d0d0d] transition-all duration-500 overflow-hidden"
-            >
-              {/* Hover glow */}
-              <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/0 to-[#D4AF37]/0 group-hover:from-[#D4AF37]/5 group-hover:to-transparent transition-all duration-700 rounded-2xl" />
-              {/* Corner accent */}
-              <div className="absolute top-0 right-0 w-12 h-12 border-t-2 border-r-2 border-[#D4AF37]/10 group-hover:border-[#D4AF37]/40 rounded-tr-2xl transition-colors duration-500" />
-
-              <div className="relative z-10 space-y-4">
-                {/* Icon */}
-                <div className="w-11 h-11 md:w-12 md:h-12 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center group-hover:border-[#D4AF37]/60 group-hover:bg-[#D4AF37]/15 transition-all duration-500">
-                  <Icon className="text-[#D4AF37]" size={18} />
-                </div>
-                {/* Label */}
-                <span className="block text-white font-black uppercase tracking-widest text-xs md:text-sm">
-                  {pillar.label}
-                </span>
-                {/* Skills */}
-                <ul className="space-y-2">
-                  {pillar.items.map((skill) => (
-                    <li
-                      key={skill}
-                      className="flex items-center gap-2.5 text-neutral-500 text-xs md:text-sm group-hover:text-neutral-400 transition-colors duration-300"
-                    >
-                      <span className="w-1 h-1 rounded-full bg-[#D4AF37]/50 shrink-0" />
-                      {skill}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function JourneyPanel() {
-  return (
-    <div className="space-y-10">
-      {/* Intro */}
-      <p className="text-2xl sm:text-3xl md:text-4xl text-neutral-200 font-light leading-[1.3] tracking-tight max-w-4xl">
-        Every milestone is a{" "}
-        <em className="text-[#D4AF37] font-normal not-italic">
-          deliberate step forward
-        </em>{" "}
-        from the first line of code to production systems serving real users at
-        scale.
-      </p>
-
-      {/* Timeline */}
-      <div className="relative">
-        {/* Horizontal connector on desktop */}
-        <div className="hidden lg:block absolute top-6 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37]/20 to-transparent" />
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          {timeline.map((item, i) => (
-            <div key={i} className="relative flex flex-col gap-4">
-              {/* Dot on desktop */}
-              <div className="hidden lg:flex items-center gap-3 mb-1">
-                <div className="w-12 h-12 rounded-full border-2 border-[#D4AF37]/40 bg-[#050505] flex items-center justify-center shrink-0">
-                  <div className="w-3 h-3 rounded-full bg-[#D4AF37]" />
-                </div>
-                <div className="flex-1 h-[1px] bg-[#1a1a1a]" />
-              </div>
-
-              {/* Card */}
-              <div className="p-5 md:p-6 rounded-2xl bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#D4AF37]/30 transition-colors duration-500 space-y-2.5 h-full">
-                <span className="text-[#D4AF37] font-mono text-xs tracking-[0.3em] uppercase font-black">
-                  {item.year}
-                </span>
-                <h4 className="text-white font-black text-base md:text-lg uppercase tracking-tight leading-tight">
-                  {item.title}
-                </h4>
-                <p className="text-neutral-500 text-sm leading-relaxed font-light">
-                  {item.desc}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PhilosophyPanel() {
-  const values = [
-    {
-      title: "Architecture first",
-      desc: "Before writing a single line of code, I design the system. A well-thought-out architecture prevents technical debt and enables teams to scale confidently.",
-    },
-    {
-      title: "End-to-end ownership",
-      desc: "I do not just implement features. I own the product. From requirements and database design to deployment and monitoring, I take full responsibility for what I ship.",
-    },
-    {
-      title: "Quality over shortcuts",
-      desc: "Clean, maintainable code is not optional. I invest time in proper abstractions, testing, and documentation to build systems that last beyond the first release.",
-    },
-    {
-      title: "Continuous improvement",
-      desc: "Technology evolves fast. I dedicate time every day to studying new patterns, tools, and architectural approaches to stay sharp and deliver modern solutions.",
-    },
-  ];
-
-  return (
-    <div className="space-y-10">
-      {/* Intro */}
-      <p className="text-2xl sm:text-3xl md:text-4xl text-neutral-200 font-light leading-[1.3] tracking-tight max-w-4xl">
-        My approach to engineering is built on{" "}
-        <em className="text-[#D4AF37] font-normal not-italic">
-          deliberate architecture, ownership, and craft
-        </em>
-        . These principles guide every technical decision I make.
-      </p>
-
-      {/* Values grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-        {values.map((v, i) => (
-          <div
-            key={i}
-            className="group relative p-6 md:p-8 rounded-2xl bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#D4AF37]/30 transition-all duration-500"
-          >
-            {/* Number */}
-            <span className="absolute top-6 right-6 md:top-8 md:right-8 text-[#D4AF37]/15 font-black text-5xl md:text-6xl leading-none select-none group-hover:text-[#D4AF37]/25 transition-colors duration-500">
-              0{i + 1}
-            </span>
-
-            <div className="relative z-10 space-y-3">
-              <h4 className="text-white font-black text-lg md:text-xl uppercase tracking-tight">
-                {v.title}
-              </h4>
-              <p className="text-neutral-500 text-sm md:text-base leading-relaxed font-light max-w-md">
-                {v.desc}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────
-// KEY ACHIEVEMENTS — standalone section below tabs
-// ─────────────────────────────────────────────
-function KeyAchievementsSection() {
-  return (
-    <section className="mt-16 md:mt-24 pt-12 md:pt-16">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-10 md:mb-14">
-        <div className="h-[2px] w-10 md:w-16 bg-[#D4AF37] shrink-0" />
-        <span className="text-[10px] md:text-xs font-mono tracking-[0.25em] text-[#D4AF37] uppercase font-bold">
-          Key Achievements
+    <div className="flex flex-col gap-8 lg:pl-10">
+      {/* Expertise header */}
+      <div className="flex items-center gap-3">
+        <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#D4AF37]/60">
+          02
         </span>
-        <div className="flex-1 h-[1px] bg-[#1a1a1a]" />
-        <FaTrophy className="text-[#D4AF37]/40" size={18} />
+        <div className="h-px flex-1 bg-[#111]" />
+        <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-neutral-600">
+          Expertise
+        </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        {achievements.map((item, i) => (
+      {/* Build items grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {buildItems.map((item, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.5, delay: i * 0.08 }}
-            className="group relative p-6 md:p-7 rounded-2xl bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#D4AF37]/40 hover:bg-[#0d0d0d] transition-all duration-500 overflow-hidden"
+            viewport={{ once: true }}
+            transition={{ duration: 0.35, delay: i * 0.07 }}
+            className="group p-4 rounded-2xl border border-[#111] bg-[#080808] hover:border-[#D4AF37]/25 hover:bg-[#0c0c0a] transition-all duration-300 flex flex-col"
           >
-            {/* Corner accent */}
-            <div className="absolute top-0 right-0 w-10 h-10 border-t-2 border-r-2 border-[#D4AF37]/10 group-hover:border-[#D4AF37]/40 rounded-tr-2xl transition-colors duration-500" />
-
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{item.icon}</span>
-                <h4 className="text-white font-black text-sm md:text-base uppercase tracking-tight leading-tight">
-                  {item.title}
-                </h4>
-              </div>
-              <p className="text-neutral-500 text-sm leading-relaxed font-light group-hover:text-neutral-400 transition-colors duration-300">
-                {item.desc}
-              </p>
-            </div>
+            <div className="text-xl mb-2">{item.icon}</div>
+            <h4 className="text-white font-bold text-xs mb-1.5 group-hover:text-[#D4AF37] transition-colors duration-300">
+              {item.title}
+            </h4>
+            <p className="text-neutral-500 text-[11px] leading-relaxed flex-1">
+              {item.desc}
+            </p>
           </motion.div>
         ))}
       </div>
-    </section>
+
+      {/* Stack pills */}
+      <div className="rounded-2xl border border-[#1a1a1a] bg-[#080808] p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#D4AF37]/60">
+            03
+          </span>
+          <div className="h-px flex-1 bg-[#111]" />
+          <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-neutral-600">
+            Hover to scramble
+          </span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {allStack.map((tech, i) => (
+            <StackPill key={tech} label={tech} delay={i * 0.02} />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
 // ─────────────────────────────────────────────
-// PANEL MAP
+// TAB NAV — shared between profile and challenge layouts
 // ─────────────────────────────────────────────
-const panelMap: Record<Tab, () => React.ReactElement> = {
-  About: AboutPanel,
-  Skills: SkillsPanel,
-  Journey: JourneyPanel,
-  Philosophy: PhilosophyPanel,
-};
+function TabNav({
+  activeTab,
+  onTabChange,
+  showChallengeGlow = true,
+}: {
+  activeTab: "profile" | "challenge";
+  onTabChange: (tab: "profile" | "challenge") => void;
+  showChallengeGlow?: boolean;
+}) {
+  return (
+    <div className="flex items-center gap-1 border-b border-[#111] mb-8">
+      {(["profile", "challenge"] as const).map((tab, i) => (
+        <button
+          key={tab}
+          onClick={() => onTabChange(tab)}
+          className="relative flex items-center gap-2 px-5 py-3 text-[11px] font-mono uppercase tracking-[0.25em] transition-colors duration-200"
+          style={{
+            color: activeTab === tab ? "#D4AF37" : "rgba(255,255,255,0.25)",
+          }}
+        >
+          <span
+            className="text-[9px] tracking-[0.3em]"
+            style={{
+              color: activeTab === tab ? "#D4AF37" : "rgba(255,255,255,0.12)",
+            }}
+          >
+            0{i + 1}
+          </span>
 
-// ─────────────────────────────────────────────
-// AUTO-ROTATE INTERVAL (ms)
-// ─────────────────────────────────────────────
-const TAB_DURATION = 8000;
+          {/* Challenge tab gets a glowing badge when profile is active */}
+          {tab === "challenge" && showChallengeGlow && activeTab !== tab ? (
+            <span className="relative inline-flex items-center">
+              <span
+                className="px-1.5 py-0.5 rounded text-[11px] font-black uppercase tracking-[0.25em]"
+                style={{
+                  color: "#569cd6",
+                  textShadow:
+                    "0 0 8px rgba(86,156,214,0.8), 0 0 20px rgba(86,156,214,0.4)",
+                  background: "rgba(86,156,214,0.08)",
+                  border: "1px solid rgba(86,156,214,0.35)",
+                  borderRadius: "4px",
+                }}
+              >
+                {tab}
+                <span
+                  className="absolute inset-0 rounded animate-ping"
+                  style={{
+                    background: "rgba(86,156,214,0.12)",
+                    animationDuration: "2s",
+                  }}
+                />
+              </span>
+            </span>
+          ) : (
+            <span className="capitalize">{tab}</span>
+          )}
+
+          {activeTab === tab && (
+            <motion.div
+              layoutId="tab-underline"
+              className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#D4AF37]"
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            />
+          )}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 // ─────────────────────────────────────────────
 // MAIN EXPORT
 // ─────────────────────────────────────────────
 export default function AboutMe() {
-  const [activeTab, setActiveTab] = useState<Tab>("About");
-  const [isPaused, setIsPaused] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const { indicator, setRef } = useTabIndicator(activeTab);
-  const ActivePanel = panelMap[activeTab];
-  const progressRef = useRef(0);
-  const lastTickRef = useRef(Date.now());
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "-8%"]);
 
-  // Advance to next tab
-  const goNext = useCallback(() => {
-    setActiveTab((prev) => {
-      const idx = tabs.indexOf(prev);
-      return tabs[(idx + 1) % tabs.length];
-    });
-    setProgress(0);
-    progressRef.current = 0;
-    lastTickRef.current = Date.now();
-  }, []);
-
-  // Manual tab click — reset timer
-  const handleTabClick = useCallback((tab: Tab) => {
-    setActiveTab(tab);
-    setProgress(0);
-    progressRef.current = 0;
-    lastTickRef.current = Date.now();
-  }, []);
-
-  // Auto-rotate with progress bar using requestAnimationFrame
-  useEffect(() => {
-    let rafId: number;
-
-    const tick = () => {
-      if (!isPaused) {
-        const now = Date.now();
-        const delta = now - lastTickRef.current;
-        lastTickRef.current = now;
-        progressRef.current += delta;
-
-        const pct = Math.min(progressRef.current / TAB_DURATION, 1);
-        setProgress(pct);
-
-        if (pct >= 1) {
-          goNext();
-          return;
-        }
-      } else {
-        lastTickRef.current = Date.now();
-      }
-      rafId = requestAnimationFrame(tick);
-    };
-
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
-  }, [isPaused, goNext]);
+  const [activeTab, setActiveTab] = useState<"profile" | "challenge">(
+    "profile",
+  );
 
   return (
     <section
+      ref={sectionRef}
       id="about"
-      className="relative w-full bg-[#050505] text-[#e1e1e1] pt-8 pb-16 md:pt-12 md:pb-24 px-4 md:px-12 overflow-hidden"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      className="relative w-full bg-[#050505] text-[#e1e1e1] overflow-hidden border-t border-[#111]"
     >
-      {/* Grid background */}
+      {/* Subtle grid background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-      {/* Radial glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] bg-[#D4AF37]/[0.03] rounded-full blur-[120px] pointer-events-none" />
+      {/* Gold glow — top-left */}
+      <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-[#D4AF37]/[0.025] rounded-full blur-[140px] pointer-events-none" />
+      {/* Gold glow — bottom-right */}
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#D4AF37]/[0.015] rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="max-w-[1700px] mx-auto relative z-10">
-        {/* HEADER */}
-        <div className="space-y-6 mb-10 md:mb-16 text-center">
-          <div className="flex items-center justify-center gap-4">
-            <div className="h-[2px] w-12 md:w-16 bg-[#D4AF37] shrink-0" />
-            <span className="text-[10px] md:text-xs font-mono tracking-[0.25em] text-[#D4AF37] uppercase font-bold">
-              Background & Skills
-            </span>
-            <div className="h-[2px] w-12 md:w-16 bg-[#D4AF37] shrink-0" />
-          </div>
+      {/* ══════════════════════════════════════════
+          HERO BLOCK — giant title + stats
+      ══════════════════════════════════════════ */}
+      <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 pt-20 md:pt-32 pb-0">
+        {/* Section label */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4 }}
+          className="flex items-center gap-3 mb-10"
+        >
+          <div className="h-[2px] w-10 bg-[#D4AF37]" />
+          <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-[#D4AF37]">
+            About
+          </span>
+        </motion.div>
 
-          <h2 className="text-7xl sm:text-8xl md:text-[9rem] lg:text-[11rem] font-black tracking-tighter text-white leading-[0.85] uppercase">
-            About{" "}
-            <span
-              className="text-transparent"
-              style={{ WebkitTextStroke: "2px #D4AF37" }}
-            >
-              Me
-            </span>
-          </h2>
-        </div>
-
-        {/* TAB NAVIGATION with progress bars */}
-        <div className="relative mb-8 md:mb-12">
-          <div className="relative flex items-center gap-1 md:gap-2 border-b border-[#1a1a1a] pb-0">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab;
-              return (
-                <button
-                  key={tab}
-                  ref={setRef(tab)}
-                  onClick={() => handleTabClick(tab)}
-                  className={`relative px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm font-mono uppercase tracking-[0.15em] md:tracking-[0.2em] transition-colors duration-300 cursor-pointer ${
-                    isActive
-                      ? "text-[#D4AF37] font-bold"
-                      : "text-neutral-600 hover:text-neutral-400 font-medium"
-                  }`}
-                >
-                  {tab}
-                  {/* Progress bar under active tab */}
-                  {isActive && (
-                    <span
-                      className="absolute bottom-0 left-0 h-[2px] bg-[#D4AF37] transition-none"
-                      style={{ width: `${progress * 100}%` }}
-                    />
-                  )}
-                </button>
-              );
-            })}
-
-            {/* Animated underline indicator */}
-            <motion.div
-              className="absolute bottom-0 h-[2px] bg-[#D4AF37]/15"
-              animate={{ left: indicator.left, width: indicator.width }}
-              transition={{ type: "spring", stiffness: 400, damping: 35 }}
-            />
-          </div>
-        </div>
-
-        {/* PANEL CONTENT */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-          >
-            <ActivePanel />
+        {/* Title + stats row */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-0 items-end">
+          {/* Giant animated title */}
+          <motion.div style={{ y: titleY }}>
+            <GlitchWord text="FULL" entryDelay={0} />
+            <GlitchWord text="STACK" entryDelay={0.15} />
+            <GlitchWord text="DEVELOPER" outlined entryDelay={0.3} />
           </motion.div>
-        </AnimatePresence>
 
-        {/* KEY ACHIEVEMENTS */}
-        <KeyAchievementsSection />
+          {/* Stats — vertical stack with gold divider */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="hidden lg:flex flex-col gap-0 pb-3 pl-16"
+          >
+            <div className="flex gap-10 items-stretch">
+              <div className="w-[1px] bg-gradient-to-b from-transparent via-[#D4AF37]/40 to-transparent self-stretch" />
+              <div className="flex flex-col gap-8 justify-center">
+                <Counter
+                  value={3}
+                  suffix="+"
+                  label="Production apps shipped"
+                  delay={0}
+                />
+                <Counter
+                  value={2}
+                  suffix="+"
+                  label="Years commercial"
+                  delay={150}
+                />
+                <Counter
+                  value={100}
+                  suffix="%"
+                  label="Solo built"
+                  delay={300}
+                />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Mobile stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="flex lg:hidden gap-8 mt-10 pt-8 border-t border-[#111]"
+        >
+          <Counter value={3} suffix="+" label="Production apps shipped" />
+          <Counter value={2} suffix="+" label="Years commercial" />
+          <Counter value={100} suffix="%" label="Solo built" />
+        </motion.div>
+      </div>
+
+      {/* ══════════════════════════════════════════
+          CONTENT BLOCK — tabs + expertise
+      ══════════════════════════════════════════ */}
+      <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 mt-16 md:mt-20 pb-20 md:pb-32">
+        {/* Section divider */}
+        <div className="flex items-center gap-4 mb-12">
+          <div className="h-px flex-1 bg-[#111]" />
+          <span className="text-[9px] font-mono uppercase tracking-[0.4em] text-neutral-700">
+            Profile & Expertise
+          </span>
+          <div className="h-px flex-1 bg-[#111]" />
+        </div>
+
+        {/* Profile tab — 2-column layout with Expertise on the right */}
+        {activeTab === "profile" ? (
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1px_1fr] gap-8 lg:gap-0">
+            {/* LEFT — terminal */}
+            <div className="flex flex-col lg:pr-10">
+              <TabNav activeTab={activeTab} onTabChange={setActiveTab} />
+              <div className="flex-1">
+                <motion.div
+                  key="profile"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="h-full"
+                >
+                  <Terminal />
+                </motion.div>
+              </div>
+            </div>
+
+            {/* CENTER divider */}
+            <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-[#1a1a1a] to-transparent" />
+
+            {/* RIGHT — expertise + stack */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <RightColumn />
+            </motion.div>
+          </div>
+        ) : (
+          /* Challenge tab — full width */
+          <div className="flex flex-col">
+            <TabNav
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              showChallengeGlow={false}
+            />
+            <motion.div
+              key="challenge"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ChallengeTab />
+            </motion.div>
+          </div>
+        )}
       </div>
     </section>
   );

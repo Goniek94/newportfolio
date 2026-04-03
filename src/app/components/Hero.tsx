@@ -26,6 +26,85 @@ import {
   windowsXpFiles,
 } from "../data/vscode/index";
 
+// ─────────────────────────────────────────────
+// GLITCH TEXT — chromatic aberration effect on surname
+// ─────────────────────────────────────────────
+function GlitchText() {
+  const text = "Goszczycki";
+  const [isGlitching, setIsGlitching] = useState(false);
+
+  useEffect(() => {
+    // Trigger glitch randomly every 3-7 seconds
+    const scheduleGlitch = () => {
+      const delay = 3000 + Math.random() * 4000;
+      return setTimeout(() => {
+        setIsGlitching(true);
+        setTimeout(() => setIsGlitching(false), 600);
+        scheduleGlitch();
+      }, delay);
+    };
+    const t = scheduleGlitch();
+    return () => clearTimeout(t);
+  }, []);
+
+  return (
+    <motion.span
+      initial={{ y: "100%", opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 1, delay: 0.1, ease: [0.76, 0, 0.24, 1] }}
+      className="block text-neutral-500 relative select-none"
+      style={{ isolation: "isolate" }}
+    >
+      {/* Base text */}
+      <span className="relative z-10">{text}</span>
+
+      {/* Cyan channel — shifts left */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 text-cyan-400 z-20 transition-none"
+        style={{
+          clipPath: isGlitching ? "inset(20% 0 50% 0)" : "inset(0 0 100% 0)",
+          transform: isGlitching ? "translateX(-4px)" : "translateX(0)",
+          opacity: isGlitching ? 0.7 : 0,
+          mixBlendMode: "screen",
+          transition: isGlitching ? "none" : "opacity 0.1s",
+        }}
+      >
+        {text}
+      </span>
+
+      {/* Red channel — shifts right */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 text-red-500 z-20 transition-none"
+        style={{
+          clipPath: isGlitching ? "inset(50% 0 20% 0)" : "inset(0 0 100% 0)",
+          transform: isGlitching ? "translateX(4px)" : "translateX(0)",
+          opacity: isGlitching ? 0.7 : 0,
+          mixBlendMode: "screen",
+          transition: isGlitching ? "none" : "opacity 0.1s",
+        }}
+      >
+        {text}
+      </span>
+
+      {/* Horizontal scan slice */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 text-neutral-500 z-30"
+        style={{
+          clipPath: isGlitching ? "inset(35% 0 45% 0)" : "inset(0 0 100% 0)",
+          transform: isGlitching ? "translateX(8px) skewX(-2deg)" : "none",
+          opacity: isGlitching ? 1 : 0,
+          transition: isGlitching ? "none" : "opacity 0.1s",
+        }}
+      >
+        {text}
+      </span>
+    </motion.span>
+  );
+}
+
 const quotes = [
   {
     id: 1,
@@ -133,7 +212,7 @@ export default function Hero() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_50%,#1a1a1a,transparent)] pointer-events-none opacity-60" />
 
         {/* Inner wrapper */}
-        <div className="z-10 w-full max-w-[1800px] mx-auto flex flex-col flex-1 justify-between md:justify-center">
+        <div className="z-10 w-full max-w-[1600px] mx-auto flex flex-col flex-1 justify-between md:justify-center">
           {/* TOP BAR */}
           <div className="flex items-center justify-between mb-4 md:mb-6 gap-3 shrink-0">
             <motion.div
@@ -195,18 +274,7 @@ export default function Hero() {
                 >
                   Mateusz
                 </motion.span>
-                <motion.span
-                  initial={{ y: "100%", opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{
-                    duration: 1,
-                    delay: 0.1,
-                    ease: [0.76, 0, 0.24, 1],
-                  }}
-                  className="block text-neutral-500"
-                >
-                  Goszczycki
-                </motion.span>
+                <GlitchText />
               </h1>
             </div>
 

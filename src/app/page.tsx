@@ -7,7 +7,7 @@ import Hero from "./components/Hero";
 import AboutMe from "./components/AboutMe";
 import Projects from "./components/Projects";
 import Contact from "./components/Contacts";
-import GoldenGlow from "./components/GoldenGlow";
+import CustomCursor from "./components/CustomCursor";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -29,8 +29,8 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Golden cursor glow effect */}
-      {!isLoading && <GoldenGlow />}
+      {/* Custom crosshair cursor with trailing dots */}
+      {!isLoading && <CustomCursor />}
 
       {/* Dopiero gdy loader zniknie (lub pod kurtyną), pokazujemy resztę */}
       <div className="relative z-0">
