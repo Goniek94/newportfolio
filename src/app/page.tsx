@@ -29,8 +29,8 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Custom crosshair cursor with trailing dots */}
-      {!isLoading && <CustomCursor />}
+      {/* Custom crosshair cursor — visible from the first frame */}
+      <CustomCursor />
 
       {/* Dopiero gdy loader zniknie (lub pod kurtyną), pokazujemy resztę */}
       <div className="relative z-0">
