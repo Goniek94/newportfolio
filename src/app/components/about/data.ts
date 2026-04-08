@@ -89,12 +89,22 @@ export const terminalScript: TermLine[] = [
   },
   { type: "output", text: "7c1d3a8  Gemini AI verification", color: "#D4AF37" },
   { type: "blank" },
-  { type: "cmd", text: "whoami" },
+  { type: "cmd", text: "cat value.txt" },
   { type: "blank" },
   {
     type: "output",
-    text: "Ships full products. Owns every layer.",
+    text: "I take problems, not tickets.",
     color: "#e1e1e1",
+  },
+  {
+    type: "output",
+    text: "One commercial client. One investor NDA. All solo.",
+    color: "#e1e1e1",
+  },
+  {
+    type: "output",
+    text: "Schema → API → UI → prod. Full ownership.",
+    color: "#D4AF37",
   },
 ];
 

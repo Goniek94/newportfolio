@@ -31,10 +31,10 @@ const quotes = [
     id: 1,
     text: (
       <>
-        Designed and deployed a{" "}
-        <span className="text-[#D4AF37]">production-grade marketplace</span> —
-        architected from scratch, handling real users, payments, and real-time
-        communication.
+        Delivered a{" "}
+        <span className="text-[#D4AF37]">commercial automotive marketplace</span>{" "}
+        for a paying client — sole developer, every architectural decision mine,
+        shipped on schedule. It&apos;s live at autosell.pl with real users.
       </>
     ),
   },
@@ -42,9 +42,9 @@ const quotes = [
     id: 2,
     text: (
       <>
-        I architect <span className="text-[#D4AF37]">end-to-end systems</span> —
-        taking full ownership from database schema and API design to deployment
-        and monitoring.
+        <span className="text-[#D4AF37]">Race conditions</span> in real-time
+        bidding. Stripe Connect payout flows. AI verification queues. I build
+        the parts that fall apart in production — and make sure they don&apos;t.
       </>
     ),
   },
@@ -52,9 +52,10 @@ const quotes = [
     id: 3,
     text: (
       <>
-        Built <span className="text-[#D4AF37]">3 production applications</span>{" "}
-        — real users, live data, working payments. Every line of code shipped
-        with purpose.
+        Three full-stack applications built{" "}
+        <span className="text-[#D4AF37]">solo from scratch</span>. One
+        commercial client delivery. One under investor NDA. Schema, API,
+        frontend, deployment — all mine.
       </>
     ),
   },
@@ -62,9 +63,10 @@ const quotes = [
     id: 4,
     text: (
       <>
-        Implemented <span className="text-[#D4AF37]">real-time bidding</span>,
-        AI-powered verification, and Stripe Connect payouts — in a single
-        full-stack platform.
+        I don&apos;t need a team to ship.{" "}
+        <span className="text-[#D4AF37]">Give me a problem</span> — I&apos;ll
+        handle the architecture, the backend, the UI, and the server. You get a
+        working product.
       </>
     ),
   },
