@@ -234,7 +234,7 @@ function ProjectsHeader() {
           {/* FEATURED — white fill */}
           <h1
             className="font-black tracking-tighter uppercase mb-0"
-            style={{ fontSize: "clamp(4rem, 10vw, 11rem)", lineHeight: 1 }}
+            style={{ fontSize: "clamp(2.2rem, 8.5vw, 11rem)", lineHeight: 1 }}
           >
             <motion.span
               className="inline-flex"
@@ -263,7 +263,7 @@ function ProjectsHeader() {
           {/* PROJECTS — gold outline */}
           <h1
             className="font-black tracking-tighter uppercase mb-10"
-            style={{ fontSize: "clamp(4rem, 10vw, 11rem)", lineHeight: 1 }}
+            style={{ fontSize: "clamp(2.2rem, 8.5vw, 11rem)", lineHeight: 1 }}
           >
             <motion.span
               className="inline-flex"

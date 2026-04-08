@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
-import GlitchWord from "./about/GlitchWord";
+import SplitWord from "./about/SplitWord";
 import Counter from "./about/Counter";
 import StackPill from "./about/StackPill";
 import Terminal from "./about/Terminal";
@@ -175,9 +175,9 @@ export default function AboutMe() {
             style={{ y: titleY, overflow: "visible" }}
             className="pb-8"
           >
-            <GlitchWord text="FULL" entryDelay={0} />
-            <GlitchWord text="STACK" entryDelay={0.15} />
-            <GlitchWord text="DEVELOPER" outlined entryDelay={0.3} />
+            <SplitWord text="FULL" color="#ffffff" entryDelay={0} />
+            <SplitWord text="STACK" color="#ffffff" entryDelay={0.15} />
+            <SplitWord text="DEVELOPER" color="#D4AF37" entryDelay={0.3} />
           </motion.div>
 
           {/* Desktop stats */}
@@ -247,7 +247,7 @@ export default function AboutMe() {
 
       {/* CONTENT BLOCK */}
       <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 mt-8 md:mt-12 pb-10 md:pb-16">
-        <div className="flex items-center gap-4 mb-12">
+        <div className="flex items-center gap-4 mb-6 md:mb-12">
           <div className="h-px flex-1 bg-[#111]" />
           <span className="text-[9px] font-mono uppercase tracking-[0.4em] text-neutral-700">
             Profile & Expertise

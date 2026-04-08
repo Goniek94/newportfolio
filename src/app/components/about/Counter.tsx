@@ -1,6 +1,24 @@
 "use client";
 
+/**
+ * Counter — slot-machine style, zero React re-renders during animation.
+ *
+ * How it works:
+ *  - Counts from 0 → target using ease-out (fast start, slow finish)
+ *  - To make small numbers like "3" feel like spinning, we overshoot first:
+ *    count quickly past the target, then ease back down to land precisely.
+ *  - ALL number updates go directly to span.textContent — React never re-renders.
+ *  - Only ONE React state flip at the end (to show label + gold color).
+ */
+
 import { useRef, useEffect, useState } from "react";
+
+const DURATION = 1400; // ms total
+
+// Ease-out cubic — starts fast, decelerates to stop
+function easeOut(t: number) {
+  return 1 - Math.pow(1 - t, 3);
+}
 
 export default function Counter({
   value,
@@ -13,109 +31,103 @@ export default function Counter({
   label: string;
   delay?: number;
 }) {
-  const [display, setDisplay] = useState<number>(0);
-  const [spinning, setSpinning] = useState(false);
   const [settled, setSettled] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const numRef = useRef<HTMLSpanElement>(null);
   const started = useRef(false);
 
   useEffect(() => {
-    const el = ref.current;
+    const el = containerRef.current;
     if (!el) return;
 
     const obs = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !started.current) {
-          started.current = true;
+        if (!entry.isIntersecting || started.current) return;
+        started.current = true;
 
-          setTimeout(() => {
-            setSpinning(true);
+        setTimeout(() => {
+          const span = numRef.current;
+          if (!span) return;
 
-            const totalDuration = 1800;
-            const fastPhase = totalDuration * 0.55;
-            const slowPhase = totalDuration * 0.45;
-            const start = performance.now();
+          // White color during spin
+          span.style.color = "#ffffff";
 
-            const animate = (now: number) => {
-              const elapsed = now - start;
+          const startTime = performance.now();
 
-              if (elapsed < fastPhase) {
-                // Faza 1: szybkie losowe liczby
-                const randomMax = Math.max(value * 3, 99);
-                setDisplay(Math.floor(Math.random() * randomMax));
-                requestAnimationFrame(animate);
-              } else if (elapsed < fastPhase + slowPhase) {
-                // Faza 2: zwalnianie — coraz bliżej docelowej wartości
-                const progress = (elapsed - fastPhase) / slowPhase;
-                const eased = 1 - Math.pow(1 - progress, 3);
-                const noise = Math.floor((1 - eased) * value * 1.5);
-                const current = Math.round(
-                  value * eased + (Math.random() * noise - noise / 2),
-                );
-                setDisplay(Math.max(0, Math.min(current, value + noise)));
-                requestAnimationFrame(animate);
-              } else {
-                // Faza 3: zatrzymanie
-                setDisplay(value);
-                setSpinning(false);
-                setSettled(true);
-              }
-            };
+          // Overshoot: for small values, spin past a higher number then land.
+          // E.g. value=3 → spin through ~30-ish before slowing to 3.
+          // This gives the "slot machine" feel even for single-digit targets.
+          const spinMax = Math.max(value * 8, 20);
 
-            requestAnimationFrame(animate);
-          }, delay);
-        }
+          const tick = (now: number) => {
+            const elapsed = Math.min((now - startTime) / DURATION, 1);
+            const progress = easeOut(elapsed);
+
+            // First 60% of time: count UP fast past spinMax
+            // Last 40%: count down/ease to the real value
+            let display: number;
+            if (elapsed < 0.6) {
+              // Rapid upswing: 0 → spinMax
+              display = Math.floor((elapsed / 0.6) * spinMax);
+            } else {
+              // Slow landing: spinMax → value
+              const landProgress = easeOut((elapsed - 0.6) / 0.4);
+              display = Math.round(spinMax + (value - spinMax) * landProgress);
+            }
+
+            span.textContent = `${Math.max(0, display)}${suffix}`;
+
+            if (elapsed < 1) {
+              requestAnimationFrame(tick);
+            } else {
+              // Done — snap to final value, gold color, one React re-render
+              span.textContent = `${value}${suffix}`;
+              span.style.color = "";
+              setSettled(true);
+            }
+          };
+
+          requestAnimationFrame(tick);
+        }, delay);
       },
-      { threshold: 0.4 },
+      { threshold: 0.3 },
     );
 
     obs.observe(el);
     return () => obs.disconnect();
-  }, [value, delay]);
+  }, [value, suffix, delay]);
 
   return (
-    <div ref={ref} className="flex flex-col group">
-      {/* Liczba */}
+    <div ref={containerRef} className="flex flex-col">
       <div
-        className="font-black tabular-nums leading-none transition-colors duration-500"
+        className="font-black tabular-nums leading-none"
         style={{
           fontSize: "clamp(3.5rem, 6vw, 6.5rem)",
-          color: settled ? "#D4AF37" : spinning ? "#fff" : "#D4AF37",
-          textShadow: spinning
-            ? "0 0 40px rgba(255,255,255,0.15)"
-            : settled
-              ? "0 0 60px rgba(212,175,55,0.25)"
-              : "none",
-          fontVariantNumeric: "tabular-nums",
+          color: "#D4AF37",
           letterSpacing: "-0.02em",
+          transition: "text-shadow 0.6s ease",
+          textShadow: settled ? "0 0 60px rgba(212,175,55,0.25)" : "none",
         }}
       >
-        <span
-          style={{
-            display: "inline-block",
-            transform: spinning ? "scaleY(1.04)" : "scaleY(1)",
-            transition: "transform 0.2s ease",
-          }}
-        >
-          {display}
-          {suffix}
-        </span>
+        <span ref={numRef}>{`0${suffix}`}</span>
       </div>
 
       {/* Separator */}
       <div
-        className="mt-3 mb-2 h-px transition-all duration-700"
+        className="mt-3 mb-2 h-px"
         style={{
           width: settled ? "100%" : "0%",
           background: "linear-gradient(to right, #D4AF37, transparent)",
+          transition: settled ? "width 0.7s ease" : "none",
         }}
       />
 
       {/* Label */}
       <div
-        className="text-[10px] font-mono uppercase tracking-[0.35em] leading-tight transition-all duration-500"
+        className="text-[10px] font-mono uppercase tracking-[0.35em] leading-tight"
         style={{
           color: settled ? "rgb(115,115,115)" : "transparent",
+          transition: "color 0.5s ease",
         }}
       >
         {label}

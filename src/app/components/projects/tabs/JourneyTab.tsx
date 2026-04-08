@@ -32,10 +32,39 @@ export default function JourneyTab({ project }: JourneyTabProps) {
         </span>
       </div>
 
-      {/* Timeline */}
-      <div className="flex gap-6">
-        {/* Left: step selectors */}
-        <div className="flex flex-col gap-0 relative">
+      {/* Timeline — mobile: horizontal phase pills → vertical detail panel */}
+      {/*         desktop: vertical timeline left + detail right          */}
+      <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+        {/* Mobile: horizontal scrollable phase pills */}
+        <div className="flex md:hidden gap-2 overflow-x-auto scrollbar-none pb-1">
+          {project.journey.map((step, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveStep(i)}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl border shrink-0 transition-all duration-300"
+              style={{
+                borderColor: i === activeStep ? "#D4AF37" : "#222",
+                background: i === activeStep ? "rgba(212,175,55,0.1)" : "#0a0a0a",
+              }}
+            >
+              <span
+                className="font-mono text-[10px] font-black"
+                style={{ color: i === activeStep ? "#D4AF37" : "rgba(255,255,255,0.3)" }}
+              >
+                {step.phase}
+              </span>
+              <span
+                className="text-[11px] font-bold uppercase tracking-wide"
+                style={{ color: i === activeStep ? "#ffffff" : "rgba(255,255,255,0.3)" }}
+              >
+                {step.title}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Desktop: vertical step selectors */}
+        <div className="hidden md:flex flex-col gap-0 relative">
           {/* Vertical line */}
           <div className="absolute left-[19px] top-5 bottom-5 w-px bg-[#1e1e1e]" />
 
@@ -88,7 +117,7 @@ export default function JourneyTab({ project }: JourneyTabProps) {
                 )}
               </div>
 
-              {/* Step title (visible on hover or active) */}
+              {/* Step title */}
               <span
                 className="text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-colors duration-300"
                 style={{
@@ -106,7 +135,7 @@ export default function JourneyTab({ project }: JourneyTabProps) {
           ))}
         </div>
 
-        {/* Right: active step detail */}
+        {/* Detail panel — full width on mobile, flex-1 on desktop */}
         <div className="flex-1 min-w-0">
           <AnimatePresence mode="wait">
             <motion.div

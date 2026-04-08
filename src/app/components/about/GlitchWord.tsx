@@ -3,9 +3,11 @@
 import { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-// ─────────────────────────────────────────────
-// SPLIT LETTER — top and bottom halves separate on hover
-// ─────────────────────────────────────────────
+// Detect touch devices once (avoids re-renders)
+const isTouchDevice =
+  typeof window !== "undefined" &&
+  window.matchMedia("(pointer: coarse)").matches;
+
 function SplitLetter({
   letter,
   outlined,
@@ -23,8 +25,8 @@ function SplitLetter({
     ? { WebkitTextStroke: "2px #D4AF37", color: "transparent" }
     : { color: "#ffffff" };
 
-  const fontSize = "clamp(4.5rem, 10vw, 11rem)";
-  // lineHeight 1.2 gives enough room so descenders (bottom of R, P, etc.) are never clipped
+  // ← KLUCZOWA ZMIANA: mniejszy clamp na mobilnych
+  const fontSize = "clamp(2.8rem, 9vw, 11rem)";
   const lh = "1.2";
 
   if (letter === " ") {
@@ -43,24 +45,21 @@ function SplitLetter({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Entry animation wrapper */}
       <motion.span
-        initial={{ y: "110%", opacity: 0, filter: "blur(8px)" }}
+        initial={{ y: "110%", opacity: 0, filter: isTouchDevice ? "blur(0px)" : "blur(8px)" }}
         animate={
           inView
             ? { y: "0%", opacity: 1, filter: "blur(0px)" }
-            : { y: "110%", opacity: 0, filter: "blur(8px)" }
+            : { y: "110%", opacity: 0, filter: isTouchDevice ? "blur(0px)" : "blur(8px)" }
         }
         transition={{
           duration: 0.55,
           delay: entryDelay,
           ease: [0.16, 1, 0.3, 1],
         }}
-        // display:block + position:relative so it takes up the full lineHeight space
         className="block relative"
         style={{ fontSize, lineHeight: lh }}
       >
-        {/* TOP HALF — clips upper 50% and slides up on hover */}
         <motion.span
           animate={
             hovered ? { y: "-35%", opacity: 0.6 } : { y: "0%", opacity: 1 }
@@ -78,7 +77,6 @@ function SplitLetter({
           {letter}
         </motion.span>
 
-        {/* BOTTOM HALF — clips lower 50% and slides down on hover */}
         <motion.span
           animate={
             hovered ? { y: "35%", opacity: 0.6 } : { y: "0%", opacity: 1 }
@@ -96,7 +94,6 @@ function SplitLetter({
           {letter}
         </motion.span>
 
-        {/* Invisible spacer — sets the width of the container */}
         <span
           className="font-black uppercase tracking-tighter invisible block"
           style={{ fontSize, lineHeight: lh }}
@@ -108,9 +105,6 @@ function SplitLetter({
   );
 }
 
-// ─────────────────────────────────────────────
-// GLITCH WORD — letter-by-letter entry + split hover
-// ─────────────────────────────────────────────
 export default function GlitchWord({
   text,
   outlined = false,
@@ -142,7 +136,11 @@ export default function GlitchWord({
   }, []);
 
   return (
-    <div ref={ref} className={`flex ${className}`} style={{ fontWeight: 900 }}>
+    <div
+      ref={ref}
+      className={`flex flex-wrap ${className}`}
+      style={{ fontWeight: 900 }}
+    >
       {text.split("").map((letter, i) => (
         <SplitLetter
           key={i}

@@ -43,7 +43,7 @@ export const projects: Project[] = [
     category: "Enterprise Marketplace",
     year: "2024 — 2025",
     description:
-      "Designed and delivered a production automotive marketplace for a client, taking full ownership from requirements gathering through architecture, development, and deployment. Implemented real-time messaging via Socket.IO, a scoring-based search engine with 30+ configurable filters, secure JWT authentication with role-based access control, a full admin dashboard, image processing via Sharp, and comprehensive test coverage with Jest.",
+      "End-to-end delivery of a production automotive marketplace for a commercial client — sole developer from day one. Architected the full system: RESTful API in Express/Node.js, MongoDB schema design, JWT auth with role-based access control, and a real-time chat layer via Socket.IO. Built a scoring-based search engine supporting 30+ configurable filters with relevance ranking. Shipped a complete admin moderation dashboard, image upload pipeline with Sharp, and a Jest test suite covering core business logic. The platform launched on schedule and is live at autosell.pl with real users.",
     tech: [
       "React 18",
       "JavaScript",
@@ -202,7 +202,7 @@ static async searchAds(req, res, next) {
     category: "Sports Auction Marketplace",
     year: "2025 — 2026",
     description:
-      "Architected and built a full-stack sports memorabilia auction platform from the ground up. Engineered a real-time bidding system using NestJS WebSocket Gateway with isolated per-auction rooms and atomic Prisma transactions to prevent race conditions. Integrated Google Gemini for AI-powered jersey authenticity verification, Stripe Connect for seller payouts, and Redis-backed Bull queues for background job processing.",
+      "Full-stack sports memorabilia auction platform — designed and built solo from architecture to deployment. The core challenge: real-time bidding where race conditions are not an option. Solved with NestJS WebSocket Gateway using isolated per-auction rooms and atomic Prisma transactions — structurally preventing any concurrent bid conflicts. Integrated Google Gemini Vision API for automated jersey authenticity verification running through Redis-backed Bull queues with exponential backoff, so sellers are never blocked. Implemented Stripe Connect with full webhook lifecycle handling for automated seller payouts. Every architectural decision was driven by correctness under concurrency and production reliability.",
     tech: [
       "Next.js 14",
       "TypeScript",

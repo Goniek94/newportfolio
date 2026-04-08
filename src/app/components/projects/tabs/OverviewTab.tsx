@@ -31,7 +31,7 @@ export default function OverviewTab({ project }: OverviewTabProps) {
       </div>
 
       {/* Quick stats row */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
           { label: "Category", value: project.category },
           { label: "Year", value: project.year },
@@ -72,7 +72,7 @@ export default function OverviewTab({ project }: OverviewTabProps) {
       </div>
 
       {/* Links */}
-      <div className="flex items-center gap-4 pt-2 border-t border-[#1a1a1a]">
+      <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-[#1a1a1a]">
         {project.website && (
           <a
             href={project.website}
