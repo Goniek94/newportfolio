@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 import SplitWord from "./about/SplitWord";
@@ -135,11 +135,19 @@ function TabNav({
 
 export default function AboutMe() {
   const sectionRef = useRef<HTMLElement>(null);
+  const [isTouch, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    setIsTouch(window.matchMedia("(pointer: coarse)").matches);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
   });
-  const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "-8%"]);
+  // Disable parallax on touch — scroll listener + transform calc is expensive on mobile
+  const titleYRaw = useTransform(scrollYProgress, [0, 1], ["0%", "-8%"]);
+  const titleY = isTouch ? "0%" : titleYRaw;
 
   const [activeTab, setActiveTab] = useState<"profile" | "challenge">(
     "profile",
@@ -152,8 +160,9 @@ export default function AboutMe() {
       className="relative w-full bg-[#050505] text-[#e1e1e1] border-t border-[#111]"
     >
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-      <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-[#D4AF37]/[0.025] rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#D4AF37]/[0.015] rounded-full blur-[120px] pointer-events-none" />
+      {/* Large blurs hidden on mobile (GPU overdraw) */}
+      <div className="hidden md:block absolute top-0 left-0 w-[600px] h-[600px] bg-[#D4AF37]/[0.025] rounded-full blur-[140px] pointer-events-none" />
+      <div className="hidden md:block absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#D4AF37]/[0.015] rounded-full blur-[120px] pointer-events-none" />
 
       {/* HERO BLOCK */}
       <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 pt-10 md:pt-16 pb-0">

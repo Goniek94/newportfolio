@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { FaCopy, FaCheck, FaGithub, FaPhone, FaEnvelope } from "react-icons/fa";
 
@@ -54,12 +54,18 @@ const STATS = [
 export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null);
   const { copied, copy } = useCopy(EMAIL);
+  const [isTouch, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    setIsTouch(window.matchMedia("(pointer: coarse)").matches);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
   });
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
+  const bgYRaw = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
+  const bgY = isTouch ? "0%" : bgYRaw;
 
   return (
     <section
@@ -285,18 +291,20 @@ export default function Contact() {
         </div>
       </div>
 
-      {/* MARQUEE */}
+      {/* MARQUEE — CSS animation (no JS RAF) */}
       <div className="relative overflow-hidden border-t border-b border-[#111] py-4">
         <div className="absolute inset-y-0 left-0 w-20 z-10 pointer-events-none" style={{ background: "linear-gradient(90deg,#050505,transparent)" }} />
         <div className="absolute inset-y-0 right-0 w-20 z-10 pointer-events-none" style={{ background: "linear-gradient(-90deg,#050505,transparent)" }} />
-        <motion.div
-          className="whitespace-nowrap font-black uppercase tracking-widest text-transparent select-none"
-          style={{ WebkitTextStroke: "1px rgba(212,175,55,0.18)", fontSize: "clamp(1rem, 1.8vw, 1.4rem)" }}
-          animate={{ x: ["0%", "-33.33%"] }}
-          transition={{ repeat: Infinity, duration: 28, ease: "linear" }}
+        <div
+          className="marquee-css font-black uppercase tracking-widest text-transparent select-none"
+          style={{ WebkitTextStroke: "1px rgba(212,175,55,0.18)", fontSize: "clamp(1rem, 1.8vw, 1.4rem)", animationDuration: "28s" }}
         >
-          {"Let's work together  ·  Open to mid-level roles  ·  Full stack developer  ·  Available now  ·  Remote · CET  ·  Warsaw · Poland  ·  ".repeat(3)}
-        </motion.div>
+          {[0, 1].map((n) => (
+            <span key={n} className="pr-8">
+              Let&apos;s work together&nbsp;&nbsp;·&nbsp;&nbsp;Open to mid-level roles&nbsp;&nbsp;·&nbsp;&nbsp;Full stack developer&nbsp;&nbsp;·&nbsp;&nbsp;Available now&nbsp;&nbsp;·&nbsp;&nbsp;Remote · CET&nbsp;&nbsp;·&nbsp;&nbsp;Warsaw · Poland&nbsp;&nbsp;·&nbsp;&nbsp;
+            </span>
+          ))}
+        </div>
       </div>
 
       {/* FOOTER */}

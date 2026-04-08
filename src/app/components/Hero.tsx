@@ -265,21 +265,24 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* MARQUEE */}
-          <div className="mt-4 md:mt-16 w-full overflow-hidden whitespace-nowrap pointer-events-none shrink-0">
-            <motion.div
-              className="flex gap-6 md:gap-10 font-black text-transparent uppercase"
+          {/* MARQUEE — CSS animation (no JS RAF) */}
+          <div className="mt-4 md:mt-16 w-full overflow-hidden pointer-events-none shrink-0">
+            <div
+              className="marquee-css font-black text-transparent uppercase"
               style={{
                 WebkitTextStroke: "1px #D4AF37",
                 opacity: 0.7,
                 fontSize: "clamp(1.8rem, 6vw, 6rem)",
+                gap: "clamp(1.5rem, 4vw, 2.5rem)",
+                animationDuration: "35s",
               }}
-              animate={{ x: [0, -2000] }}
-              transition={{ repeat: Infinity, duration: 35, ease: "linear" }}
             >
-              REACT • NEXT.JS • NEST.JS • TYPESCRIPT • JAVASCRIPT • POSTGRESQL •
-              NODE.JS • TAILWIND • DOCKER • PRISMA • REACT • NEXT.JS • NEST.JS
-            </motion.div>
+              {[0, 1].map((n) => (
+                <span key={n} className="flex gap-[2.5rem] pr-[2.5rem]">
+                  REACT&nbsp;•&nbsp;NEXT.JS&nbsp;•&nbsp;NEST.JS&nbsp;•&nbsp;TYPESCRIPT&nbsp;•&nbsp;JAVASCRIPT&nbsp;•&nbsp;POSTGRESQL&nbsp;•&nbsp;NODE.JS&nbsp;•&nbsp;TAILWIND&nbsp;•&nbsp;DOCKER&nbsp;•&nbsp;PRISMA&nbsp;•
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </section>

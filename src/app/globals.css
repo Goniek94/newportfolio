@@ -77,6 +77,24 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
+/* ── CSS Marquee (replaces Framer Motion — runs on compositor, no JS) ── */
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquee-css {
+  display: inline-flex;
+  white-space: nowrap;
+  will-change: transform;
+  animation: marquee-left linear infinite;
+}
+
+/* Pause on hover (desktop only) */
+@media (pointer: fine) {
+  .marquee-css:hover { animation-play-state: paused; }
+}
+
 /* ── Mobile GPU acceleration hints ── */
 /* Marquee strips and parallax containers benefit from layer promotion */
 .marquee-gpu {
@@ -84,18 +102,28 @@ body {
   transform: translateZ(0);
 }
 
-/* ── Reduce heavy backdrop blurs on low-end mobile ── */
-@media (pointer: coarse) and (max-width: 768px) {
-  /* Modals: reduce backdrop blur cost */
-  .backdrop-blur-md {
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+/* ── Reduce heavy effects on mobile ── */
+@media (pointer: coarse) {
+  /* Kill all large blurs — these force GPU to rasterize massive areas */
+  .blur-\[140px\],
+  .blur-\[120px\],
+  .blur-\[100px\],
+  .blur-3xl,
+  .blur-2xl {
+    filter: none !important;
   }
 
-  /* Remove box-shadow on elements that stack — these trigger repaints */
+  /* Reduce backdrop blur cost on modals */
+  .backdrop-blur-md,
+  .backdrop-blur-sm {
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+  }
+
+  /* No hover shadows on touch — they never trigger anyway */
   .hover\:shadow-\[0_0_15px_rgba\(212\,175\,55\,0\.1\)\]:hover,
   .hover\:shadow-\[0_0_20px_rgba\(212\,175\,55\,0\.2\)\]:hover {
-    box-shadow: none;
+    box-shadow: none !important;
   }
 }
 
