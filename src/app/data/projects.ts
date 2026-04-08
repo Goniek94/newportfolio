@@ -368,7 +368,7 @@ async placeBid(
     category: "Interactive OS Portfolio",
     year: "2026",
     description:
-      "Designed and built a fully functional Windows XP simulation as an interactive portfolio experience. Engineered a custom window manager with z-index stacking, drag-and-drop positioning, and minimize/maximize state. Implemented a complete boot sequence and recreated retro applications including Winamp and Gadu-Gadu. Demonstrates advanced React state management, complex component composition, and creative UI architecture.",
+      "A fully interactive Windows XP desktop running live in the browser. The boot sequence takes exactly 7.5 seconds — progress bar fills, \"Uruchamianie Windows...\" appears, then the desktop fades in. The window manager is custom-built from scratch: windows stack by z-index, snap focus on click, drag within clamped screen boundaries, and each one has independent minimize and maximize state. No library handles any of it. Winamp is a working audio player with a 75-bar animated spectrum analyzer, scrolling track title, seek bar, and volume control wired to a real audio element. Gadu-Gadu is a faithful recreation of the classic Polish messenger. A glitch overlay fires as a scripted sequence event — matrix rain, RGB channel split, scan lines, screen shake — all coordinated by a page orchestrator managing the full boot-to-desktop-to-glitch transition. Built to see how far you can push React component architecture when the constraints are self-imposed.",
     tech: [
       "Next.js 16",
       "React 19",
