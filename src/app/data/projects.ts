@@ -25,6 +25,7 @@ export type Project = {
   category: string;
   year: string;
   description: string;
+  bullets?: string[];
   tech: string[];
   stackCategories: StackCategory[];
   journey: JourneyStep[];
@@ -40,24 +41,26 @@ export const projects: Project[] = [
     number: "01",
     title: "Autosell.pl",
     nda: true,
-    category: "Enterprise Marketplace",
+    category: "Client Project · Live in Production",
     year: "2024 — 2025",
     description:
-      "End-to-end delivery of a production automotive marketplace for a commercial client — sole developer from day one. Architected the full system: RESTful API in Express/Node.js, MongoDB schema design, JWT auth with role-based access control, and a real-time chat layer via Socket.IO. Built a scoring-based search engine supporting 30+ configurable filters with relevance ranking. Shipped a complete admin moderation dashboard, image upload pipeline with Sharp, and a Jest test suite covering core business logic. The platform launched on schedule and is live at autosell.pl with real users.",
+      "Built and deployed a production automotive marketplace for a paying client, live at autosell.pl and used by real users.",
+    bullets: [
+      "Delivered the full system end-to-end as a sole developer",
+      "Built a search system with 30+ filters that ranks listings by relevance, not just date",
+      "Implemented real-time messaging between buyers and sellers, with message history and read receipts",
+      "Integrated TPay payment gateway for listing fees",
+      "Implemented authentication and basic security features for production use",
+      "Wrote integration tests with Jest and Supertest covering search filters, auth, and input validation",
+      "Deployed to production using Docker on a Linux VPS",
+    ],
     tech: [
       "React 18",
-      "JavaScript",
-      "Tailwind CSS",
-      "REST API",
       "Node.js",
       "Express",
       "MongoDB",
-      "Mongoose",
       "Socket.IO",
-      "JWT",
-      "Supabase",
-      "Helmet",
-      "Sharp",
+      "Docker",
       "Jest",
     ],
     stackCategories: [
@@ -78,37 +81,37 @@ export const projects: Project[] = [
     journey: [
       {
         phase: "01",
-        title: "Requirements & Architecture",
+        title: "Client Discovery & System Design",
         description:
-          "Gathered client requirements, defined data models, and designed the full system architecture — API contracts, auth flow, and real-time messaging strategy.",
+          "Ran requirements workshops with the client, mapped user flows, and made the first hard call: MongoDB for flexible vehicle schemas, Socket.IO for real-time chat, Express for the API layer. Defined all API contracts before writing a line of code.",
         duration: "2 weeks",
       },
       {
         phase: "02",
-        title: "Core Backend",
+        title: "Security-First Backend",
         description:
-          "Built the Express/MongoDB API with JWT auth, role-based access control, and Helmet security hardening. Designed the scoring-based search engine with 30+ filters.",
+          "Built the Express/MongoDB API with a layered security stack: JWT rotation, bcrypt + argon2, 2FA TOTP via Speakeasy, account lockout, Helmet headers, MongoDB sanitization. The scoring-based search engine with 30+ filters came next — relevance ranking, not just queries.",
         duration: "6 weeks",
       },
       {
         phase: "03",
-        title: "Real-time Messaging",
+        title: "Real-Time Messaging & Payments",
         description:
-          "Integrated Socket.IO for live chat between buyers and sellers. Implemented room management, message persistence, and read receipts.",
-        duration: "2 weeks",
+          "Socket.IO rooms for per-conversation chat with message persistence and read receipts. TPay payment gateway integration for the Polish market — OAuth2 token caching, webhook handling, invoice PDF generation via PDFKit.",
+        duration: "3 weeks",
       },
       {
         phase: "04",
-        title: "Frontend & Admin Dashboard",
+        title: "Frontend, Admin & Image Pipeline",
         description:
-          "Built the React frontend with Tailwind CSS, full admin panel for moderation, image upload pipeline via Sharp, and Supabase storage integration.",
-        duration: "5 weeks",
+          "Built the React frontend and a full admin moderation dashboard. Image uploads run through Sharp for compression before landing in Supabase Storage. Multi-channel notifications via Nodemailer, Resend, and Twilio SMS.",
+        duration: "4 weeks",
       },
       {
         phase: "05",
-        title: "Testing & Deployment",
+        title: "Production Deployment",
         description:
-          "Wrote comprehensive Jest test suites, performance-tuned MongoDB queries, and deployed to production. Platform is live at autosell.pl.",
+          "Jest test suite covering core business logic. Deployed on Linux VPS with Docker + NGINX + PM2 for zero-downtime restarts. Client accepted delivery. autosell.pl went live.",
         duration: "2 weeks",
       },
     ],
@@ -199,26 +202,26 @@ static async searchAds(req, res, next) {
     number: "02",
     title: "Matchdays",
     nda: false,
-    category: "Sports Auction Marketplace",
+    category: "Personal Project · Seed Round In Progress",
     year: "2025 — 2026",
     description:
-      "Full-stack sports memorabilia auction platform — designed and built solo from architecture to deployment. The core challenge: real-time bidding where race conditions are not an option. Solved with NestJS WebSocket Gateway using isolated per-auction rooms and atomic Prisma transactions — structurally preventing any concurrent bid conflicts. Integrated Google Gemini Vision API for automated jersey authenticity verification running through Redis-backed Bull queues with exponential backoff, so sellers are never blocked. Implemented Stripe Connect with full webhook lifecycle handling for automated seller payouts. Every architectural decision was driven by correctness under concurrency and production reliability.",
+      "Built a fullstack marketplace for real-time sports jersey auctions, running live with backend-driven bidding logic.",
+    bullets: [
+      "Built a real-time bidding system using WebSockets with live price updates",
+      "Ensured consistent data handling during simultaneous bids using database transactions",
+      "Designed backend API handling auctions, users, and listing logic",
+      "Integrated Stripe for seller payouts and payment flows",
+      "Implemented AI-based image verification for uploaded items",
+      "Used background jobs to process AI checks without blocking user actions",
+    ],
     tech: [
       "Next.js 14",
       "TypeScript",
-      "Zustand",
-      "TanStack Query",
-      "Axios",
-      "Socket.IO",
-      "shadcn/ui",
-      "Tailwind CSS",
-      "NestJS 10",
-      "Prisma ORM",
+      "NestJS",
       "PostgreSQL",
+      "Socket.IO",
+      "Stripe",
       "Redis",
-      "Bull",
-      "Supabase Storage",
-      "Swagger",
     ],
     stackCategories: [
       {
@@ -365,16 +368,21 @@ async placeBid(
     number: "03",
     title: "Windows XP",
     nda: false,
-    category: "Interactive OS Portfolio",
+    category: "Interactive Browser OS · Creative Project",
     year: "2026",
     description:
-      "A fully interactive Windows XP desktop running live in the browser. The boot sequence takes exactly 7.5 seconds — progress bar fills, \"Uruchamianie Windows...\" appears, then the desktop fades in. The window manager is custom-built from scratch: windows stack by z-index, snap focus on click, drag within clamped screen boundaries, and each one has independent minimize and maximize state. No library handles any of it. Winamp is a working audio player with a 75-bar animated spectrum analyzer, scrolling track title, seek bar, and volume control wired to a real audio element. Gadu-Gadu is a faithful recreation of the classic Polish messenger. A glitch overlay fires as a scripted sequence event — matrix rain, RGB channel split, scan lines, screen shake — all coordinated by a page orchestrator managing the full boot-to-desktop-to-glitch transition. Built to see how far you can push React component architecture when the constraints are self-imposed.",
+      "Built an interactive Windows XP-style desktop in the browser to explore advanced UI architecture and state management.",
+    bullets: [
+      "Developed a custom window manager with dragging, focus handling, and window state (minimize/maximize)",
+      "Implemented multiple interactive apps — audio player and messenger — with independent state and shared UI logic",
+      "Built complex UI interactions and animations without external libraries",
+      "Managed global state and transitions across the full boot-to-desktop experience",
+    ],
     tech: [
-      "Next.js 16",
+      "Next.js",
       "React 19",
       "TypeScript",
-      "Tailwind CSS v4",
-      "CSS Animations",
+      "Tailwind CSS",
     ],
     stackCategories: [
       {

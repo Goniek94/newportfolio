@@ -70,6 +70,17 @@ const quotes = [
       </>
     ),
   },
+  {
+    id: 5,
+    text: (
+      <>
+        Working with a client means{" "}
+        <span className="text-[#D4AF37]">translating business into code</span>{" "}
+        — gathering requirements, explaining trade-offs, iterating on feedback,
+        and delivering on time. I&apos;ve done it. It&apos;s live.
+      </>
+    ),
+  },
 ];
 
 export default function Hero() {
@@ -146,7 +157,7 @@ export default function Hero() {
             >
               <div className="h-[2px] w-6 md:w-12 bg-[#D4AF37] shrink-0" />
               <span className="text-[9px] sm:text-[11px] md:text-sm font-mono tracking-[0.15em] md:tracking-[0.2em] text-[#D4AF37] uppercase font-bold truncate">
-                Full Stack Developer • Poland
+                Full Stack Engineer · Poland
               </span>
             </motion.div>
 
@@ -417,7 +428,7 @@ export default function Hero() {
                     Mateusz <span className="text-[#D4AF37]">Goszczycki</span>
                   </h2>
                   <h3 className="text-xl md:text-2xl text-neutral-300 mt-3 font-light tracking-wide">
-                    Full Stack Developer · 3+ Production Applications Shipped
+                    Full Stack Engineer · 4 Production Applications Shipped
                   </h3>
 
                   {/* Personal Info Grid */}
@@ -428,28 +439,39 @@ export default function Hero() {
                     </div>
                     <div className="flex items-center gap-3 text-sm text-neutral-400">
                       <FaMapMarkerAlt className="text-[#D4AF37]" />{" "}
-                      <span>Łowicz / Warsaw, PL (Remote OK)</span>
+                      <span>Łowicz / Warsaw, PL</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm text-neutral-400">
                       <FaBriefcase className="text-[#D4AF37]" />{" "}
-                      <span>Mid-Level Position</span>
+                      <span>Mid-Level · Remote OK</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm text-[#27c93f]">
+                      <span className="w-2 h-2 rounded-full bg-[#27c93f] inline-block shrink-0" />
+                      <span>Open to relocation</span>
                     </div>
                   </div>
 
-                  {/* Contact Links */}
-                  <div className="flex flex-wrap gap-4 mt-6 pt-6 border-t border-[#1a1a1a]/50">
-                    <a
-                      href="mailto:mateusz.goszczycki1994@gmail.com"
-                      className="flex items-center gap-2 text-sm font-mono text-[#D4AF37] hover:underline bg-[#D4AF37]/10 px-4 py-2 rounded-lg cursor-pointer"
-                    >
-                      <FaEnvelope /> mateusz.goszczycki1994@gmail.com
-                    </a>
-                    <a
-                      href="tel:+48516223029"
-                      className="flex items-center gap-2 text-sm font-mono text-[#D4AF37] hover:underline bg-[#D4AF37]/10 px-4 py-2 rounded-lg cursor-pointer"
-                    >
-                      <FaPhoneAlt /> +48 516 223 029
-                    </a>
+                  {/* Contact Links — -> style matching CV */}
+                  <div className="flex flex-wrap items-center gap-x-0 gap-y-2 mt-6 pt-6 border-t border-[#1a1a1a]/50 font-mono text-sm">
+                    {[
+                      { href: "mailto:mateusz.goszczycki1994@gmail.com", label: "mateusz.goszczycki1994@gmail.com", icon: <FaEnvelope />, external: false },
+                      { href: "tel:+48516223029", label: "+48 516 223 029", icon: <FaPhoneAlt />, external: false },
+                      { href: "https://github.com/Goniek94", label: "github.com/Goniek94", icon: <FaGithub />, external: true },
+                      { href: "https://mateuszgoszczyckiportfolio.vercel.app", label: "portfolio", icon: <FaCode />, external: true },
+                    ].map(({ href, label, icon, external }, i) => (
+                      <span key={i} className="flex items-center">
+                        <span className="text-[#D4AF37] font-black px-2 select-none">-&gt;</span>
+                        <a
+                          href={href}
+                          target={external ? "_blank" : undefined}
+                          rel={external ? "noopener noreferrer" : undefined}
+                          className="flex items-center gap-1.5 text-[#D4AF37] hover:text-white transition-colors bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 px-3 py-1.5 rounded-lg cursor-pointer"
+                        >
+                          {icon} {label}
+                        </a>
+                      </span>
+                    ))}
+                    <span className="text-[#D4AF37] font-black px-2 select-none">-&gt;</span>
                     {/* LINK DO POBRANIA - wymaga by plik na dysku nazywał się Mateusz_Goszczycki_CV.pdf */}
                     <a
                       href="/Mateusz_Goszczycki_CV.pdf"
@@ -469,7 +491,7 @@ export default function Hero() {
                       Professional Profile
                     </h3>
                     <p className="text-neutral-300 text-sm md:text-base leading-relaxed font-light">
-                      I am a highly motivated Full Stack Developer who
+                      I am a Full Stack Engineer who
                       successfully transitioned from a demanding career in
                       gastronomy. Working as a Head Chef and Instructor for
                       individuals with disabilities taught me extreme patience,
@@ -487,10 +509,10 @@ export default function Hero() {
                     </h3>
                     <ul className="space-y-3">
                       {[
-                        "High stress tolerance & adaptability",
-                        "End-to-End product ownership",
-                        "Empathetic communication & teamwork",
-                        "Rapid self-learning & problem solving",
+                        "End-to-end product ownership — spec to prod",
+                        "Client-facing: requirements, feedback loops, trade-off calls",
+                        "Async & remote communication — delivered solo for paying clients",
+                        "Rapid self-learning under pressure (career pivot in 2 years)",
                       ].map((item, i) => (
                         <li
                           key={i}
@@ -707,6 +729,48 @@ export default function Hero() {
                       </p>
                     </div>
 
+                    {/* Ecomati */}
+                    <div className="relative pl-6 border-l-2 border-[#D4AF37]/50">
+                      <div className="absolute w-3 h-3 bg-[#D4AF37] rounded-full -left-[7px] top-1.5 shadow-[0_0_10px_#D4AF37]" />
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
+                        <h4 className="text-white font-bold text-lg md:text-xl">
+                          Ecomati.pl{" "}
+                          <span className="text-neutral-400 font-normal text-sm ml-2">
+                            — Organic Food E-Commerce
+                          </span>
+                        </h4>
+                        <span className="text-[#D4AF37] font-mono text-xs border border-[#D4AF37]/30 px-2 py-1 rounded">
+                          2025
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {[
+                          "Next.js",
+                          "NestJS",
+                          "TypeScript",
+                          "PostgreSQL",
+                          "Prisma ORM",
+                          "Docker",
+                          "Redis",
+                          "Supabase",
+                        ].map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-2 py-0.5 bg-[#0a0a0a] border border-[#222] rounded text-[9px] md:text-[10px] font-mono text-[#D4AF37]/80 uppercase tracking-wider"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
+                        Two-app system — customer storefront + admin panel sharing one{" "}
+                        <strong>PostgreSQL</strong> database via <strong>Prisma ORM</strong>.
+                        Dynamic product variants, persistent cart, Zod-validated API routes,
+                        sales analytics dashboard. Fully containerized with{" "}
+                        <strong>Docker</strong>. Live at ecomati.pl.
+                      </p>
+                    </div>
+
                     {/* Windows XP Portfolio */}
                     <div className="relative pl-6 border-l-2 border-[#D4AF37]/50">
                       <div className="absolute w-3 h-3 bg-[#D4AF37] rounded-full -left-[7px] top-1.5 shadow-[0_0_10px_#D4AF37]" />
@@ -757,12 +821,12 @@ export default function Hero() {
                     Experience
                   </h3>
                   <div className="space-y-10">
-                    {/* Freelance Full Stack Developer */}
+                    {/* Freelance Full Stack Engineer */}
                     <div className="relative pl-6 border-l-2 border-[#1a1a1a]">
                       <div className="absolute w-3 h-3 bg-[#333] rounded-full -left-[7px] top-1.5" />
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                         <h4 className="text-neutral-300 font-bold text-lg md:text-xl">
-                          Freelance Full Stack Developer
+                          Freelance Full Stack Engineer
                         </h4>
                         <span className="text-neutral-600 font-mono text-xs border border-[#1a1a1a] px-2 py-1 rounded">
                           2023 - Present
@@ -772,12 +836,7 @@ export default function Hero() {
                         Client Collaboration (Remote)
                       </p>
                       <p className="text-neutral-400 text-sm md:text-base leading-relaxed mt-2">
-                        2 years of commercial experience working directly with
-                        clients: gathering requirements, managing feedback
-                        loops, and delivering production-ready applications.
-                        Built and deployed Autosell.pl as a client project —
-                        full lifecycle ownership from specification and
-                        architecture through production deployment.
+                        2+ years delivering production systems for paying clients — full ownership from requirements gathering through architecture, iterative feedback loops, and zero-downtime deployment. Worked directly with stakeholders: translating business needs into technical decisions, managing scope, and communicating trade-offs clearly. Built and deployed Autosell.pl end-to-end on Linux VPS — sole developer, shipped on schedule.
                       </p>
                     </div>
 
@@ -831,7 +890,7 @@ export default function Hero() {
                             English
                           </span>
                           <span className="text-[#D4AF37] font-mono text-xs tracking-widest uppercase">
-                            B1 / Communicative
+                            B2 / Professional Working
                           </span>
                         </div>
                       </div>

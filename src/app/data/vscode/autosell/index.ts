@@ -1,6 +1,11 @@
 import { FileNode } from "../index";
 
 // ==========================================
+// IMPORTY TESTS
+// ==========================================
+import { adsTestCode } from "./backend/tests/ads.test";
+
+// ==========================================
 // IMPORTY FRONTEND
 // ==========================================
 import { clientCode } from "./frontend/api/client";
@@ -162,6 +167,18 @@ export const autosellFiles: FileNode[] = [
                 name: "socketService.js",
                 language: "javascript",
                 content: socketServiceCode,
+              },
+            ],
+          },
+          {
+            name: "__tests__",
+            language: "typescript",
+            isOpen: true,
+            children: [
+              {
+                name: "ads.test.js",
+                language: "javascript",
+                content: adsTestCode,
               },
             ],
           },

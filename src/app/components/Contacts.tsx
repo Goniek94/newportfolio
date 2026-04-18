@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { FaCopy, FaCheck, FaGithub, FaPhone, FaEnvelope } from "react-icons/fa";
+import { FaCopy, FaCheck, FaGithub, FaPhone, FaEnvelope, FaLinkedin } from "react-icons/fa";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 const EMAIL = "mateusz.goszczycki1994@gmail.com";
@@ -167,7 +167,7 @@ export default function Contact() {
               transition={{ duration: 0.6, delay: 0.15, ease: EASE }}
               className="flex flex-wrap gap-2"
             >
-              {["Full-time", "Contract / B2B", "Freelance", "Remote · CET"].map((t) => (
+              {["Full-time", "Contract / B2B", "Freelance", "Remote · CET", "Open to relocation"].map((t) => (
                 <span
                   key={t}
                   className="px-3 py-1.5 rounded-lg text-[11px] font-mono text-neutral-500"
@@ -301,7 +301,7 @@ export default function Contact() {
         >
           {[0, 1].map((n) => (
             <span key={n} className="pr-8">
-              Let&apos;s work together&nbsp;&nbsp;·&nbsp;&nbsp;Open to mid-level roles&nbsp;&nbsp;·&nbsp;&nbsp;Full stack developer&nbsp;&nbsp;·&nbsp;&nbsp;Available now&nbsp;&nbsp;·&nbsp;&nbsp;Remote · CET&nbsp;&nbsp;·&nbsp;&nbsp;Warsaw · Poland&nbsp;&nbsp;·&nbsp;&nbsp;
+              Let&apos;s work together&nbsp;&nbsp;·&nbsp;&nbsp;Open to mid-level roles&nbsp;&nbsp;·&nbsp;&nbsp;Full stack developer&nbsp;&nbsp;·&nbsp;&nbsp;Available now&nbsp;&nbsp;·&nbsp;&nbsp;Remote · CET&nbsp;&nbsp;·&nbsp;&nbsp;Open to relocation&nbsp;&nbsp;·&nbsp;&nbsp;Warsaw · Poland&nbsp;&nbsp;·&nbsp;&nbsp;
             </span>
           ))}
         </div>

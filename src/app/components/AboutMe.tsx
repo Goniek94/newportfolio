@@ -12,7 +12,7 @@ import { buildItems, allStack } from "./about/data";
 
 function RightColumn() {
   return (
-    <div className="flex flex-col gap-8 lg:pl-10">
+    <div className="flex flex-col gap-6 lg:pl-10">
       <div className="flex items-center gap-3">
         <span className="text-[11px] font-mono uppercase tracking-[0.3em] text-[#D4AF37]/60">
           02
@@ -31,9 +31,9 @@ function RightColumn() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.35, delay: i * 0.07 }}
-            className="group p-5 rounded-2xl border border-[#111] bg-[#080808] hover:border-[#D4AF37]/25 hover:bg-[#0c0c0a] transition-all duration-300 flex flex-col"
+            className="group p-6 rounded-2xl border border-[#111] bg-[#080808] hover:border-[#D4AF37]/30 hover:bg-[#0c0c0a] transition-all duration-300 flex flex-col min-h-[140px]"
           >
-            <div className="text-2xl mb-2">{item.icon}</div>
+            <div className="text-2xl mb-3">{item.icon}</div>
             <h4 className="text-white font-bold text-sm mb-2 group-hover:text-[#D4AF37] transition-colors duration-300">
               {item.title}
             </h4>
@@ -43,6 +43,34 @@ function RightColumn() {
           </motion.div>
         ))}
       </div>
+
+      {/* Availability strip */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, delay: 0.3 }}
+        className="rounded-2xl border border-[#27c93f]/20 bg-[#27c93f]/[0.04] p-5 flex items-center justify-between gap-4"
+      >
+        <div className="flex items-center gap-3">
+          <span className="relative flex h-2.5 w-2.5 shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#27c93f] opacity-50" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#27c93f]" />
+          </span>
+          <div>
+            <p className="text-white font-bold text-sm">Available · Immediate start</p>
+            <p className="text-neutral-500 text-[11px] font-mono mt-0.5">
+              Remote · CET · Open to relocation
+            </p>
+          </div>
+        </div>
+        <a
+          href="#contact"
+          className="shrink-0 px-4 py-2 rounded-xl border border-[#27c93f]/30 text-[#27c93f] text-[11px] font-mono uppercase tracking-wider hover:bg-[#27c93f]/10 transition-colors"
+        >
+          Hire me →
+        </a>
+      </motion.div>
 
       <div className="rounded-2xl border border-[#1a1a1a] bg-[#080808] p-5">
         <div className="flex items-center gap-3 mb-4">
@@ -60,6 +88,47 @@ function RightColumn() {
           ))}
         </div>
       </div>
+
+      {/* Why hire me */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="rounded-2xl border border-[#D4AF37]/15 bg-[#080808] p-5"
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-[11px] font-mono uppercase tracking-[0.3em] text-[#D4AF37]/60">
+            04
+          </span>
+          <div className="h-px flex-1 bg-[#111]" />
+          <span className="text-[11px] font-mono uppercase tracking-[0.3em] text-neutral-600">
+            Why me
+          </span>
+        </div>
+        <div className="flex flex-col gap-3">
+          {[
+            { icon: "🚀", text: "Shipped for a real, paying client — autosell.pl is live with real users" },
+            { icon: "🧠", text: "Full ownership mindset — schema, API, UI, deployment, all mine" },
+            { icon: "⚡", text: "6 years running a kitchen under pressure — production incidents don't scare me" },
+            { icon: "📈", text: "Career pivot from zero in 2 years — I learn fast and ship faster" },
+          ].map(({ icon, text }, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: -8 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: 0.25 + i * 0.06 }}
+              className="flex items-start gap-3 group"
+            >
+              <span className="text-base shrink-0 mt-0.5">{icon}</span>
+              <p className="text-neutral-400 text-[13px] leading-relaxed group-hover:text-neutral-200 transition-colors duration-200">
+                {text}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
     </div>
   );
 }

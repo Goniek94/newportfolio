@@ -28,6 +28,16 @@ export default function OverviewTab({ project }: OverviewTabProps) {
         <p className="text-neutral-300 text-base leading-[1.85] font-light">
           {project.description}
         </p>
+        {project.bullets && (
+          <ul className="mt-4 flex flex-col gap-2.5">
+            {project.bullets.map((b, i) => (
+              <li key={i} className="flex items-start gap-3 text-sm text-neutral-400 leading-relaxed">
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#D4AF37]/60" />
+                {b}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* Quick stats row */}
