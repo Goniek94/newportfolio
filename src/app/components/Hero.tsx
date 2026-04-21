@@ -1,89 +1,39 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
 import {
-  FaGithub,
-  FaCode,
-  FaFileAlt,
-  FaTimes,
-  FaMapMarkerAlt,
-  FaCalendarAlt,
-  FaBriefcase,
-  FaEnvelope,
-  FaPhoneAlt,
-  FaFolderOpen,
-  FaChevronRight,
-  FaDownload,
-  FaLayerGroup,
-} from "react-icons/fa";
+  motion,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { FaGithub, FaCode, FaFileAlt, FaLayerGroup } from "react-icons/fa";
 
-// Importy potrzebne do uruchomienia VSCode wprost z Hero
+// Importy Modali (Upewnij się, że ścieżki są poprawne!)
 import VSCodeViewer from "./VSCodeViewer";
+import ProjectsVaultModal from "./ProjectsVaultModal";
+import InteractiveCVModal from "./InteractiveCVModal";
+
+// Importy Danych
+import { heroQuotes } from "../data/hero-quotes";
 import {
   autosellFiles,
   matchdaysFiles,
   windowsXpFiles,
 } from "../data/vscode/index";
 
-const quotes = [
-  {
-    id: 1,
-    text: (
-      <>
-        Delivered a{" "}
-        <span className="text-[#D4AF37]">commercial automotive marketplace</span>{" "}
-        for a paying client — sole developer, every architectural decision mine,
-        shipped on schedule. It&apos;s live at autosell.pl with real users.
-      </>
-    ),
-  },
-  {
-    id: 2,
-    text: (
-      <>
-        <span className="text-[#D4AF37]">Race conditions</span> in real-time
-        bidding. Stripe Connect payout flows. AI verification queues. I build
-        the parts that fall apart in production — and make sure they don&apos;t.
-      </>
-    ),
-  },
-  {
-    id: 3,
-    text: (
-      <>
-        Three full-stack applications built{" "}
-        <span className="text-[#D4AF37]">solo from scratch</span>. One
-        commercial client delivery. One under investor NDA. Schema, API,
-        frontend, deployment — all mine.
-      </>
-    ),
-  },
-  {
-    id: 4,
-    text: (
-      <>
-        I don&apos;t need a team to ship.{" "}
-        <span className="text-[#D4AF37]">Give me a problem</span> — I&apos;ll
-        handle the architecture, the backend, the UI, and the server. You get a
-        working product.
-      </>
-    ),
-  },
-  {
-    id: 5,
-    text: (
-      <>
-        Working with a client means{" "}
-        <span className="text-[#D4AF37]">translating business into code</span>{" "}
-        — gathering requirements, explaining trade-offs, iterating on feedback,
-        and delivering on time. I&apos;ve done it. It&apos;s live.
-      </>
-    ),
-  },
-];
-
 export default function Hero() {
+  const containerRef = useRef(null);
+
+  // Twoje animacje na scrolla
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
+  // Stany lokalne
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [time, setTime] = useState("");
 
@@ -91,12 +41,30 @@ export default function Hero() {
   const [isCVModalOpen, setIsCVModalOpen] = useState(false);
   const [isProjectsModalOpen, setIsProjectsModalOpen] = useState(false);
 
-  // Stany dla VSCode
+  // Stany VSCode
   const [isVSCodeOpen, setIsVSCodeOpen] = useState(false);
   const [currentFiles, setCurrentFiles] = useState(autosellFiles);
   const [currentTitle, setCurrentTitle] = useState("Autosell-Repo");
 
-  // Obsługa otwierania konkretnego projektu
+  // Zegar
+  useEffect(() => {
+    const updateTime = () => {
+      setTime(new Date().toLocaleTimeString("pl-PL", { hour12: false }));
+    };
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Rotacja cytatów
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setQuoteIndex((prev) => (prev + 1) % heroQuotes.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Handler do odpalania Code Viewera
   const handleOpenVSCode = (projectId: number) => {
     if (projectId === 1) {
       setCurrentFiles(autosellFiles);
@@ -112,157 +80,124 @@ export default function Hero() {
     setIsVSCodeOpen(true);
   };
 
-  // Blokowanie scrolla gdy którykolwiek modal jest otwarty
-  useEffect(() => {
-    if (isCVModalOpen || isProjectsModalOpen || isVSCodeOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-  }, [isCVModalOpen, isProjectsModalOpen, isVSCodeOpen]);
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTime(now.toLocaleTimeString("pl-PL", { hour12: false }));
-    };
-    updateTime();
-    const timer = setInterval(updateTime, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setQuoteIndex((prev) => (prev + 1) % quotes.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <>
-      <section className="relative min-h-svh md:min-h-screen w-full bg-[#050505] text-[#e1e1e1] flex flex-col px-4 sm:px-6 md:px-8 lg:px-12 overflow-hidden pt-4 pb-6 md:pt-14 md:pb-20">
-        {/* Background */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_50%,#1a1a1a,transparent)] pointer-events-none opacity-60" />
+      <section
+        ref={containerRef}
+        className="relative min-h-screen w-full bg-[#050505] text-[#e1e1e1] flex flex-col justify-center px-4 md:px-12 overflow-hidden pt-32 pb-20"
+      >
+        {/* --- BACKGROUND --- */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_50%,#1a1a1a,transparent)] pointer-events-none opacity-60"></div>
 
-        {/* Inner wrapper */}
-        <div className="z-10 w-full max-w-[1600px] mx-auto flex flex-col flex-1 justify-between md:justify-center">
+        {/* --- MAIN CONTENT --- */}
+        <div className="z-10 w-full max-w-[1800px] mx-auto flex flex-col justify-center">
           {/* TOP BAR */}
-          <div className="flex items-center justify-between mb-4 md:mb-6 gap-3 shrink-0">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-6">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="flex items-center gap-2 md:gap-4 min-w-0"
+              className="flex items-center gap-4"
             >
-              <div className="h-[2px] w-6 md:w-12 bg-[#D4AF37] shrink-0" />
-              <span className="text-[9px] sm:text-[11px] md:text-sm font-mono tracking-[0.15em] md:tracking-[0.2em] text-[#D4AF37] uppercase font-bold truncate">
-                Full Stack Engineer · Poland
+              <div className="h-[2px] w-12 bg-[#D4AF37]" />
+              <span className="text-xs md:text-sm font-mono tracking-[0.2em] text-[#D4AF37] uppercase font-bold">
+                Full Stack Engineer • Poland
               </span>
             </motion.div>
 
-            {/* Clock */}
+            {/* DOJEBANY ZEGAR */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.7, duration: 0.8 }}
               className="relative group shrink-0"
             >
-              <div className="absolute -inset-1 bg-[#D4AF37]/10 rounded-xl blur-lg opacity-60 group-hover:opacity-100 transition-opacity" />
-              <div className="relative bg-[#0a0a0a] border border-[#D4AF37]/40 rounded-xl px-3 py-2 md:px-6 md:py-4 group-hover:border-[#D4AF37] transition-all duration-500">
-                <div className="flex items-center gap-2 md:gap-4">
-                  <div className="font-mono text-xl sm:text-2xl md:text-5xl font-black text-white tabular-nums tracking-tighter">
+              <div className="absolute -inset-2 bg-gradient-to-r from-[#D4AF37]/20 via-[#D4AF37]/10 to-transparent rounded-2xl blur-xl opacity-60 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative bg-[#0a0a0a] border-2 border-[#D4AF37]/30 rounded-2xl px-6 py-4 backdrop-blur-sm group-hover:border-[#D4AF37] transition-all duration-500">
+                <div className="flex items-center gap-4">
+                  <div className="font-mono text-5xl font-black text-white tabular-nums tracking-tighter">
                     {time}
                   </div>
-                  <div className="h-6 md:h-12 w-[1px] md:w-[2px] bg-gradient-to-b from-transparent via-[#D4AF37] to-transparent" />
+                  <div className="h-12 w-[2px] bg-gradient-to-b from-transparent via-[#D4AF37] to-transparent"></div>
                   <div className="flex flex-col justify-center">
-                    <div className="flex items-center gap-1 mb-0.5">
-                      <div className="w-1.5 h-1.5 bg-[#27c93f] rounded-full animate-pulse" />
-                      <span className="text-[8px] md:text-xs font-mono text-neutral-500 uppercase tracking-wider hidden sm:block">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="w-2 h-2 bg-[#27c93f] rounded-full animate-pulse shadow-[0_0_10px_#27c93f]"></div>
+                      <span className="text-xs font-mono text-neutral-500 uppercase tracking-wider">
                         Live
                       </span>
                     </div>
-                    <div className="text-[10px] md:text-sm font-bold text-[#D4AF37]">
-                      PL
+                    <div className="text-sm font-bold text-[#D4AF37]">
+                      Łódź, PL
                     </div>
                   </div>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 h-[1px] md:h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
               </div>
             </motion.div>
           </div>
 
-          {/* CENTER */}
-          <div className="flex-1 md:flex-none flex flex-col justify-center">
-            {/* TITLE */}
-            <div className="relative z-20 mix-blend-difference">
-              <h1
-                className="font-black tracking-tighter text-white uppercase leading-[0.85]"
-                style={{ fontSize: "clamp(2.2rem, 11vw, 12rem)" }}
+          {/* TITLE */}
+          <motion.div
+            style={{ y, opacity }}
+            className="relative z-20 mix-blend-difference"
+          >
+            <h1 className="text-[12vw] leading-[0.85] font-black tracking-tighter text-white uppercase break-words">
+              <motion.span
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
+                className="block"
               >
-                <motion.span
-                  initial={{ y: "100%", opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
-                  className="block"
-                >
-                  Mateusz
-                </motion.span>
-                <motion.span
-                  initial={{ y: "100%", opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{
-                    duration: 1,
-                    delay: 0.15,
-                    ease: [0.76, 0, 0.24, 1],
-                  }}
-                  className="block text-neutral-500"
-                >
-                  Goszczycki
-                </motion.span>
-              </h1>
-            </div>
+                Mateusz
+              </motion.span>
+              <motion.span
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{
+                  duration: 1,
+                  delay: 0.1,
+                  ease: [0.76, 0, 0.24, 1],
+                }}
+                className="block text-neutral-500"
+              >
+                Goszczycki
+              </motion.span>
+            </h1>
+          </motion.div>
 
-            {/* ACTION BUTTONS */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="mt-6 md:mt-10 flex flex-wrap items-center gap-3 md:gap-5 z-30 relative"
+          {/* ACTION BUTTONS (Przeniesione nad cytaty, żeby były dostępne z pierwszego widoku) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="mt-8 flex flex-wrap items-center gap-3 md:gap-5 z-30 relative"
+          >
+            <a
+              href="https://github.com/goniek94"
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 px-5 py-3 bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#D4AF37] rounded-full text-sm font-mono uppercase tracking-widest transition-all hover:text-[#D4AF37]"
             >
-              <a
-                href="https://github.com/goniek94"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 px-5 py-2.5 md:px-8 md:py-4 bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#D4AF37] rounded-full text-xs md:text-sm font-mono uppercase tracking-widest transition-all hover:text-[#D4AF37] hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] cursor-pointer"
-              >
-                <FaGithub size={16} /> GitHub
-              </a>
+              <FaGithub size={16} /> GitHub
+            </a>
+            <button
+              onClick={() => setIsProjectsModalOpen(true)}
+              className="flex items-center gap-2 px-5 py-3 bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#D4AF37] rounded-full text-sm font-mono uppercase tracking-widest transition-all hover:text-[#D4AF37]"
+            >
+              <FaCode size={16} /> Code Viewer
+            </button>
+            <button
+              onClick={() => setIsCVModalOpen(true)}
+              className="flex items-center gap-2 px-5 py-3 bg-[#D4AF37]/10 border border-[#D4AF37]/50 hover:border-[#D4AF37] hover:bg-[#D4AF37]/20 rounded-full text-sm font-mono uppercase tracking-widest text-[#D4AF37] transition-all"
+            >
+              <FaFileAlt size={16} /> Interactive CV
+            </button>
+          </motion.div>
 
-              <a
-                href="#projects"
-                className="flex items-center gap-2 px-5 py-2.5 md:px-8 md:py-4 bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#D4AF37] rounded-full text-xs md:text-sm font-mono uppercase tracking-widest transition-all hover:text-[#D4AF37] hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] cursor-pointer"
-              >
-                <FaLayerGroup size={16} /> Projects
-              </a>
-
-              <button
-                onClick={() => setIsProjectsModalOpen(true)}
-                className="flex items-center gap-2 px-5 py-2.5 md:px-8 md:py-4 bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#D4AF37] rounded-full text-xs md:text-sm font-mono uppercase tracking-widest transition-all hover:text-[#D4AF37] hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] cursor-pointer"
-              >
-                <FaCode size={16} /> Code Viewer
-              </button>
-
-              <button
-                onClick={() => setIsCVModalOpen(true)}
-                className="flex items-center gap-2 px-5 py-2.5 md:px-8 md:py-4 bg-[#D4AF37]/10 border border-[#D4AF37]/50 hover:border-[#D4AF37] hover:bg-[#D4AF37]/20 rounded-full text-xs md:text-sm font-mono uppercase tracking-widest text-[#D4AF37] transition-all hover:shadow-[0_0_20px_rgba(212,175,55,0.2)] cursor-pointer"
-              >
-                <FaFileAlt size={16} /> Interactive CV
-              </button>
-            </motion.div>
-
-            {/* ROTATING QUOTES */}
-            <div className="mt-8 md:mt-12 max-w-3xl border-t border-[#222] pt-4 md:pt-10">
+          {/* BIO + ROTATING QUOTES */}
+          <div className="mt-12 max-w-3xl border-t border-[#222] pt-10">
+            <div className="relative overflow-hidden min-h-[100px]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={quoteIndex}
@@ -270,122 +205,36 @@ export default function Hero() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -10 }}
                   transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className="text-fluid-xl italic text-neutral-400 font-light leading-relaxed border-l-2 border-[#D4AF37] pl-4 md:pl-8 min-h-[80px]"
+                  className="text-xl md:text-2xl italic text-neutral-400 font-light leading-relaxed border-l-2 border-[#D4AF37] pl-8"
                 >
-                  {quotes[quoteIndex].text}
+                  {heroQuotes[quoteIndex].text}
                 </motion.div>
               </AnimatePresence>
             </div>
           </div>
 
-          {/* MARQUEE — CSS animation (no JS RAF) */}
-          <div className="mt-4 md:mt-16 w-full overflow-hidden pointer-events-none shrink-0">
-            <div
-              className="marquee-css font-black text-transparent uppercase"
-              style={{
-                WebkitTextStroke: "1px #D4AF37",
-                opacity: 0.7,
-                fontSize: "clamp(1.8rem, 6vw, 6rem)",
-                gap: "clamp(1.5rem, 4vw, 2.5rem)",
-                animationDuration: "35s",
-              }}
+          {/* --- GOLD STACK MARQUEE --- */}
+          <div className="mt-16 w-full overflow-hidden whitespace-nowrap pointer-events-none">
+            <motion.div
+              className="flex gap-10 text-6xl md:text-8xl font-black text-transparent uppercase"
+              style={{ WebkitTextStroke: "1.5px #D4AF37", opacity: 0.8 }}
+              animate={{ x: [0, -2000] }}
+              transition={{ repeat: Infinity, duration: 35, ease: "linear" }}
             >
-              {[0, 1].map((n) => (
-                <span key={n} className="flex gap-[2.5rem] pr-[2.5rem]">
-                  REACT&nbsp;•&nbsp;NEXT.JS&nbsp;•&nbsp;NEST.JS&nbsp;•&nbsp;TYPESCRIPT&nbsp;•&nbsp;JAVASCRIPT&nbsp;•&nbsp;POSTGRESQL&nbsp;•&nbsp;NODE.JS&nbsp;•&nbsp;TAILWIND&nbsp;•&nbsp;DOCKER&nbsp;•&nbsp;PRISMA&nbsp;•
-                </span>
-              ))}
-            </div>
+              REACT • NEXT.JS • NEST.JS • TYPESCRIPT • JAVASCRIPT • POSTGRESQL •
+              NODE.JS • TAILWIND • DOCKER • PRISMA • REACT • NEXT.JS • NEST.JS
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* 1. MODAL: WYBÓR PROJEKTÓW DLA CODE VIEWER */}
-      {/* ------------------------------------------------------------------ */}
-      <AnimatePresence>
-        {isProjectsModalOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md"
-            onClick={() => setIsProjectsModalOpen(false)}
-          >
-            <motion.div
-              initial={{ y: 50, scale: 0.95 }}
-              animate={{ y: 0, scale: 1 }}
-              exit={{ y: 20, scale: 0.95 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-lg bg-[#050505] border border-[#D4AF37]/30 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden"
-            >
-              <button
-                onClick={() => setIsProjectsModalOpen(false)}
-                className="absolute top-4 right-4 text-neutral-500 hover:text-[#D4AF37] transition-colors p-2 bg-[#0a0a0a] rounded-full border border-[#1a1a1a] cursor-pointer z-50"
-              >
-                <FaTimes size={16} />
-              </button>
+      {/* --- WYDZIELONE MODALE --- */}
+      <ProjectsVaultModal
+        isOpen={isProjectsModalOpen}
+        onClose={() => setIsProjectsModalOpen(false)}
+        onSelectProject={handleOpenVSCode}
+      />
 
-              <div className="p-6 md:p-8">
-                <div className="mb-6">
-                  <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-2 flex items-center gap-3">
-                    <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Select
-                    Source
-                  </h3>
-                  <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-white">
-                    Code <span className="text-[#D4AF37]">Vault</span>
-                  </h2>
-                </div>
-
-                <div className="space-y-3">
-                  {[
-                    {
-                      id: 1,
-                      name: "Autosell.pl",
-                      desc: "Enterprise Marketplace • Node.js, Express, Socket.IO",
-                    },
-                    {
-                      id: 2,
-                      name: "Matchdays",
-                      desc: "Sports Auction Platform • NestJS, PostgreSQL, Stripe",
-                    },
-                    {
-                      id: 3,
-                      name: "Windows XP",
-                      desc: "Interactive OS Portfolio • React 19, TypeScript",
-                    },
-                  ].map((proj) => (
-                    <div
-                      key={proj.id}
-                      onClick={() => handleOpenVSCode(proj.id)}
-                      className="group flex items-center justify-between p-4 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl hover:border-[#D4AF37] hover:bg-[#D4AF37]/5 cursor-pointer transition-all duration-300"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-lg bg-[#111] border border-[#222] group-hover:border-[#D4AF37]/50 flex items-center justify-center text-neutral-500 group-hover:text-[#D4AF37] transition-colors">
-                          <FaFolderOpen size={16} />
-                        </div>
-                        <div>
-                          <h4 className="text-white font-bold group-hover:text-[#D4AF37] transition-colors">
-                            {proj.name}
-                          </h4>
-                          <p className="text-[10px] md:text-xs text-neutral-500 font-mono mt-0.5">
-                            {proj.desc}
-                          </p>
-                        </div>
-                      </div>
-                      <FaChevronRight className="text-neutral-700 group-hover:text-[#D4AF37] transition-colors" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* 2. KOMPONENT VSCODE VIEWER (Wysuwa się po kliknięciu w projekt) */}
-      {/* ------------------------------------------------------------------ */}
       <VSCodeViewer
         isOpen={isVSCodeOpen}
         onClose={() => setIsVSCodeOpen(false)}
@@ -393,540 +242,10 @@ export default function Hero() {
         title={currentTitle}
       />
 
-      {/* ------------------------------------------------------------------ */}
-      {/* 3. INTERACTIVE CV MODAL */}
-      {/* ------------------------------------------------------------------ */}
-      <AnimatePresence>
-        {isCVModalOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 md:p-12 bg-black/80 backdrop-blur-md"
-            onClick={() => setIsCVModalOpen(false)}
-          >
-            <motion.div
-              initial={{ y: 50, scale: 0.95 }}
-              animate={{ y: 0, scale: 1 }}
-              exit={{ y: 20, scale: 0.95 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-[#050505] border border-[#D4AF37]/30 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] custom-scrollbar"
-            >
-              {/* Close Button */}
-              <button
-                onClick={() => setIsCVModalOpen(false)}
-                className="absolute top-4 right-4 md:top-6 md:right-6 text-neutral-500 hover:text-[#D4AF37] transition-colors p-2 bg-[#0a0a0a] rounded-full border border-[#1a1a1a] cursor-pointer z-50"
-              >
-                <FaTimes size={20} />
-              </button>
-
-              {/* CV Content Wrapper */}
-              <div className="p-6 sm:p-10 md:p-14 space-y-12">
-                {/* 1. HEADER SECTION */}
-                <div className="border-b border-[#1a1a1a] pb-8">
-                  <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white leading-none">
-                    Mateusz <span className="text-[#D4AF37]">Goszczycki</span>
-                  </h2>
-                  <h3 className="text-xl md:text-2xl text-neutral-300 mt-3 font-light tracking-wide">
-                    Full Stack Engineer · 4 Production Applications Shipped
-                  </h3>
-
-                  {/* Personal Info Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-                    <div className="flex items-center gap-3 text-sm text-neutral-400">
-                      <FaCalendarAlt className="text-[#D4AF37]" />{" "}
-                      <span>Born: 1994</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-neutral-400">
-                      <FaMapMarkerAlt className="text-[#D4AF37]" />{" "}
-                      <span>Łowicz / Warsaw, PL</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-neutral-400">
-                      <FaBriefcase className="text-[#D4AF37]" />{" "}
-                      <span>Mid-Level · Remote OK</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-[#27c93f]">
-                      <span className="w-2 h-2 rounded-full bg-[#27c93f] inline-block shrink-0" />
-                      <span>Open to relocation</span>
-                    </div>
-                  </div>
-
-                  {/* Contact Links — -> style matching CV */}
-                  <div className="flex flex-wrap items-center gap-x-0 gap-y-2 mt-6 pt-6 border-t border-[#1a1a1a]/50 font-mono text-sm">
-                    {[
-                      { href: "mailto:mateusz.goszczycki1994@gmail.com", label: "mateusz.goszczycki1994@gmail.com", icon: <FaEnvelope />, external: false },
-                      { href: "tel:+48516223029", label: "+48 516 223 029", icon: <FaPhoneAlt />, external: false },
-                      { href: "https://github.com/Goniek94", label: "github.com/Goniek94", icon: <FaGithub />, external: true },
-                      { href: "https://mateuszgoszczyckiportfolio.vercel.app", label: "portfolio", icon: <FaCode />, external: true },
-                    ].map(({ href, label, icon, external }, i) => (
-                      <span key={i} className="flex items-center">
-                        <span className="text-[#D4AF37] font-black px-2 select-none">-&gt;</span>
-                        <a
-                          href={href}
-                          target={external ? "_blank" : undefined}
-                          rel={external ? "noopener noreferrer" : undefined}
-                          className="flex items-center gap-1.5 text-[#D4AF37] hover:text-white transition-colors bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 px-3 py-1.5 rounded-lg cursor-pointer"
-                        >
-                          {icon} {label}
-                        </a>
-                      </span>
-                    ))}
-                    <span className="text-[#D4AF37] font-black px-2 select-none">-&gt;</span>
-                    {/* LINK DO POBRANIA - wymaga by plik na dysku nazywał się Mateusz_Goszczycki_CV.pdf */}
-                    <a
-                      href="/Mateusz_Goszczycki_CV.pdf"
-                      download="Mateusz_Goszczycki_CV.pdf"
-                      className="flex items-center gap-2 text-sm font-bold font-mono text-[#050505] bg-[#D4AF37] hover:bg-white px-5 py-2 rounded-lg cursor-pointer transition-colors shadow-[0_0_15px_rgba(212,175,55,0.4)]"
-                    >
-                      <FaDownload /> Download PDF
-                    </a>
-                  </div>
-                </div>
-
-                {/* 2. PROFILE & STRENGTHS GRID */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  <section>
-                    <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-4 flex items-center gap-3">
-                      <div className="h-[1px] w-8 bg-[#D4AF37]/50" />{" "}
-                      Professional Profile
-                    </h3>
-                    <p className="text-neutral-300 text-sm md:text-base leading-relaxed font-light">
-                      I am a Full Stack Engineer who
-                      successfully transitioned from a demanding career in
-                      gastronomy. Working as a Head Chef and Instructor for
-                      individuals with disabilities taught me extreme patience,
-                      crisis management, and the ability to lead under pressure.
-                      I bring this mature, organized approach to software
-                      engineering, taking end-to-end ownership of the
-                      applications I build.
-                    </p>
-                  </section>
-
-                  <section>
-                    <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-4 flex items-center gap-3">
-                      <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Key
-                      Strengths
-                    </h3>
-                    <ul className="space-y-3">
-                      {[
-                        "End-to-end product ownership — spec to prod",
-                        "Client-facing: requirements, feedback loops, trade-off calls",
-                        "Async & remote communication — delivered solo for paying clients",
-                        "Rapid self-learning under pressure (career pivot in 2 years)",
-                      ].map((item, i) => (
-                        <li
-                          key={i}
-                          className="flex items-start gap-3 text-sm md:text-base text-neutral-300 font-light"
-                        >
-                          <div className="mt-1.5 w-1.5 h-1.5 bg-[#D4AF37] rounded-full shrink-0" />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                </div>
-
-                {/* 3. TECH STACK (Categorized) - Równiutkie 6 elementów na kolumnę */}
-                <section>
-                  <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-6 flex items-center gap-3">
-                    <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Tech Stack
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {/* Frontend */}
-                    <div>
-                      <h4 className="text-neutral-500 font-mono text-xs uppercase mb-3">
-                        Frontend
-                      </h4>
-                      <div className="flex flex-col gap-2">
-                        {[
-                          "JavaScript",
-                          "TypeScript",
-                          "React 18",
-                          "Next.js",
-                          "Tailwind CSS v4",
-                          "Framer Motion",
-                        ].map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-3 py-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg text-xs font-mono text-neutral-300 hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/5 transition-all cursor-default flex items-center justify-between group"
-                          >
-                            {tech}
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#1a1a1a] group-hover:bg-[#D4AF37] transition-colors" />
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    {/* Backend */}
-                    <div>
-                      <h4 className="text-neutral-500 font-mono text-xs uppercase mb-3">
-                        Backend
-                      </h4>
-                      <div className="flex flex-col gap-2">
-                        {[
-                          "Node.js",
-                          "NestJS",
-                          "Express.js",
-                          "REST APIs",
-                          "Socket.IO",
-                          "JWT Auth",
-                        ].map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-3 py-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg text-xs font-mono text-neutral-300 hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/5 transition-all cursor-default flex items-center justify-between group"
-                          >
-                            {tech}
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#1a1a1a] group-hover:bg-[#D4AF37] transition-colors" />
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    {/* Database */}
-                    <div>
-                      <h4 className="text-neutral-500 font-mono text-xs uppercase mb-3">
-                        Database
-                      </h4>
-                      <div className="flex flex-col gap-2">
-                        {[
-                          "PostgreSQL",
-                          "MongoDB",
-                          "Prisma ORM",
-                          "Mongoose",
-                          "Redis",
-                          "Supabase",
-                        ].map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-3 py-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg text-xs font-mono text-neutral-300 hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/5 transition-all cursor-default flex items-center justify-between group"
-                          >
-                            {tech}
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#1a1a1a] group-hover:bg-[#D4AF37] transition-colors" />
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    {/* DevOps & Tools */}
-                    <div>
-                      <h4 className="text-neutral-500 font-mono text-xs uppercase mb-3">
-                        DevOps & Tools
-                      </h4>
-                      <div className="flex flex-col gap-2">
-                        {[
-                          "Docker",
-                          "Git",
-                          "Linux VPS",
-                          "NGINX",
-                          "PM2",
-                          "Jest",
-                        ].map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-3 py-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg text-xs font-mono text-neutral-300 hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/5 transition-all cursor-default flex items-center justify-between group"
-                          >
-                            {tech}
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#1a1a1a] group-hover:bg-[#D4AF37] transition-colors" />
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </section>
-
-                {/* 4. PROJECTS */}
-                <section>
-                  <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-8 flex items-center gap-3">
-                    <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Projects
-                  </h3>
-                  <div className="space-y-10">
-                    {/* Matchdays */}
-                    <div className="relative pl-6 border-l-2 border-[#D4AF37]/50">
-                      <div className="absolute w-3 h-3 bg-[#D4AF37] rounded-full -left-[7px] top-1.5 shadow-[0_0_10px_#D4AF37]" />
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
-                        <h4 className="text-white font-bold text-lg md:text-xl">
-                          Matchdays{" "}
-                          <span className="text-neutral-400 font-normal text-sm ml-2">
-                            — Sports Auction Marketplace
-                          </span>
-                        </h4>
-                        <span className="text-[#D4AF37] font-mono text-xs border border-[#D4AF37]/30 px-2 py-1 rounded">
-                          2025 — 2026
-                        </span>
-                      </div>
-
-                      {/* TECH BADGES */}
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {[
-                          "Next.js 14",
-                          "NestJS",
-                          "TypeScript",
-                          "PostgreSQL",
-                          "Prisma ORM",
-                          "Socket.IO",
-                          "Redis",
-                          "Stripe Connect",
-                          "Google Gemini",
-                        ].map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-2 py-0.5 bg-[#0a0a0a] border border-[#222] rounded text-[9px] md:text-[10px] font-mono text-[#D4AF37]/80 uppercase tracking-wider"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-
-                      <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
-                        Full-stack sports memorabilia auction platform with
-                        real-time bidding via{" "}
-                        <strong>NestJS WebSocket Gateway</strong>, JWT auth with
-                        account lockout, AI-powered jersey verification (
-                        <strong>Google Gemini</strong>),{" "}
-                        <strong>Stripe Connect</strong> payouts, and a smart
-                        listing engine. Live and accepting real users.
-                      </p>
-                    </div>
-
-                    {/* Autosell */}
-                    <div className="relative pl-6 border-l-2 border-[#D4AF37]/50">
-                      <div className="absolute w-3 h-3 bg-[#D4AF37] rounded-full -left-[7px] top-1.5 shadow-[0_0_10px_#D4AF37]" />
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
-                        <h4 className="text-white font-bold text-lg md:text-xl">
-                          Autosell.pl{" "}
-                          <span className="text-neutral-400 font-normal text-sm ml-2">
-                            — Automotive Marketplace
-                          </span>
-                        </h4>
-                        <span className="text-[#D4AF37] font-mono text-xs border border-[#D4AF37]/30 px-2 py-1 rounded">
-                          2024
-                        </span>
-                      </div>
-
-                      {/* TECH BADGES */}
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {[
-                          "React 18",
-                          "Node.js",
-                          "Express",
-                          "MongoDB",
-                          "Socket.IO",
-                          "JWT",
-                        ].map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-2 py-0.5 bg-[#0a0a0a] border border-[#222] rounded text-[9px] md:text-[10px] font-mono text-[#D4AF37]/80 uppercase tracking-wider"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-
-                      <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
-                        Built an end-to-end production vehicle marketplace for a
-                        client. Gathered requirements, managed feedback, and
-                        delivered a scalable platform. Implemented real-time
-                        messaging using <strong>Socket.IO</strong>, complex
-                        search filters, secure JWT authentication, and designed
-                        a robust database schema.
-                      </p>
-                    </div>
-
-                    {/* Ecomati */}
-                    <div className="relative pl-6 border-l-2 border-[#D4AF37]/50">
-                      <div className="absolute w-3 h-3 bg-[#D4AF37] rounded-full -left-[7px] top-1.5 shadow-[0_0_10px_#D4AF37]" />
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
-                        <h4 className="text-white font-bold text-lg md:text-xl">
-                          Ecomati.pl{" "}
-                          <span className="text-neutral-400 font-normal text-sm ml-2">
-                            — Organic Food E-Commerce
-                          </span>
-                        </h4>
-                        <span className="text-[#D4AF37] font-mono text-xs border border-[#D4AF37]/30 px-2 py-1 rounded">
-                          2025
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {[
-                          "Next.js",
-                          "NestJS",
-                          "TypeScript",
-                          "PostgreSQL",
-                          "Prisma ORM",
-                          "Docker",
-                          "Redis",
-                          "Supabase",
-                        ].map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-2 py-0.5 bg-[#0a0a0a] border border-[#222] rounded text-[9px] md:text-[10px] font-mono text-[#D4AF37]/80 uppercase tracking-wider"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                      <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
-                        Two-app system — customer storefront + admin panel sharing one{" "}
-                        <strong>PostgreSQL</strong> database via <strong>Prisma ORM</strong>.
-                        Dynamic product variants, persistent cart, Zod-validated API routes,
-                        sales analytics dashboard. Fully containerized with{" "}
-                        <strong>Docker</strong>. Live at ecomati.pl.
-                      </p>
-                    </div>
-
-                    {/* Windows XP Portfolio */}
-                    <div className="relative pl-6 border-l-2 border-[#D4AF37]/50">
-                      <div className="absolute w-3 h-3 bg-[#D4AF37] rounded-full -left-[7px] top-1.5 shadow-[0_0_10px_#D4AF37]" />
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
-                        <h4 className="text-white font-bold text-lg md:text-xl">
-                          Windows XP Portfolio{" "}
-                          <span className="text-neutral-400 font-normal text-sm ml-2">
-                            — Interactive OS Simulation
-                          </span>
-                        </h4>
-                        <span className="text-[#D4AF37] font-mono text-xs border border-[#D4AF37]/30 px-2 py-1 rounded">
-                          2026
-                        </span>
-                      </div>
-
-                      {/* TECH BADGES */}
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {[
-                          "React 19",
-                          "TypeScript",
-                          "Tailwind CSS v4",
-                          "CSS Animations",
-                        ].map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-2 py-0.5 bg-[#0a0a0a] border border-[#222] rounded text-[9px] md:text-[10px] font-mono text-[#D4AF37]/80 uppercase tracking-wider"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-
-                      <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
-                        Built a fully functional Windows XP simulation acting as
-                        an interactive portfolio. Engineered a custom window
-                        manager, boot sequence, and recreated retro apps.
-                        Showcases advanced <strong>React</strong> state
-                        management and complex UI architecture.
-                      </p>
-                    </div>
-                  </div>
-                </section>
-
-                {/* 5. WORK EXPERIENCE */}
-                <section>
-                  <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-8 flex items-center gap-3">
-                    <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Work
-                    Experience
-                  </h3>
-                  <div className="space-y-10">
-                    {/* Freelance Full Stack Engineer */}
-                    <div className="relative pl-6 border-l-2 border-[#1a1a1a]">
-                      <div className="absolute w-3 h-3 bg-[#333] rounded-full -left-[7px] top-1.5" />
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-                        <h4 className="text-neutral-300 font-bold text-lg md:text-xl">
-                          Freelance Full Stack Engineer
-                        </h4>
-                        <span className="text-neutral-600 font-mono text-xs border border-[#1a1a1a] px-2 py-1 rounded">
-                          2023 - Present
-                        </span>
-                      </div>
-                      <p className="text-neutral-500 text-sm font-mono mb-3">
-                        Client Collaboration (Remote)
-                      </p>
-                      <p className="text-neutral-400 text-sm md:text-base leading-relaxed mt-2">
-                        2+ years delivering production systems for paying clients — full ownership from requirements gathering through architecture, iterative feedback loops, and zero-downtime deployment. Worked directly with stakeholders: translating business needs into technical decisions, managing scope, and communicating trade-offs clearly. Built and deployed Autosell.pl end-to-end on Linux VPS — sole developer, shipped on schedule.
-                      </p>
-                    </div>
-
-                    {/* ZAZ Ja Ty My */}
-                    <div className="relative pl-6 border-l-2 border-[#1a1a1a]">
-                      <div className="absolute w-3 h-3 bg-[#333] rounded-full -left-[7px] top-1.5" />
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-                        <h4 className="text-neutral-300 font-bold text-lg md:text-xl">
-                          Head Chef & Culinary Instructor
-                        </h4>
-                        <span className="text-neutral-600 font-mono text-xs border border-[#1a1a1a] px-2 py-1 rounded">
-                          2017 - 2023
-                        </span>
-                      </div>
-                      <p className="text-neutral-500 text-sm font-mono mb-3">
-                        Zakład Aktywności Zawodowej "Ja Ty My"
-                      </p>
-                      <p className="text-neutral-400 text-sm md:text-base leading-relaxed mt-2">
-                        Managed full kitchen operations and acted as an
-                        instructor and mentor for individuals with disabilities.
-                        This highly demanding role honed my leadership, empathy,
-                        and crisis-management abilities. During this time, I
-                        dedicated my evenings to intensive, self-directed
-                        programming study, eventually transitioning fully into
-                        software engineering.
-                      </p>
-                    </div>
-                  </div>
-                </section>
-
-                {/* 6. LANGUAGES & INTERESTS */}
-                <section>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    {/* Languages */}
-                    <div>
-                      <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-5 flex items-center gap-3">
-                        <div className="h-[1px] w-8 bg-[#D4AF37]/50" />{" "}
-                        Languages
-                      </h3>
-                      <div className="flex flex-col gap-3">
-                        <div className="flex items-center justify-between bg-[#0a0a0a] border border-[#1a1a1a] px-4 py-3 rounded-xl hover:border-[#D4AF37]/40 transition-colors">
-                          <span className="text-white font-bold text-sm">
-                            Polish
-                          </span>
-                          <span className="text-[#D4AF37] font-mono text-xs tracking-widest uppercase">
-                            Native
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between bg-[#0a0a0a] border border-[#1a1a1a] px-4 py-3 rounded-xl hover:border-[#D4AF37]/40 transition-colors">
-                          <span className="text-white font-bold text-sm">
-                            English
-                          </span>
-                          <span className="text-[#D4AF37] font-mono text-xs tracking-widest uppercase">
-                            B2 / Professional Working
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Interests */}
-                    <div>
-                      <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-5 flex items-center gap-3">
-                        <div className="h-[1px] w-8 bg-[#D4AF37]/50" />{" "}
-                        Interests
-                      </h3>
-                      <div className="flex flex-wrap gap-3">
-                        {[
-                          "Sports",
-                          "Traveling",
-                          "Music",
-                          "Video Games",
-                          "Artificial Intelligence",
-                        ].map((interest, i) => (
-                          <span
-                            key={i}
-                            className="px-3 py-1.5 border border-[#1a1a1a] bg-[#0a0a0a] rounded-lg text-xs md:text-sm text-neutral-400 font-light flex items-center gap-2 hover:border-[#D4AF37]/40 transition-colors"
-                          >
-                            <div className="w-1.5 h-1.5 bg-[#D4AF37] rounded-full" />
-                            {interest}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </section>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <InteractiveCVModal
+        isOpen={isCVModalOpen}
+        onClose={() => setIsCVModalOpen(false)}
+      />
     </>
   );
 }
