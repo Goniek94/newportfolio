@@ -66,8 +66,9 @@ export default function InteractiveCVModal({
             </div>
 
             <div className="flex items-center gap-4">
+              {/* DESKTOP DOWNLOAD BUTTON */}
               <a
-                href="/cv_mateusz.pdf"
+                href="/cv_mateusz.pdf" // Zmieniono z cv_mateusz (1).pdf
                 download="Mateusz_Goszczycki_CV.pdf"
                 className="hidden sm:flex items-center gap-2 bg-[#D4AF37] text-black px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white transition-all shadow-[0_0_20px_rgba(212,175,55,0.2)] transform hover:-translate-y-0.5"
               >
@@ -82,9 +83,10 @@ export default function InteractiveCVModal({
             </div>
           </div>
 
+          {/* MOBILE DOWNLOAD BUTTON */}
           <div className="sm:hidden p-4 border-b border-[#222] bg-[#0a0a0a]">
             <a
-              href="/cv_mateusz.pdf"
+              href="/cv_mateusz.pdf" // Zmieniono z cv_mateusz (1).pdf
               download="Mateusz_Goszczycki_CV.pdf"
               className="w-full flex justify-center items-center gap-2 bg-[#D4AF37] text-black px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest"
             >
