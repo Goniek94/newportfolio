@@ -7,9 +7,9 @@ import {
   AnimatePresence,
 } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { FaGithub, FaCode, FaFileAlt, FaLayerGroup } from "react-icons/fa";
+import { FaGithub, FaCode, FaFileAlt } from "react-icons/fa";
 
-// Importy Modali (Upewnij się, że ścieżki są poprawne!)
+// Importy Modali
 import VSCodeViewer from "./VSCodeViewer";
 import ProjectsVaultModal from "./ProjectsVaultModal";
 import InteractiveCVModal from "./InteractiveCVModal";
@@ -25,7 +25,7 @@ import {
 export default function Hero() {
   const containerRef = useRef(null);
 
-  // Twoje animacje na scrolla
+  // Animacje na scrolla
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
@@ -102,11 +102,11 @@ export default function Hero() {
             >
               <div className="h-[2px] w-12 bg-[#D4AF37]" />
               <span className="text-xs md:text-sm font-mono tracking-[0.2em] text-[#D4AF37] uppercase font-bold">
-                Full Stack Engineer • Poland
+                Software Engineer • Poland
               </span>
             </motion.div>
 
-            {/* DOJEBANY ZEGAR */}
+            {/* ZEGAR */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -166,7 +166,7 @@ export default function Hero() {
             </h1>
           </motion.div>
 
-          {/* ACTION BUTTONS (Przeniesione nad cytaty, żeby były dostępne z pierwszego widoku) */}
+          {/* ACTION BUTTONS (Bez pobierania, bo przenieśliśmy do CV) */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

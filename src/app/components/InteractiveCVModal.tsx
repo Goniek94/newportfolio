@@ -1,18 +1,18 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect } from "react";
 import {
   FaTimes,
   FaDownload,
-  FaMapMarkerAlt,
-  FaBriefcase,
-  FaCalendarAlt,
-  FaEnvelope,
-  FaPhoneAlt,
-  FaGithub,
-  FaCode,
+  FaServer,
+  FaCodeBranch,
+  FaBug,
+  FaUsers,
+  FaLightbulb,
+  FaRocket,
+  FaShieldAlt,
 } from "react-icons/fa";
+import { useEffect } from "react";
 
 interface InteractiveCVModalProps {
   isOpen: boolean;
@@ -24,361 +24,386 @@ export default function InteractiveCVModal({
   onClose,
 }: InteractiveCVModalProps) {
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
     if (isOpen) {
       document.body.style.overflow = "hidden";
-      window.addEventListener("keydown", handleKeyDown);
     } else {
       document.body.style.overflow = "unset";
     }
     return () => {
       document.body.style.overflow = "unset";
-      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
+
+  if (!isOpen) return null;
 
   return (
     <AnimatePresence>
-      {isOpen && (
+      <div className="fixed inset-0 z-[9999] flex justify-center items-center p-4 sm:p-6 md:p-12">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 md:p-12 bg-black/80 backdrop-blur-md"
           onClick={onClose}
+          className="absolute inset-0 bg-black/80 backdrop-blur-md"
+        />
+
+        <motion.div
+          initial={{ opacity: 0, y: 30, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.98 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="relative w-full max-w-7xl h-[90vh] md:h-[85vh] bg-[#0a0a0a] border border-[#222] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
         >
-          <motion.div
-            initial={{ y: 50, scale: 0.95 }}
-            animate={{ y: 0, scale: 1 }}
-            exit={{ y: 20, scale: 0.95 }}
-            onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-[#050505] border border-[#D4AF37]/30 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] custom-scrollbar"
-          >
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 md:top-6 md:right-6 text-neutral-500 hover:text-[#D4AF37] transition-colors p-2 bg-[#0a0a0a] rounded-full border border-[#1a1a1a] cursor-pointer z-50"
+          {/* --- HEADER --- */}
+          <div className="h-20 sm:h-24 bg-[#0f0f0f] border-b border-[#222] flex items-center justify-between px-6 sm:px-10 shrink-0 relative z-20">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tighter">
+                Mateusz Goszczycki
+              </h2>
+              <p className="text-[#D4AF37] font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase mt-1">
+                Full Stack Software Engineer
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <a
+                href="/cv_mateusz.pdf"
+                download="Mateusz_Goszczycki_CV.pdf"
+                className="hidden sm:flex items-center gap-2 bg-[#D4AF37] text-black px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white transition-all shadow-[0_0_20px_rgba(212,175,55,0.2)] transform hover:-translate-y-0.5"
+              >
+                <FaDownload size={12} /> Download PDF
+              </a>
+              <button
+                onClick={onClose}
+                className="w-10 h-10 bg-[#1a1a1a] hover:bg-[#D4AF37] text-white hover:text-black rounded-full flex items-center justify-center transition-colors border border-[#333] hover:border-transparent"
+              >
+                <FaTimes />
+              </button>
+            </div>
+          </div>
+
+          <div className="sm:hidden p-4 border-b border-[#222] bg-[#0a0a0a]">
+            <a
+              href="/cv_mateusz.pdf"
+              download="Mateusz_Goszczycki_CV.pdf"
+              className="w-full flex justify-center items-center gap-2 bg-[#D4AF37] text-black px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest"
             >
-              <FaTimes size={20} />
-            </button>
+              <FaDownload size={12} /> Download PDF
+            </a>
+          </div>
 
-            <div className="p-6 sm:p-10 md:p-14 space-y-12">
-              {/* 1. HEADER */}
-              <div className="border-b border-[#1a1a1a] pb-8">
-                <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white leading-none">
-                  Mateusz <span className="text-[#D4AF37]">Goszczycki</span>
-                </h2>
-                <h3 className="text-xl md:text-2xl text-neutral-300 mt-3 font-light tracking-wide">
-                  Full Stack Engineer · 4 Production Applications Shipped
-                </h3>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-                  <div className="flex items-center gap-3 text-sm text-neutral-400">
-                    <FaCalendarAlt className="text-[#D4AF37]" />{" "}
-                    <span>Born: 1994</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm text-neutral-400">
-                    <FaMapMarkerAlt className="text-[#D4AF37]" />{" "}
-                    <span>Łowicz / Warsaw, PL</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm text-neutral-400">
-                    <FaBriefcase className="text-[#D4AF37]" />{" "}
-                    <span>Mid-Level · Remote OK</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm text-[#27c93f]">
-                    <span className="w-2 h-2 rounded-full bg-[#27c93f] inline-block shrink-0" />
-                    <span>Open to relocation</span>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-x-0 gap-y-2 mt-6 pt-6 border-t border-[#1a1a1a]/50 font-mono text-sm">
-                  {[
-                    {
-                      href: "mailto:mateusz.goszczycki1994@gmail.com",
-                      label: "mateusz.goszczycki1994@gmail.com",
-                      icon: <FaEnvelope />,
-                      external: false,
-                    },
-                    {
-                      href: "tel:+48516223029",
-                      label: "+48 516 223 029",
-                      icon: <FaPhoneAlt />,
-                      external: false,
-                    },
-                    {
-                      href: "https://github.com/Goniek94",
-                      label: "github.com/Goniek94",
-                      icon: <FaGithub />,
-                      external: true,
-                    },
-                    {
-                      href: "https://mateuszgoszczyckiportfolio.vercel.app",
-                      label: "portfolio",
-                      icon: <FaCode />,
-                      external: true,
-                    },
-                  ].map(({ href, label, icon, external }, i) => (
-                    <span key={i} className="flex items-center">
-                      <span className="text-[#D4AF37] font-black px-2 select-none">
-                        -&gt;
-                      </span>
-                      <a
-                        href={href}
-                        target={external ? "_blank" : undefined}
-                        rel={external ? "noopener noreferrer" : undefined}
-                        className="flex items-center gap-1.5 text-[#D4AF37] hover:text-white transition-colors bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 px-3 py-1.5 rounded-lg cursor-pointer"
-                      >
-                        {icon} {label}
-                      </a>
-                    </span>
-                  ))}
-                  <span className="text-[#D4AF37] font-black px-2 select-none">
-                    -&gt;
-                  </span>
-                  <a
-                    href="/Mateusz_Goszczycki_CV.pdf"
-                    download="Mateusz_Goszczycki_CV.pdf"
-                    className="flex items-center gap-2 text-sm font-bold font-mono text-[#050505] bg-[#D4AF37] hover:bg-white px-5 py-2 rounded-lg cursor-pointer transition-colors shadow-[0_0_15px_rgba(212,175,55,0.4)]"
-                  >
-                    <FaDownload /> Download PDF
-                  </a>
-                </div>
-              </div>
-
-              {/* 2. PROFILE */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          {/* --- GŁÓWNA TREŚĆ --- */}
+          <div className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-10 lg:p-12">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_2.2fr] gap-12 lg:gap-20">
+              {/* --- LEWA KOLUMNA: FILOZOFIA, KLIENT, STACK --- */}
+              <div className="flex flex-col gap-10">
                 <section>
-                  <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-4 flex items-center gap-3">
-                    <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Professional
-                    Profile
+                  <h3 className="text-xs font-mono text-[#555] uppercase tracking-[0.3em] mb-4 border-b border-[#222] pb-2 flex items-center gap-2">
+                    <FaLightbulb className="text-[#D4AF37]" /> Engineering
+                    Philosophy
                   </h3>
-                  <p className="text-neutral-300 text-sm md:text-base leading-relaxed font-light">
-                    I am a Full Stack Engineer who successfully transitioned
-                    from a demanding career in gastronomy. Working as a Head
-                    Chef and Instructor for individuals with disabilities taught
-                    me extreme patience, crisis management, and the ability to
-                    lead under pressure. I bring this mature, organized approach
-                    to software engineering, taking end-to-end ownership of the
-                    applications I build.
+                  <p className="text-neutral-400 text-[13px] leading-relaxed font-light">
+                    I don't just write code; I build businesses. My focus is on
+                    robust architecture, scalable databases, and seamless user
+                    experiences. I believe in choosing the right tool for the
+                    job, writing maintainable code, and anticipating bottlenecks
+                    before they happen in production.
                   </p>
                 </section>
+
                 <section>
-                  <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-4 flex items-center gap-3">
-                    <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Key
-                    Strengths
+                  <h3 className="text-xs font-mono text-[#555] uppercase tracking-[0.3em] mb-4 border-b border-[#222] pb-2 flex items-center gap-2">
+                    <FaUsers className="text-[#D4AF37]" /> Client & Product
+                    Ownership
                   </h3>
-                  <ul className="space-y-3">
-                    {[
-                      "End-to-end product ownership — spec to prod",
-                      "Client-facing: requirements, feedback loops, trade-off calls",
-                      "Async & remote communication — delivered solo for paying clients",
-                      "Rapid self-learning under pressure",
-                    ].map((item, i) => (
-                      <li
-                        key={i}
-                        className="flex items-start gap-3 text-sm md:text-base text-neutral-300 font-light"
-                      >
-                        <div className="mt-1.5 w-1.5 h-1.5 bg-[#D4AF37] rounded-full shrink-0" />
-                        {item}
-                      </li>
-                    ))}
+                  <p className="text-neutral-400 text-[13px] leading-relaxed font-light mb-3">
+                    Experience in driving projects from zero to one. I
+                    specialize in translating vague business requirements into
+                    concrete technical specifications.
+                  </p>
+                  <ul className="text-[12px] text-neutral-400 flex flex-col gap-2 font-light">
+                    <li className="flex items-start gap-2">
+                      <span className="text-[#D4AF37] mt-1">▹</span>{" "}
+                      Requirements gathering & architecture planning
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-[#D4AF37] mt-1">▹</span> Transparent
+                      communication & sprint estimations
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-[#D4AF37] mt-1">▹</span> End-to-end
+                      delivery (DB to Deployment)
+                    </li>
                   </ul>
                 </section>
-              </div>
 
-              {/* 3. TECH STACK */}
-              <section>
-                <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-6 flex items-center gap-3">
-                  <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Tech Stack
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {[
-                    {
-                      title: "Frontend",
-                      tools: [
-                        "JavaScript",
-                        "TypeScript",
-                        "React 18",
-                        "Next.js",
-                        "Tailwind CSS v4",
-                        "Framer Motion",
-                      ],
-                    },
-                    {
-                      title: "Backend",
-                      tools: [
-                        "Node.js",
-                        "NestJS",
-                        "Express.js",
-                        "REST APIs",
-                        "Socket.IO",
-                        "JWT Auth",
-                      ],
-                    },
-                    {
-                      title: "Database",
-                      tools: [
-                        "PostgreSQL",
-                        "MongoDB",
-                        "Prisma ORM",
-                        "Mongoose",
-                        "Redis",
-                        "Supabase",
-                      ],
-                    },
-                    {
-                      title: "DevOps & Tools",
-                      tools: [
-                        "Docker",
-                        "Git",
-                        "Linux VPS",
-                        "NGINX",
-                        "PM2",
-                        "Jest",
-                      ],
-                    },
-                  ].map((category) => (
-                    <div key={category.title}>
-                      <h4 className="text-neutral-500 font-mono text-xs uppercase mb-3">
-                        {category.title}
-                      </h4>
-                      <div className="flex flex-col gap-2">
-                        {category.tools.map((tech) => (
+                <section>
+                  <h3 className="text-xs font-mono text-[#555] uppercase tracking-[0.3em] mb-4 border-b border-[#222] pb-2 flex items-center gap-2">
+                    <FaCodeBranch className="text-[#D4AF37]" /> Core Arsenal
+                  </h3>
+                  <div className="flex flex-col gap-5">
+                    <div>
+                      <span className="text-white text-xs font-bold uppercase block mb-2">
+                        Backend & Architecture
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          "Node.js",
+                          "NestJS",
+                          "Express",
+                          "Microservices",
+                          "REST API",
+                          "Socket.IO",
+                          "WebSockets",
+                        ].map((tech) => (
                           <span
                             key={tech}
-                            className="px-3 py-2 bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg text-xs font-mono text-neutral-300 flex items-center justify-between group hover:border-[#D4AF37]/50 hover:bg-[#D4AF37]/5 transition-all"
+                            className="px-3 py-1 bg-[#151515] border border-[#2a2a2a] rounded text-[10px] text-neutral-300 font-mono"
                           >
                             {tech}
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#1a1a1a] group-hover:bg-[#D4AF37] transition-colors" />
                           </span>
                         ))}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </section>
+                    <div>
+                      <span className="text-white text-xs font-bold uppercase block mb-2">
+                        Frontend & State
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          "React 18",
+                          "Next.js 14",
+                          "TypeScript",
+                          "Zustand",
+                          "TanStack Query",
+                          "Tailwind",
+                        ].map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-3 py-1 bg-[#151515] border border-[#2a2a2a] rounded text-[10px] text-neutral-300 font-mono"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-white text-xs font-bold uppercase block mb-2">
+                        Data & Infra
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          "PostgreSQL",
+                          "MongoDB",
+                          "Prisma ORM",
+                          "Redis",
+                          "BullMQ",
+                          "Docker",
+                          "Linux VPS",
+                        ].map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-3 py-1 bg-[#151515] border border-[#2a2a2a] rounded text-[10px] text-neutral-300 font-mono"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
 
-              {/* 4. PROJECTS */}
-              <section>
-                <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-8 flex items-center gap-3">
-                  <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Projects
-                </h3>
-                <div className="space-y-10">
-                  {/* Matchdays */}
-                  <div className="relative pl-6 border-l-2 border-[#D4AF37]/50">
-                    <div className="absolute w-3 h-3 bg-[#D4AF37] rounded-full -left-[7px] top-1.5 shadow-[0_0_10px_#D4AF37]" />
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
-                      <h4 className="text-white font-bold text-lg md:text-xl">
-                        Matchdays{" "}
-                        <span className="text-neutral-400 font-normal text-sm ml-2">
-                          — Sports Auction Marketplace
+              {/* --- PRAWA KOLUMNA: DOŚWIADCZENIE I PROBLEMY INŻYNIERYJNE --- */}
+              <div className="flex flex-col gap-10">
+                <section>
+                  <h3 className="text-sm font-mono text-[#D4AF37] uppercase tracking-[0.2em] mb-8 flex items-center gap-3 border-b border-[#222] pb-4">
+                    <FaServer /> Engineering Case Studies & Experience
+                  </h3>
+
+                  {/* PROJEKT 1: MATCHDAYS */}
+                  <div className="mb-12 relative">
+                    <div className="absolute left-[-30px] sm:left-[-40px] top-1.5 w-3 h-3 rounded-full bg-[#D4AF37] shadow-[0_0_15px_#D4AF37]" />
+                    <div className="absolute left-[-25px] sm:left-[-35px] top-6 w-px h-[105%] bg-gradient-to-b from-[#D4AF37]/50 to-transparent" />
+
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-3">
+                        <h4 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">
+                          Matchdays
+                        </h4>
+                        <span className="px-2 py-0.5 bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20 rounded text-[10px] font-mono uppercase">
+                          Startup / Seed
                         </span>
-                      </h4>
-                      <span className="text-[#D4AF37] font-mono text-xs border border-[#D4AF37]/30 px-2 py-1 rounded">
+                      </div>
+                      <span className="text-xs font-mono text-neutral-500 tracking-widest">
                         2025 — 2026
                       </span>
                     </div>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {[
-                        "Next.js 14",
-                        "NestJS",
-                        "TypeScript",
-                        "PostgreSQL",
-                        "Prisma ORM",
-                        "Socket.IO",
-                        "Stripe Connect",
-                      ].map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-2 py-0.5 bg-[#0a0a0a] border border-[#222] rounded text-[9px] md:text-[10px] font-mono text-[#D4AF37]/80 uppercase tracking-wider"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                    <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
-                      Full-stack sports memorabilia auction platform with
-                      real-time bidding via{" "}
-                      <strong>NestJS WebSocket Gateway</strong>, JWT auth with
-                      account lockout, AI-powered jersey verification,{" "}
-                      <strong>Stripe Connect</strong> payouts, and a smart
-                      listing engine.
+                    <p className="text-sm text-neutral-400 mb-6 font-light">
+                      High-concurrency sports memorabilia auction platform.
                     </p>
-                  </div>
-                  {/* Autosell */}
-                  <div className="relative pl-6 border-l-2 border-[#D4AF37]/50">
-                    <div className="absolute w-3 h-3 bg-[#D4AF37] rounded-full -left-[7px] top-1.5 shadow-[0_0_10px_#D4AF37]" />
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
-                      <h4 className="text-white font-bold text-lg md:text-xl">
-                        Autosell.pl{" "}
-                        <span className="text-neutral-400 font-normal text-sm ml-2">
-                          — Automotive Marketplace
-                        </span>
-                      </h4>
-                      <span className="text-[#D4AF37] font-mono text-xs border border-[#D4AF37]/30 px-2 py-1 rounded">
-                        2024
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {[
-                        "React 18",
-                        "Node.js",
-                        "Express",
-                        "MongoDB",
-                        "Socket.IO",
-                      ].map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-2 py-0.5 bg-[#0a0a0a] border border-[#222] rounded text-[9px] md:text-[10px] font-mono text-[#D4AF37]/80 uppercase tracking-wider"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                    <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
-                      Built an end-to-end production vehicle marketplace for a
-                      client. Gathered requirements, managed feedback, and
-                      delivered a scalable platform. Implemented real-time
-                      messaging using <strong>Socket.IO</strong>.
-                    </p>
-                  </div>
-                </div>
-              </section>
 
-              {/* 5. EXPERIENCE */}
-              <section>
-                <h3 className="text-xs font-mono text-[#D4AF37] tracking-[0.2em] uppercase mb-8 flex items-center gap-3">
-                  <div className="h-[1px] w-8 bg-[#D4AF37]/50" /> Work
-                  Experience
-                </h3>
-                <div className="space-y-10">
-                  <div className="relative pl-6 border-l-2 border-[#1a1a1a]">
-                    <div className="absolute w-3 h-3 bg-[#333] rounded-full -left-[7px] top-1.5" />
+                    <div className="bg-[#111] border border-[#222] rounded-xl p-5 sm:p-8 hover:border-[#333] transition-colors">
+                      <h5 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                        <FaRocket className="text-[#D4AF37]" /> The Challenge:
+                        Race Conditions & Real-Time Sync
+                      </h5>
+                      <p className="text-[13px] text-neutral-400 mb-6 leading-relaxed">
+                        In a live auction, multiple users can place bids in the
+                        exact same millisecond. The system needed a bulletproof
+                        way to process bids, reject conflicting ones instantly,
+                        and broadcast the new price to all connected clients
+                        with sub-100ms latency.
+                      </p>
+                      <h5 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                        <FaShieldAlt className="text-green-500" /> Architectural
+                        Solution
+                      </h5>
+                      <ul className="text-[13px] text-neutral-400 leading-relaxed flex flex-col gap-3 font-light">
+                        <li>
+                          <strong className="text-neutral-200">
+                            Concurrency Control:
+                          </strong>{" "}
+                          Implemented PostgreSQL atomic transactions via Prisma.
+                          This guarantees at the database level that only the
+                          absolute highest bid is recorded, structurally
+                          preventing double-bidding.
+                        </li>
+                        <li>
+                          <strong className="text-neutral-200">
+                            WebSocket Engine:
+                          </strong>{" "}
+                          Architected a NestJS Gateway using isolated Socket.IO
+                          rooms. State is synced globally using Redis, ensuring
+                          seamless performance across instances.
+                        </li>
+                        <li>
+                          <strong className="text-neutral-200">
+                            FinTech & AI:
+                          </strong>{" "}
+                          Integrated Stripe Connect for automated multi-party
+                          payouts (escrow-like logic) and BullMQ background
+                          queues to run Google Gemini AI image verifications
+                          without blocking the main event loop.
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* PROJEKT 2: AUTOSELL */}
+                  <div className="mb-12 relative">
+                    <div className="absolute left-[-30px] sm:left-[-40px] top-1.5 w-3 h-3 rounded-full bg-neutral-500" />
+                    <div className="absolute left-[-25px] sm:left-[-35px] top-6 w-px h-[105%] bg-gradient-to-b from-neutral-500/30 to-transparent" />
+
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-                      <h4 className="text-neutral-300 font-bold text-lg md:text-xl">
-                        Freelance Full Stack Engineer
-                      </h4>
-                      <span className="text-neutral-600 font-mono text-xs border border-[#1a1a1a] px-2 py-1 rounded">
-                        2023 - Present
+                      <div className="flex items-center gap-3">
+                        <h4 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">
+                          Autosell.pl
+                        </h4>
+                        <span className="px-2 py-0.5 bg-neutral-800 text-neutral-300 border border-neutral-700 rounded text-[10px] font-mono uppercase">
+                          B2B Client Project
+                        </span>
+                      </div>
+                      <span className="text-xs font-mono text-neutral-500 tracking-widest">
+                        2024 — 2025
                       </span>
                     </div>
-                    <p className="text-neutral-500 text-sm font-mono mb-3">
-                      Client Collaboration (Remote)
+                    <p className="text-sm text-neutral-400 mb-6 font-light">
+                      Production automotive marketplace delivered end-to-end.
                     </p>
-                    <p className="text-neutral-400 text-sm md:text-base leading-relaxed mt-2">
-                      2+ years delivering production systems for paying clients
-                      — full ownership from requirements gathering through
-                      architecture, iterative feedback loops, and zero-downtime
-                      deployment.
-                    </p>
+
+                    <div className="bg-[#111] border border-[#222] rounded-xl p-5 sm:p-8 hover:border-[#333] transition-colors">
+                      <h5 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                        <FaUsers className="text-[#D4AF37]" /> The Challenge:
+                        Client Needs & Data Flexibility
+                      </h5>
+                      <p className="text-[13px] text-neutral-400 mb-6 leading-relaxed">
+                        The client required a highly dynamic platform where
+                        vehicles could have dozens of varying, category-specific
+                        attributes. I was responsible for the entire lifecycle:
+                        gathering requirements, designing the DB, coding the
+                        backend/frontend, integrating payments, and deployment.
+                      </p>
+                      <h5 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                        <FaCodeBranch className="text-blue-400" /> Architectural
+                        Solution
+                      </h5>
+                      <ul className="text-[13px] text-neutral-400 leading-relaxed flex flex-col gap-3 font-light">
+                        <li>
+                          <strong className="text-neutral-200">
+                            Database Design:
+                          </strong>{" "}
+                          Chose MongoDB to handle the dynamic schema
+                          requirements of diverse vehicle parameters, allowing
+                          for a deeply nested, scalable 30+ filter search
+                          engine.
+                        </li>
+                        <li>
+                          <strong className="text-neutral-200">
+                            Business Logic:
+                          </strong>{" "}
+                          Integrated the TPay payment gateway for listing
+                          monetization, complete with webhook handlers and
+                          automated invoice generation.
+                        </li>
+                        <li>
+                          <strong className="text-neutral-200">
+                            Production Deployment:
+                          </strong>{" "}
+                          Dockerized the entire application and deployed it to a
+                          Linux VPS (NGINX + PM2), setting up a CI/CD pipeline
+                          and ensuring 99.9% uptime for the live business.
+                        </li>
+                      </ul>
+                    </div>
                   </div>
-                </div>
-              </section>
+
+                  {/* PROJEKT 3: WINDOWS XP */}
+                  <div className="mb-4 relative">
+                    <div className="absolute left-[-30px] sm:left-[-40px] top-1.5 w-3 h-3 rounded-full bg-neutral-700" />
+
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-3">
+                        <h4 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">
+                          Windows XP Web OS
+                        </h4>
+                        <span className="px-2 py-0.5 bg-neutral-800 text-neutral-400 border border-neutral-700 rounded text-[10px] font-mono uppercase">
+                          Engineering Showcase
+                        </span>
+                      </div>
+                      <span className="text-xs font-mono text-neutral-500 tracking-widest">
+                        2026
+                      </span>
+                    </div>
+                    <p className="text-sm text-neutral-400 mb-6 font-light">
+                      Advanced DOM manipulation and state management.
+                    </p>
+
+                    <div className="bg-[#111] border border-[#222] rounded-xl p-5 sm:p-8 hover:border-[#333] transition-colors">
+                      <p className="text-[13px] text-neutral-400 leading-relaxed font-light">
+                        <strong className="text-white">
+                          Why build an OS in a browser?
+                        </strong>{" "}
+                        To demonstrate profound understanding of React state and
+                        browser APIs without relying on external libraries. I
+                        engineered a bespoke{" "}
+                        <strong className="text-[#D4AF37]">
+                          Window Manager
+                        </strong>{" "}
+                        from scratch that calculates complex z-index stacking,
+                        drag-and-drop boundary collisions, and focus states. The
+                        project also utilizes the native HTML5 Audio API for a
+                        fully functional Winamp clone, proving deep, low-level
+                        frontend capabilities.
+                      </p>
+                    </div>
+                  </div>
+                </section>
+              </div>
             </div>
-          </motion.div>
+          </div>
         </motion.div>
-      )}
+      </div>
     </AnimatePresence>
   );
 }

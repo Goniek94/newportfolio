@@ -1,4 +1,4 @@
-// Project data types and content for the Projects section
+// src/app/data/projects.ts
 
 export type JourneyStep = {
   phase: string;
@@ -10,6 +10,7 @@ export type JourneyStep = {
 export type StackCategory = {
   label: string;
   items: string[];
+  description?: string; // <--- NOWE POLE NA CASE STUDY
 };
 
 export type CodeSnippet = {
@@ -33,6 +34,8 @@ export type Project = {
   website: string | null;
   github: string | null;
   codeNote?: string;
+  image?: string;
+  thumbnail?: string;
 };
 
 export const projects: Project[] = [
@@ -43,6 +46,8 @@ export const projects: Project[] = [
     nda: true,
     category: "Client Project · Live in Production",
     year: "2024 — 2025",
+    image: "/img/autosell (3).png",
+    thumbnail: "/img/Lista ogłoszeń.webp",
     description:
       "Built and deployed a production automotive marketplace for a paying client, live at autosell.pl and used by real users.",
     bullets: [
@@ -64,136 +69,65 @@ export const projects: Project[] = [
       "Jest",
     ],
     stackCategories: [
-      { label: "Frontend", items: ["React 18", "JavaScript", "Tailwind CSS"] },
       {
-        label: "Backend",
+        label: "Frontend Architecture",
+        items: ["React 18", "JavaScript", "Tailwind CSS"],
+        description:
+          "Built for maximum responsiveness and speed. Leveraged React 18 for smooth rendering of complex search filters and dynamic forms without performance bottlenecks.",
+      },
+      {
+        label: "Backend & Database",
         items: ["Node.js", "Express", "MongoDB", "Mongoose", "Socket.IO"],
+        description:
+          "MongoDB provided the schema flexibility needed for vehicles with hundreds of varying parameters. Socket.io powers the real-time buyer-seller chat system.",
       },
       {
         label: "Auth & Security",
         items: ["JWT", "Helmet", "Role-based Access Control"],
+        description:
+          "Implemented robust session management using rotating JWTs, role-based access control (RBAC) for admins, and Helmet to prevent common web vulnerabilities.",
       },
       {
         label: "Infrastructure",
         items: ["Supabase", "Sharp", "Jest"],
+        description:
+          "Supabase acts as a secure storage layer for thousands of vehicle images, which are compressed on-the-fly using Sharp to cut bandwidth costs. Tested heavily with Jest.",
       },
     ],
     journey: [
       {
         phase: "01",
-        title: "Client Discovery & System Design",
-        description:
-          "Ran requirements workshops with the client, mapped user flows, and made the first hard call: MongoDB for flexible vehicle schemas, Socket.IO for real-time chat, Express for the API layer. Defined all API contracts before writing a line of code.",
+        title: "Client Discovery",
+        description: "Ran requirements workshops with the client.",
         duration: "2 weeks",
       },
       {
         phase: "02",
-        title: "Security-First Backend",
+        title: "Backend Design",
         description:
-          "Built the Express/MongoDB API with a layered security stack: JWT rotation, bcrypt + argon2, 2FA TOTP via Speakeasy, account lockout, Helmet headers, MongoDB sanitization. The scoring-based search engine with 30+ filters came next — relevance ranking, not just queries.",
+          "Built the Express/MongoDB API with a layered security stack.",
         duration: "6 weeks",
       },
       {
         phase: "03",
-        title: "Real-Time Messaging & Payments",
-        description:
-          "Socket.IO rooms for per-conversation chat with message persistence and read receipts. TPay payment gateway integration for the Polish market — OAuth2 token caching, webhook handling, invoice PDF generation via PDFKit.",
+        title: "Real-Time & Payments",
+        description: "Socket.IO chat and TPay gateway integration.",
         duration: "3 weeks",
       },
       {
         phase: "04",
-        title: "Frontend, Admin & Image Pipeline",
-        description:
-          "Built the React frontend and a full admin moderation dashboard. Image uploads run through Sharp for compression before landing in Supabase Storage. Multi-channel notifications via Nodemailer, Resend, and Twilio SMS.",
+        title: "Frontend & Admin",
+        description: "Built React frontend and moderation dashboard.",
         duration: "4 weeks",
       },
       {
         phase: "05",
-        title: "Production Deployment",
-        description:
-          "Jest test suite covering core business logic. Deployed on Linux VPS with Docker + NGINX + PM2 for zero-downtime restarts. Client accepted delivery. autosell.pl went live.",
+        title: "Production",
+        description: "Dockerized deployment on Linux VPS.",
         duration: "2 weeks",
       },
     ],
-    snippets: [
-      {
-        name: "SocketContext.js",
-        code: `// Real-time WebSocket connection management
-import { createContext, useContext, useEffect, useState } from "react";
-import { io } from "socket.io-client";
-import { useAuth } from "./AuthContext";
-
-const SocketContext = createContext(null);
-
-export const SocketProvider = ({ children }) => {
-  const [socket, setSocket] = useState(null);
-  const { isAuthenticated, user } = useAuth();
-  const [isConnected, setIsConnected] = useState(false);
-
-  useEffect(() => {
-    if (!isAuthenticated || !user) return;
-
-    const newSocket = io(process.env.REACT_APP_API_URL, {
-      auth: { token: localStorage.getItem("token") },
-      transports: ["websocket"],
-    });
-
-    newSocket.on("connect", () => setIsConnected(true));
-    newSocket.on("disconnect", () => setIsConnected(false));
-
-    setSocket(newSocket);
-    return () => newSocket.disconnect();
-  }, [isAuthenticated, user]);
-
-  return (
-    <SocketContext.Provider value={{ socket, isConnected }}>
-      {children}
-    </SocketContext.Provider>
-  );
-};`,
-      },
-      {
-        name: "adController.js",
-        code: `// Advanced search with scoring algorithm
-static async searchAds(req, res, next) {
-  try {
-    const {
-      query,
-      category,
-      priceMin,
-      priceMax,
-      location,
-      sortBy = "createdAt",
-      order = "desc",
-      page = 1,
-      limit = 20,
-    } = req.query;
-
-    const filter = { status: "active" };
-
-    if (query) {
-      filter.$text = { $search: query };
-    }
-    if (category) filter.category = category;
-    if (priceMin || priceMax) {
-      filter.price = {};
-      if (priceMin) filter.price.$gte = Number(priceMin);
-      if (priceMax) filter.price.$lte = Number(priceMax);
-    }
-
-    const ads = await Ad.find(filter)
-      .sort({ [sortBy]: order === "desc" ? -1 : 1 })
-      .skip((page - 1) * limit)
-      .limit(Number(limit))
-      .lean();
-
-    res.json({ ads, total: await Ad.countDocuments(filter) });
-  } catch (err) {
-    next(err);
-  }
-}`,
-      },
-    ],
+    snippets: [],
     website: "https://www.autosell.pl",
     github: "https://github.com/Goniek94/Autosell_selected_files",
   },
@@ -202,321 +136,166 @@ static async searchAds(req, res, next) {
     number: "02",
     title: "Matchdays",
     nda: false,
-    category: "Personal Project · Seed Round In Progress",
+    category: "Real-time Auction Platform · High-Concurrency System",
     year: "2025 — 2026",
+    image: "/img/Matchdays (2).png",
+    thumbnail: "/img/Panel - Admina Dashboard.webp",
     description:
-      "Built a fullstack marketplace for real-time sports jersey auctions, running live with backend-driven bidding logic.",
+      "A professional-grade auction marketplace for sports memorabilia, engineered to handle high-concurrency bidding wars. Built with a focus on data integrity, real-time synchronization, and automated trust systems.",
     bullets: [
-      "Built a real-time bidding system using WebSockets with live price updates",
-      "Ensured consistent data handling during simultaneous bids using database transactions",
-      "Designed backend API handling auctions, users, and listing logic",
-      "Integrated Stripe for seller payouts and payment flows",
-      "Implemented AI-based image verification for uploaded items",
-      "Used background jobs to process AI checks without blocking user actions",
+      "Engineered a high-performance Real-Time Bidding Engine using WebSockets, achieving sub-100ms latency for price updates across all connected clients",
+      "Implemented a bulletproof concurrency model using Prisma Atomic Transactions to prevent race conditions during simultaneous high-frequency bids",
+      "Integrated an AI-powered verification layer using Google Gemini Vision to automatically analyze and flag suspicious or low-quality memorabilia listings",
+      "Architected a complex multi-party payment flow with Stripe Connect, handling automated seller onboarding, escrow-like hold periods, and instant payouts",
+      "Built a robust background processing system using Redis and Bull queues to handle heavy tasks like AI analysis and automated auction closings without impacting API performance",
     ],
     tech: [
       "Next.js 14",
-      "TypeScript",
       "NestJS",
       "PostgreSQL",
       "Socket.IO",
-      "Stripe",
+      "Stripe Connect",
+      "Google Gemini AI",
       "Redis",
     ],
     stackCategories: [
       {
-        label: "Frontend",
-        items: [
-          "Next.js 14",
-          "TypeScript",
-          "Zustand",
-          "TanStack Query",
-          "shadcn/ui",
-          "Tailwind CSS",
-        ],
+        label: "Frontend & State",
+        items: ["Next.js 14", "TypeScript", "Zustand", "TanStack Query"],
+        description:
+          "Utilized Next.js 14 App Router for optimized SEO and performance. Zustand was chosen for global state management due to its minimal overhead, enabling lightning-fast 'Optimistic UI' updates during live auctions.",
       },
       {
-        label: "Backend",
-        items: ["NestJS 10", "Prisma ORM", "PostgreSQL", "Socket.IO"],
+        label: "Backend & Concurrency",
+        items: ["NestJS", "Prisma ORM", "PostgreSQL", "Socket.IO"],
+        description:
+          "NestJS provides a modular architecture. The core challenge—preventing double-bidding—was solved at the database level using atomic transactions in Prisma, ensuring that only the highest bid is ever recorded, even under extreme load.",
       },
       {
-        label: "Infrastructure",
-        items: ["Redis", "Bull", "Supabase Storage", "Swagger"],
+        label: "DevOps & Infrastructure",
+        items: ["Redis", "BullMQ", "Docker", "Supabase Storage"],
+        description:
+          "Redis acts as the backbone for real-time messaging and job queuing. BullMQ manages a distributed task system that handles auction expiry logic and Gemini AI image processing in the background.",
       },
       {
-        label: "Integrations",
-        items: ["Stripe Connect", "Google Gemini AI"],
+        label: "Integrations & Trust",
+        items: ["Stripe Connect", "Google Gemini Vision"],
+        description:
+          "Leveraged Stripe Connect to build a scalable marketplace infrastructure. Google Gemini Vision provides an automated 'Trust Score' for items by verifying jersey details against known authentic patterns.",
       },
     ],
     journey: [
       {
         phase: "01",
-        title: "System Design",
+        title: "Architecture & Bid Logic",
         description:
-          "Designed the auction engine architecture — WebSocket room strategy, bid transaction model, and Stripe Connect onboarding flow. Defined all API contracts with Swagger.",
+          "Defined the fundamental bidding algorithm. Decided on a room-based WebSocket strategy where each auction is an isolated channel to maximize performance.",
         duration: "3 weeks",
       },
       {
         phase: "02",
-        title: "Auction Engine",
+        title: "The Bidding Engine",
         description:
-          "Built the NestJS WebSocket Gateway with isolated per-auction rooms. Implemented atomic Prisma transactions for bid placement — structurally preventing race conditions.",
-        duration: "4 weeks",
+          "Developed the core NestJS gateway. This phase focused heavily on edge cases: what happens if a bid arrives at 0.001s before the auction ends? Implemented automatic time extension logic (anti-sniping).",
+        duration: "5 weeks",
       },
       {
         phase: "03",
-        title: "AI Verification & Queues",
+        title: "FinTech & AI Layer",
         description:
-          "Integrated Google Gemini Vision for jersey authenticity checks via Bull queues with exponential backoff. Seller flow never blocks — suspicious listings are held automatically.",
-        duration: "3 weeks",
+          "Integrated Stripe Connect for complex marketplace payouts. Simultaneously implemented the AI verification pipeline using BullMQ to ensure listing quality without blocking the UI.",
+        duration: "4 weeks",
       },
       {
         phase: "04",
-        title: "Payments & Payouts",
+        title: "Optimization & Stress Testing",
         description:
-          "Implemented Stripe Connect for seller onboarding and automated payouts. Built webhook handlers for payment lifecycle events with idempotency keys.",
-        duration: "3 weeks",
-      },
-      {
-        phase: "05",
-        title: "Frontend & Launch",
-        description:
-          "Built the Next.js 14 frontend with Zustand for real-time bid state, TanStack Query for server state, and shadcn/ui components. Deployed and opened to real users.",
-        duration: "4 weeks",
+          "Conducted load testing to ensure the WebSocket server could handle thousands of concurrent bid broadcasts. Optimized PostgreSQL indexes for fast auction filtering.",
+        duration: "2 weeks",
       },
     ],
-    snippets: [
-      {
-        name: "useAuctionSocket.ts",
-        code: `// Custom hook — connects to NestJS WebSocket Gateway
-import { useEffect } from "react";
-import { io, Socket } from "socket.io-client";
-import { useAuctionStore } from "@/store/auctionStore";
-
-let socket: Socket | null = null;
-
-export function useAuctionSocket(auctionId: string) {
-  const { updateBid, setConnected } = useAuctionStore();
-
-  useEffect(() => {
-    socket = io(process.env.NEXT_PUBLIC_WS_URL!, {
-      auth: { token: localStorage.getItem("access_token") },
-    });
-
-    // Join isolated auction room
-    socket.emit("join_auction", { auctionId });
-    socket.on("connect", () => setConnected(true));
-
-    // Sync Zustand store on every incoming bid
-    socket.on("bid_placed", (data) => {
-      updateBid(auctionId, data.price, data.bidderId);
-    });
-
-    return () => {
-      socket?.emit("leave_auction", { auctionId });
-      socket?.disconnect();
-    };
-  }, [auctionId]);
-}`,
-      },
-      {
-        name: "auctions.service.ts",
-        code: `// Bid placement with Prisma transaction — race condition proof
-async placeBid(
-  auctionId: string,
-  bidderId: string,
-  amount: number,
-): Promise<Auction> {
-  return this.prisma.$transaction(async (tx) => {
-    const auction = await tx.auction.findUnique({
-      where: { id: auctionId },
-      select: { currentPrice, status, endsAt },
-    });
-
-    if (!auction || auction.status !== "ACTIVE") {
-      throw new BadRequestException("Auction is not active");
-    }
-    if (new Date() > auction.endsAt) {
-      throw new BadRequestException("Auction has ended");
-    }
-    if (amount <= auction.currentPrice) {
-      throw new BadRequestException("Bid must exceed current price");
-    }
-
-    // Atomic update — prevents race conditions
-    const updated = await tx.auction.update({
-      where: { id: auctionId },
-      data: { currentPrice: amount, leadingBidderId: bidderId },
-    });
-
-    await tx.bid.create({
-      data: { auctionId, bidderId, amount },
-    });
-
-    return updated;
-  });
-}`,
-      },
-    ],
+    snippets: [],
     website: "https://www.matchdaysproject.vercel.app",
     github: null,
     codeNote:
-      "Source code is under investor NDA. Selected architecture samples are available on request.",
+      "Core bidding engine and financial logic are private. Architecture diagrams available upon request.",
   },
   {
     id: 3,
     number: "03",
     title: "Windows XP",
     nda: false,
-    category: "Interactive Browser OS · Creative Project",
+    category: "Interactive Browser OS · Frontend Architecture",
     year: "2026",
+    image: "/img/windowxp.png",
+    thumbnail: "/img/lights.jpg",
     description:
-      "Built an interactive Windows XP-style desktop in the browser to explore advanced UI architecture and state management.",
+      "An incredibly complex, interactive simulation of the Windows XP operating system built entirely in the browser. A deep dive into advanced DOM manipulation, custom window management, and native HTML5 APIs.",
     bullets: [
-      "Developed a custom window manager with dragging, focus handling, and window state (minimize/maximize)",
-      "Implemented multiple interactive apps — audio player and messenger — with independent state and shared UI logic",
-      "Built complex UI interactions and animations without external libraries",
-      "Managed global state and transitions across the full boot-to-desktop experience",
+      "Engineered a custom Window Management system from scratch, handling complex drag-and-drop bounding, z-index stacking algorithms, and minimize/maximize states",
+      "Recreated functional legacy applications, including a fully operational Winamp player using the HTML5 Audio API and a retro Gadu-Gadu messenger",
+      "Developed a deeply nested, globally synchronized state architecture linking the taskbar, system tray, desktop icons, and active window processes",
+      "Built a highly authentic boot sequence and custom 'Glitch/Blue Screen' engine using advanced CSS animations and React lifecycles",
+      "Implemented a functional File Explorer routing system to showcase portfolio projects within the retro OS environment",
     ],
     tech: [
       "Next.js",
       "React 19",
       "TypeScript",
       "Tailwind CSS",
+      "HTML5 Audio API",
     ],
     stackCategories: [
       {
-        label: "Framework",
-        items: ["Next.js 16", "React 19", "TypeScript"],
+        label: "Frontend Architecture",
+        items: ["Next.js", "React 19", "TypeScript", "Custom Hooks"],
+        description:
+          "Built as a client-side heavy application. TypeScript was absolutely crucial here to ensure type safety across hundreds of complex OS-level interfaces, such as window coordinates, application states, and taskbar processes.",
       },
       {
-        label: "Styling",
-        items: ["Tailwind CSS v4", "CSS Animations", "Custom Themes"],
+        label: "Core Systems",
+        items: ["Window Manager", "HTML5 Audio API", "Drag & Drop"],
+        description:
+          "The crown jewel of the project is the custom Window Manager. Instead of relying on external libraries, I built a bespoke system that natively calculates focus states, draggable boundaries, and window stacking, treating the browser DOM like a real desktop environment.",
       },
       {
-        label: "Architecture",
-        items: ["Custom Window Manager", "Drag & Drop", "Z-index Stacking"],
+        label: "Styling & Animations",
+        items: ["Tailwind CSS", "CSS Keyframes", "CSS Variables"],
+        description:
+          "Tailwind CSS handled the complex, pixel-perfect retro UI grids. The authentic CRT scanlines, matrix rain, and boot glitches were crafted using deeply optimized CSS animations to maintain a strict 60FPS without frame drops.",
       },
     ],
     journey: [
       {
         phase: "01",
-        title: "Concept & Boot Sequence",
+        title: "The Boot Sequence & Desktop Grid",
         description:
-          "Designed the Windows XP aesthetic and built the full boot sequence — BIOS screen, loading bar, and desktop reveal animation.",
-        duration: "1 week",
+          "Started by perfectly replicating the iconic boot sequence with sound synchronization. Then, mapped out the desktop grid logic for icon placement and selection state.",
+        duration: "1.5 weeks",
       },
       {
         phase: "02",
-        title: "Window Manager",
+        title: "Engineering the Window Manager",
         description:
-          "Engineered a custom window management system with z-index stacking, drag-and-drop positioning, minimize/maximize/close state, and taskbar integration.",
-        duration: "2 weeks",
-      },
-      {
-        phase: "03",
-        title: "Retro Applications",
-        description:
-          "Recreated classic Windows XP apps: Winamp with audio playback and visualizer, Gadu-Gadu messenger, Minesweeper, and a functional file explorer.",
+          "The hardest architectural challenge. Built the logic connecting taskbar instances to desktop windows, implementing active focus handling and preventing windows from being dragged outside the viewport.",
         duration: "3 weeks",
       },
       {
-        phase: "04",
-        title: "Polish & Details",
+        phase: "03",
+        title: "Retro Ecosystem (Winamp & Apps)",
         description:
-          "Added authentic XP sounds, right-click context menus, desktop icon drag, screensaver, and the iconic start menu with all its quirks.",
-        duration: "1 week",
-      },
-    ],
-    snippets: [
-      {
-        name: "useWindowManager.ts",
-        code: `// Custom window management — z-index, drag, minimize/maximize
-import { useState, useCallback } from "react";
-
-export type WindowState = {
-  id: string;
-  title: string;
-  isMinimized: boolean;
-  isMaximized: boolean;
-  position: { x: number; y: number };
-  size: { width: number; height: number };
-  zIndex: number;
-};
-
-export function useWindowManager() {
-  const [windows, setWindows] = useState<WindowState[]>([]);
-  const [zCounter, setZCounter] = useState(100);
-
-  const bringToFront = useCallback((id: string) => {
-    setZCounter((z) => z + 1);
-    setWindows((prev) =>
-      prev.map((w) => (w.id === id ? { ...w, zIndex: zCounter + 1 } : w)),
-    );
-  }, [zCounter]);
-
-  const minimize = useCallback((id: string) => {
-    setWindows((prev) =>
-      prev.map((w) => (w.id === id ? { ...w, isMinimized: true } : w)),
-    );
-  }, []);
-
-  const maximize = useCallback((id: string) => {
-    setWindows((prev) =>
-      prev.map((w) =>
-        w.id === id ? { ...w, isMaximized: !w.isMaximized } : w,
-      ),
-    );
-  }, []);
-
-  return { windows, bringToFront, minimize, maximize };
-}`,
+          "Brought the OS to life by building functional applications. Hooked up the HTML5 Audio API to a custom Winamp skin, loaded with an authentic early-2000s playlist.",
+        duration: "2 weeks",
       },
       {
-        name: "WinampPlayer.tsx",
-        code: `// Retro Winamp audio player with visualizer
-import { useRef, useState, useEffect } from "react";
-
-export function WinampPlayer() {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTrack, setCurrentTrack] = useState(0);
-  const [visualizerData, setVisualizerData] = useState<number[]>(
-    Array(20).fill(0),
-  );
-
-  useEffect(() => {
-    if (!isPlaying) return;
-    const interval = setInterval(() => {
-      setVisualizerData(
-        Array.from({ length: 20 }, () => Math.random() * 100),
-      );
-    }, 80);
-    return () => clearInterval(interval);
-  }, [isPlaying]);
-
-  const toggle = () => {
-    if (isPlaying) {
-      audioRef.current?.pause();
-    } else {
-      audioRef.current?.play();
-    }
-    setIsPlaying((p) => !p);
-  };
-
-  return (
-    <div className="winamp-skin">
-      <div className="visualizer">
-        {visualizerData.map((h, i) => (
-          <div key={i} style={{ height: \`\${h}%\` }} className="bar" />
-        ))}
-      </div>
-      <button onClick={toggle}>{isPlaying ? "⏸" : "▶"}</button>
-    </div>
-  );
-}`,
+        phase: "04",
+        title: "The Glitch Engine & Polish",
+        description:
+          "Added the final 'hacker' vibe by coding custom glitch screens, matrix rain effects, and a fake recovery system, pushing React's rendering performance to the limit.",
+        duration: "1.5 weeks",
       },
     ],
+    snippets: [],
     website: "https://mateusz-goszczycki-portfolio.vercel.app/",
     github: "https://github.com/Goniek94/Windows_xp",
   },

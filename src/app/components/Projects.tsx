@@ -8,39 +8,126 @@ import {
   useTransform,
   useInView,
 } from "framer-motion";
+import { FaExternalLinkAlt, FaGithub } from "react-icons/fa";
 import VSCodeViewer from "./VSCodeViewer";
-import { projects } from "../data/projects";
+import { projects, Project } from "../data/projects";
 import {
   autosellFiles,
   matchdaysFiles,
   windowsXpFiles,
 } from "../data/vscode/index";
-import OverviewTab from "./projects/tabs/OverviewTab";
-import JourneyTab from "./projects/tabs/JourneyTab";
-import StackTab from "./projects/tabs/StackTab";
 
-// ─────────────────────────────────────────────
-// TAB TYPES
-// ─────────────────────────────────────────────
-type Tab = "overview" | "journey" | "stack" | "code";
+type Tab = "overview" | "journey" | "stack";
 
-const TABS: { id: Tab; label: string; isCode?: boolean }[] = [
+const TABS: { id: Tab; label: string }[] = [
   { id: "overview", label: "Overview" },
   { id: "journey", label: "Journey" },
   { id: "stack", label: "Stack" },
-  { id: "code", label: "Code", isCode: true },
 ];
 
-// ─────────────────────────────────────────────
-// SECTION BRIDGE — visual connector between About and Projects
-// ─────────────────────────────────────────────
+// --- KOMPONENTY ZAKŁADEK ---
+
+function OverviewTabContent({ project }: { project: Project }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="flex flex-col gap-6"
+    >
+      <p className="text-sm md:text-base text-neutral-300 leading-relaxed font-light">
+        {project.description}
+      </p>
+      {project.bullets && project.bullets.length > 0 && (
+        <ul className="flex flex-col gap-3">
+          {project.bullets.map((bullet, i) => (
+            <li
+              key={i}
+              className="flex items-start gap-3 text-sm md:text-base text-neutral-400"
+            >
+              <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] mt-2 shrink-0" />
+              <span>{bullet}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </motion.div>
+  );
+}
+
+function JourneyTabContent({ project }: { project: Project }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="flex flex-col gap-8"
+    >
+      {project.journey?.map((step, i) => (
+        <div key={i} className="relative pl-6 border-l border-[#333]">
+          <div className="absolute w-3 h-3 bg-[#D4AF37] rounded-full -left-[6.5px] top-1" />
+          <span className="text-[10px] text-[#D4AF37] tracking-widest font-mono uppercase">
+            {step.phase} • {step.duration}
+          </span>
+          <h4 className="text-lg font-bold text-white mt-1 mb-2">
+            {step.title}
+          </h4>
+          <p className="text-sm text-neutral-400 leading-relaxed">
+            {step.description}
+          </p>
+        </div>
+      ))}
+    </motion.div>
+  );
+}
+
+// ZMIENIONY KOMPONENT STACK - TERAZ JAKO CASE STUDY ARCHITEKTURY
+function StackTabContent({ project }: { project: Project }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="flex flex-col gap-8"
+    >
+      {project.stackCategories?.map((category, i) => (
+        <div key={i} className="flex flex-col gap-3">
+          {/* Elegancki nagłówek z linią */}
+          <div className="flex items-center gap-4">
+            <h4 className="text-[11px] font-mono text-[#D4AF37] uppercase tracking-[0.2em] whitespace-nowrap">
+              {category.label}
+            </h4>
+            <div className="h-px flex-1 bg-gradient-to-r from-[#D4AF37]/30 to-transparent" />
+          </div>
+
+          {/* Opis architektoniczny (Case Study) */}
+          {category.description && (
+            <p className="text-sm text-neutral-400 leading-relaxed font-light">
+              {category.description}
+            </p>
+          )}
+
+          {/* Technologie w bańkach pod spodem */}
+          <div className="flex flex-wrap gap-2 mt-2">
+            {category.items.map((item, j) => (
+              <span
+                key={j}
+                className="px-4 py-1.5 bg-[#111] border border-[#333] text-neutral-300 text-[11px] font-medium rounded-full shadow-sm"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </motion.div>
+  );
+}
+
+// --- GŁÓWNY KOMPONENT PROJECTS ---
+
 function SectionBridge() {
   return (
     <div className="relative w-full overflow-hidden bg-[#050505]">
-      {/* Horizontal rule with centered label */}
       <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16">
         <div className="relative flex items-center gap-0 py-0">
-          {/* Left line */}
           <motion.div
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
@@ -48,7 +135,6 @@ function SectionBridge() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="h-px flex-1 bg-gradient-to-r from-transparent via-[#D4AF37]/20 to-[#D4AF37]/40 origin-left"
           />
-          {/* Center node */}
           <motion.div
             initial={{ opacity: 0, scale: 0 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -62,7 +148,6 @@ function SectionBridge() {
               style={{ animationDuration: "2.5s" }}
             />
           </motion.div>
-          {/* Right line */}
           <motion.div
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
@@ -76,293 +161,17 @@ function SectionBridge() {
   );
 }
 
-// ─────────────────────────────────────────────
-// PROJECTS HEADER — full cinematic treatment
-// ─────────────────────────────────────────────
-
-/** Animated grid background — pure CSS, no canvas */
-function GridBackground() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Perspective grid lines */}
-      <svg
-        className="absolute inset-0 w-full h-full"
-        xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="none"
-      >
-        <defs>
-          <pattern
-            id="grid-pattern"
-            width="80"
-            height="80"
-            patternUnits="userSpaceOnUse"
-          >
-            <path
-              d="M 80 0 L 0 0 0 80"
-              fill="none"
-              stroke="rgba(212,175,55,0.07)"
-              strokeWidth="0.5"
-            />
-          </pattern>
-          <radialGradient id="grid-fade" cx="30%" cy="50%" r="60%">
-            <stop offset="0%" stopColor="white" stopOpacity="1" />
-            <stop offset="100%" stopColor="white" stopOpacity="0" />
-          </radialGradient>
-          <mask id="grid-mask">
-            <rect width="100%" height="100%" fill="url(#grid-fade)" />
-          </mask>
-        </defs>
-        <rect
-          width="100%"
-          height="100%"
-          fill="url(#grid-pattern)"
-          mask="url(#grid-mask)"
-        />
-      </svg>
-
-      {/* Large ghost number "03" in background — hidden on small screens */}
-      <div
-        className="absolute right-[-2%] top-1/2 -translate-y-1/2 font-black select-none hidden sm:block"
-        style={{
-          fontSize: "clamp(10rem, 28vw, 42rem)",
-          lineHeight: 1,
-          color: "transparent",
-          WebkitTextStroke: "1px rgba(212,175,55,0.06)",
-          letterSpacing: "-0.05em",
-        }}
-      >
-        03
-      </div>
-
-      {/* Gold radial glow — left side, behind title */}
-      <div
-        className="absolute left-0 top-0 w-[70%] h-full"
-        style={{
-          background:
-            "radial-gradient(ellipse 55% 70% at 20% 55%, rgba(212,175,55,0.09) 0%, transparent 65%)",
-        }}
-      />
-
-      {/* Horizontal scan line */}
-      <motion.div
-        initial={{ scaleX: 0, opacity: 0 }}
-        whileInView={{ scaleX: 1, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
-        className="absolute left-0 right-0 origin-left"
-        style={{
-          top: "52%",
-          height: "1px",
-          background:
-            "linear-gradient(90deg, rgba(212,175,55,0.4) 0%, rgba(212,175,55,0.1) 40%, transparent 70%)",
-        }}
-      />
-    </div>
-  );
-}
-
-// Stagger variants for the title words
-const titleContainerVariants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.05, delayChildren: 0 },
-  },
-};
-
-const titleLetterVariants = {
-  hidden: { y: "110%", opacity: 0 },
-  visible: {
-    y: "0%",
-    opacity: 1,
-    transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] as const },
-  },
-};
-
-const titleContainerVariantsDelayed = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.05, delayChildren: 0.2 },
-  },
-};
-
-function ProjectsHeader() {
-  const ref = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
-
-  // useInView on the title container — triggers as soon as 1px is visible
-  const isInView = useInView(titleRef, { once: true, margin: "0px" });
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-
-  // Parallax: title moves slightly up as you scroll past
-  const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "-8%"]);
-
-  const featuredLetters = "FEATURED".split("");
-  const projectsLetters = "PROJECTS".split("");
-
-  return (
-    <div ref={ref} className="relative w-full overflow-hidden">
-      {/* ── Decorative background ── */}
-      <GridBackground />
-
-      <div className="relative max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 pt-10 md:pt-14 pb-8 md:pb-12">
-        {/* ── Label ── */}
-        <motion.div
-          initial={{ opacity: 0, x: -24 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] as const }}
-          className="flex items-center gap-4 mb-10"
-        >
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] as const }}
-            className="h-[2px] w-12 bg-[#D4AF37] origin-left"
-          />
-          <span className="text-[11px] font-mono uppercase tracking-[0.35em] text-[#D4AF37]">
-            Selected Work
-          </span>
-        </motion.div>
-
-        {/* ── Giant title with parallax ── */}
-        <motion.div ref={titleRef} style={{ y: titleY }}>
-          {/* FEATURED — white fill */}
-          <h1
-            className="font-black tracking-tighter uppercase mb-0"
-            style={{ fontSize: "clamp(2.2rem, 8.5vw, 11rem)", lineHeight: 1 }}
-          >
-            <motion.span
-              className="inline-flex"
-              variants={titleContainerVariants}
-              initial="hidden"
-              animate={isInView ? "visible" : "hidden"}
-              aria-label="FEATURED"
-            >
-              {featuredLetters.map((char, i) => (
-                <span
-                  key={i}
-                  className="inline-block overflow-visible"
-                  style={{ lineHeight: 1, paddingBottom: "0.06em" }}
-                >
-                  <motion.span
-                    className="inline-block text-white"
-                    variants={titleLetterVariants}
-                  >
-                    {char}
-                  </motion.span>
-                </span>
-              ))}
-            </motion.span>
-          </h1>
-
-          {/* PROJECTS — gold outline */}
-          <h1
-            className="font-black tracking-tighter uppercase mb-10"
-            style={{ fontSize: "clamp(2.2rem, 8.5vw, 11rem)", lineHeight: 1 }}
-          >
-            <motion.span
-              className="inline-flex"
-              variants={titleContainerVariantsDelayed}
-              initial="hidden"
-              animate={isInView ? "visible" : "hidden"}
-              aria-label="PROJECTS"
-            >
-              {projectsLetters.map((char, i) => (
-                <span
-                  key={i}
-                  className="inline-block overflow-visible"
-                  style={{ lineHeight: 1, paddingBottom: "0.06em" }}
-                >
-                  <motion.span
-                    className="inline-block"
-                    variants={titleLetterVariants}
-                    style={{
-                      WebkitTextStroke: "2px #D4AF37",
-                      color: "transparent",
-                    }}
-                  >
-                    {char}
-                  </motion.span>
-                </span>
-              ))}
-            </motion.span>
-          </h1>
-        </motion.div>
-
-        {/* ── Divider line ── */}
-        <motion.div
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{
-            duration: 0.8,
-            delay: 0.3,
-            ease: [0.16, 1, 0.3, 1] as const,
-          }}
-          className="h-px w-full origin-left mb-10"
-          style={{
-            background:
-              "linear-gradient(90deg, rgba(212,175,55,0.5) 0%, rgba(212,175,55,0.1) 50%, transparent 100%)",
-          }}
-        />
-
-        {/* ── Description + meta row ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{
-            duration: 0.6,
-            delay: 0.2,
-            ease: [0.16, 1, 0.3, 1] as const,
-          }}
-          className="flex flex-col md:flex-row md:items-end gap-6 md:gap-12"
-        >
-          <p className="text-base md:text-lg text-neutral-400 font-light leading-relaxed max-w-xl border-l-2 border-[#D4AF37]/40 pl-5">
-            Production applications built{" "}
-            <span className="text-white font-medium">
-              from concept to deployment
-            </span>
-            . Click any project to explore its architecture, build journey, and
-            tech stack.
-          </p>
-
-          {/* Right meta block */}
-          <div className="md:ml-auto shrink-0 flex flex-col items-end gap-1">
-            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-neutral-600">
-              3 projects · 2024 — 2026
-            </span>
-            <div className="flex gap-3 mt-2">
-              {projects.map((p) => (
-                <span
-                  key={p.id}
-                  className="text-[9px] font-mono text-neutral-700 uppercase tracking-widest"
-                >
-                  {String(p.id).padStart(2, "0")} {p.title}
-                </span>
-              ))}
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────
-// MAIN EXPORT
-// ─────────────────────────────────────────────
 export default function Projects() {
-  const [activeId, setActiveId] = useState<number | null>(1);
-  const [activeTab, setActiveTab] = useState<Tab>("overview");
+  const [activeIds, setActiveIds] = useState<number[]>([1]);
+  const [activeTabs, setActiveTabs] = useState<Record<number, Tab>>({});
+
   const [isVSCodeOpen, setIsVSCodeOpen] = useState(false);
   const [vsCodeFiles, setVsCodeFiles] = useState(autosellFiles);
   const [vsCodeTitle, setVsCodeTitle] = useState("Autosell-Repo");
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const getActiveTab = (projectId: number) =>
+    activeTabs[projectId] || "overview";
 
   const openVSCode = (projectId: number) => {
     if (projectId === 1) {
@@ -379,12 +188,11 @@ export default function Projects() {
   };
 
   const handleProjectClick = (id: number) => {
-    if (activeId === id) {
-      setActiveId(null);
-    } else {
-      setActiveId(id);
-      setActiveTab("overview");
-    }
+    setActiveIds((prev) =>
+      prev.includes(id)
+        ? prev.filter((activeId) => activeId !== id)
+        : [...prev, id],
+    );
   };
 
   return (
@@ -392,7 +200,6 @@ export default function Projects() {
       id="projects"
       className="relative w-full bg-[#050505] text-[#e1e1e1] overflow-hidden"
     >
-      {/* Full-screen VSCode viewer */}
       <VSCodeViewer
         isOpen={isVSCodeOpen}
         onClose={() => setIsVSCodeOpen(false)}
@@ -400,17 +207,35 @@ export default function Projects() {
         title={vsCodeTitle}
       />
 
-      {/* ── Visual bridge from About section ── */}
+      {/* Lightbox */}
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedImage(null)}
+            className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/95 p-4 md:p-10 cursor-zoom-out"
+          >
+            <motion.img
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9 }}
+              src={selectedImage}
+              alt="Zoomed Project"
+              className="max-w-full max-h-full rounded-lg border border-[#333] shadow-2xl"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <SectionBridge />
 
-      {/* ── Cinematic header ── */}
-      <ProjectsHeader />
-
-      {/* ── Accordion project list ── */}
-      <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 pb-24 md:pb-36">
-        <div className="flex flex-col gap-3">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 pt-20 pb-24 md:pb-36">
+        <div className="flex flex-col gap-6">
           {projects.map((project, i) => {
-            const isOpen = activeId === project.id;
+            const isOpen = activeIds.includes(project.id);
+            const currentTab = getActiveTab(project.id);
 
             return (
               <motion.div
@@ -418,201 +243,155 @@ export default function Projects() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
-                className="rounded-2xl border overflow-hidden transition-all duration-500"
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+                className="rounded-3xl border border-[#ffffff08] transition-all duration-500 overflow-hidden"
                 style={{
-                  borderColor: isOpen
-                    ? "rgba(212,175,55,0.4)"
-                    : "rgba(255,255,255,0.06)",
-                  background: isOpen ? "#0c0c0a" : "#080808",
-                  boxShadow: isOpen ? "0 0 60px rgba(212,175,55,0.06)" : "none",
+                  background: isOpen ? "#0c0c0c" : "#080808",
+                  boxShadow: isOpen ? "0 0 80px rgba(0,0,0,0.5)" : "none",
                 }}
               >
-                {/* ── Project header row (always visible) ── */}
+                {/* NAGŁÓWEK */}
                 <button
                   onClick={() => handleProjectClick(project.id)}
-                  className="w-full flex items-center gap-3 md:gap-6 px-4 sm:px-6 md:px-8 py-5 md:py-7 text-left group"
+                  className="w-full flex items-center gap-8 px-6 sm:px-8 py-8 md:py-12 text-left group"
                 >
-                  {/* Number — hidden on xs, visible from sm */}
                   <span
-                    className="hidden sm:block font-mono text-4xl md:text-6xl font-black leading-none shrink-0 transition-colors duration-300 tabular-nums"
-                    style={{
-                      color: isOpen
-                        ? "rgba(212,175,55,0.25)"
-                        : "rgba(255,255,255,0.06)",
-                    }}
+                    className="font-mono text-5xl md:text-7xl font-black tabular-nums transition-colors duration-300"
+                    style={{ color: isOpen ? "rgba(212,175,55,0.4)" : "#111" }}
                   >
                     {project.number}
                   </span>
-
-                  {/* Title + meta */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span
-                        className="text-[9px] sm:text-[10px] font-mono uppercase tracking-[0.25em] transition-colors duration-300"
-                        style={{
-                          color: isOpen
-                            ? "rgba(212,175,55,0.6)"
-                            : "rgba(255,255,255,0.2)",
-                        }}
-                      >
-                        {project.category}
-                      </span>
-                      {project.nda && (
-                        <span className="text-[9px] font-mono bg-red-600/80 text-white px-2 py-0.5 rounded-full uppercase tracking-widest">
-                          NDA
-                        </span>
-                      )}
-                    </div>
-                    <h3
-                      className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight leading-none transition-colors duration-300"
-                      style={{ color: isOpen ? "#ffffff" : "#3a3a3a" }}
-                    >
+                  <div className="flex-1">
+                    <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#D4AF37] mb-2 block opacity-60">
+                      {project.category}
+                    </span>
+                    <h3 className="text-3xl md:text-6xl font-black uppercase tracking-tighter text-white">
                       {project.title}
                     </h3>
                   </div>
-
-                  {/* Right side: year + expand indicator */}
-                  <div className="flex items-center gap-3 md:gap-6 shrink-0">
-                    <span
-                      className="font-mono text-xs md:text-sm hidden md:block transition-colors duration-300"
-                      style={{
-                        color: isOpen
-                          ? "rgba(212,175,55,0.5)"
-                          : "rgba(255,255,255,0.15)",
-                      }}
+                  <div
+                    className={`hidden sm:flex w-12 h-12 rounded-full border border-[#D4AF37]/30 items-center justify-center transition-all ${isOpen ? "bg-[#D4AF37] text-black" : "text-[#D4AF37]"}`}
+                  >
+                    <motion.span
+                      animate={{ rotate: isOpen ? 45 : 0 }}
+                      className="text-2xl"
                     >
-                      {project.year}
-                    </span>
-
-                    {/* Expand/collapse icon */}
-                    <div
-                      className="w-8 h-8 md:w-10 md:h-10 rounded-full border flex items-center justify-center transition-all duration-300 shrink-0"
-                      style={{
-                        borderColor: isOpen
-                          ? "rgba(212,175,55,0.4)"
-                          : "rgba(255,255,255,0.1)",
-                        background: isOpen
-                          ? "rgba(212,175,55,0.08)"
-                          : "transparent",
-                      }}
-                    >
-                      <motion.span
-                        animate={{ rotate: isOpen ? 45 : 0 }}
-                        transition={{ duration: 0.25 }}
-                        className="text-lg leading-none font-light"
-                        style={{
-                          color: isOpen ? "#D4AF37" : "rgba(255,255,255,0.3)",
-                        }}
-                      >
-                        +
-                      </motion.span>
-                    </div>
+                      +
+                    </motion.span>
                   </div>
                 </button>
 
-                {/* ── Expanded panel ── */}
-                <AnimatePresence initial={false}>
+                {/* ROZWINIĘTY PANEL */}
+                <AnimatePresence>
                   {isOpen && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.35, ease: "easeInOut" }}
-                      className="overflow-hidden"
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                      className="overflow-hidden border-t border-[#ffffff05]"
                     >
-                      <div className="border-t border-[#1a1a1a]">
-                        {/* Tab bar — scrollable on mobile */}
-                        <div className="flex items-center gap-0 px-4 sm:px-6 md:px-8 border-b border-[#1a1a1a] overflow-x-auto scrollbar-none">
-                          {TABS.map((tab) => {
-                            const isActive = activeTab === tab.id;
-
-                            // Code tab — special highlighted style, opens VSCode directly
-                            if (tab.isCode) {
-                              return (
-                                <button
-                                  key={tab.id}
-                                  onClick={() => openVSCode(project.id)}
-                                  className="relative ml-2 flex items-center gap-2 px-4 py-2 my-2 rounded-lg text-[10px] sm:text-[11px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all duration-200 shrink-0"
-                                  style={{
-                                    background: "rgba(212,175,55,0.08)",
-                                    border: "1px solid rgba(212,175,55,0.25)",
-                                    color: "#D4AF37",
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    (
-                                      e.currentTarget as HTMLElement
-                                    ).style.background =
-                                      "rgba(212,175,55,0.15)";
-                                    (
-                                      e.currentTarget as HTMLElement
-                                    ).style.borderColor =
-                                      "rgba(212,175,55,0.5)";
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    (
-                                      e.currentTarget as HTMLElement
-                                    ).style.background =
-                                      "rgba(212,175,55,0.08)";
-                                    (
-                                      e.currentTarget as HTMLElement
-                                    ).style.borderColor =
-                                      "rgba(212,175,55,0.25)";
-                                  }}
-                                >
-                                  <span className="w-1.5 h-1.5 rounded-full bg-[#27c93f] animate-pulse shrink-0" />
-                                  {tab.label}
-                                </button>
-                              );
-                            }
-
-                            // Regular tabs
-                            return (
+                      <div className="flex flex-col lg:flex-row bg-[#0c0c0c]">
+                        {/* LEWA STRONA (55%) */}
+                        <div className="lg:w-[55%] flex flex-col border-r border-[#ffffff05]">
+                          <div className="flex items-center px-4 border-b border-[#ffffff05] bg-[#0e0e0e] overflow-x-auto scrollbar-none">
+                            {TABS.map((tab) => (
                               <button
                                 key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className="relative px-4 sm:px-6 py-4 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-colors duration-200 shrink-0"
-                                style={{
-                                  color: isActive
-                                    ? "#D4AF37"
-                                    : "rgba(255,255,255,0.25)",
-                                }}
+                                onClick={() =>
+                                  setActiveTabs((prev) => ({
+                                    ...prev,
+                                    [project.id]: tab.id,
+                                  }))
+                                }
+                                className={`px-6 py-5 text-[10px] font-bold uppercase tracking-widest transition-all relative shrink-0 ${currentTab === tab.id ? "text-[#D4AF37]" : "text-neutral-500 hover:text-neutral-300"}`}
                               >
                                 {tab.label}
-                                {isActive && (
+                                {currentTab === tab.id && (
                                   <motion.div
-                                    layoutId="tab-line"
+                                    layoutId={`t-line-${project.id}`}
                                     className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#D4AF37]"
-                                    transition={{ duration: 0.2 }}
                                   />
                                 )}
                               </button>
-                            );
-                          })}
+                            ))}
+                          </div>
+                          <div className="p-6 md:p-10 flex-1">
+                            <AnimatePresence mode="wait">
+                              {currentTab === "overview" && (
+                                <OverviewTabContent
+                                  key="ov"
+                                  project={project}
+                                />
+                              )}
+                              {currentTab === "journey" && (
+                                <JourneyTabContent key="jn" project={project} />
+                              )}
+                              {currentTab === "stack" && (
+                                <StackTabContent key="st" project={project} />
+                              )}
+                            </AnimatePresence>
+                          </div>
                         </div>
 
-                        {/* Tab content */}
-                        <div className="px-4 sm:px-6 md:px-8 py-6 md:py-8">
-                          <AnimatePresence mode="wait">
-                            {activeTab === "overview" && (
-                              <OverviewTab
-                                key={`ov-${project.id}`}
-                                project={project}
-                              />
-                            )}
-                            {activeTab === "journey" && (
-                              <JourneyTab
-                                key={`jn-${project.id}`}
-                                project={project}
-                              />
-                            )}
-                            {activeTab === "stack" && (
-                              <StackTab
-                                key={`st-${project.id}`}
-                                project={project}
-                              />
-                            )}
-                          </AnimatePresence>
+                        {/* PRAWA STRONA (45%) */}
+                        <div className="lg:w-[45%] bg-[#080808] p-6 md:p-10 flex flex-col justify-center items-center relative overflow-hidden">
+                          {project.image && (
+                            <div className="w-full flex flex-col gap-6 max-w-xl">
+                              <motion.div
+                                whileHover={{ scale: 1.01 }}
+                                onClick={() =>
+                                  setSelectedImage(project.image as string)
+                                }
+                                className="relative w-full rounded-2xl overflow-hidden border border-[#ffffff10] shadow-xl cursor-zoom-in group"
+                              >
+                                <div className="h-7 w-full bg-[#151515] border-b border-[#ffffff08] flex items-center px-4 gap-2">
+                                  <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]/50" />
+                                  <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]/50" />
+                                  <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]/50" />
+                                </div>
+                                <img
+                                  src={project.image}
+                                  alt={project.title}
+                                  className="w-full h-auto object-cover object-top opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-6">
+                                  <span className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-4 py-1.5 rounded-full text-[9px] font-bold tracking-[0.3em]">
+                                    CLICK TO ENLARGE
+                                  </span>
+                                </div>
+                              </motion.div>
+
+                              <div className="flex flex-row items-center justify-center gap-2 sm:gap-3 w-full">
+                                {project.website && (
+                                  <a
+                                    href={project.website}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 flex items-center justify-center gap-2 px-2 sm:px-3 py-3 bg-[#D4AF37] text-black rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all transform hover:-translate-y-0.5 whitespace-nowrap"
+                                  >
+                                    <FaExternalLinkAlt size={10} /> Live Site
+                                  </a>
+                                )}
+                                <button
+                                  onClick={() => openVSCode(project.id)}
+                                  className="flex-1 flex items-center justify-center gap-2 px-2 sm:px-3 py-3 bg-[#111] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-[#D4AF37]/10 transition-all transform hover:-translate-y-0.5 whitespace-nowrap"
+                                >
+                                  💻 View Code
+                                </button>
+                                {project.github && (
+                                  <a
+                                    href={project.github}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 flex items-center justify-center gap-2 px-2 sm:px-3 py-3 bg-[#111] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-[#D4AF37]/10 transition-all transform hover:-translate-y-0.5 whitespace-nowrap"
+                                  >
+                                    <FaGithub size={12} /> Repo
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </motion.div>

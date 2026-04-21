@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const viewport = {
+export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -21,11 +21,14 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
+  // Define the base URL so Next.js can resolve relative image paths for OG tags
+  metadataBase: new URL("https://mateusz-goszczycki.vercel.app"),
+
   title: "Mateusz Goszczycki — Full Stack Engineer",
   description:
     "Full Stack Engineer building production-ready web apps from concept to deployment. React, Next.js, Node.js, TypeScript.",
   keywords: [
-    "Full Stack Engineer",
+    "Full Stack Developer", // Changed duplicate to Developer
     "Full Stack Engineer",
     "React Developer",
     "Next.js Developer",
@@ -44,12 +47,23 @@ export const metadata: Metadata = {
     title: "Mateusz Goszczycki — Full Stack Engineer",
     description:
       "Full Stack Engineer. Built and shipped 3 production apps — one for a paying client (autosell.pl). React · Next.js · Node.js · TypeScript.",
+    // If you don't use the automatic opengraph-image.png file, uncomment this:
+    // images: [
+    //   {
+    //     url: "/images/opengraph-image.webp",
+    //     width: 1200,
+    //     height: 630,
+    //     alt: "Mateusz Goszczycki Portfolio",
+    //   },
+    // ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Mateusz Goszczycki — Full Stack Engineer",
     description:
       "Full Stack Engineer. Built and shipped 3 production apps — one for a paying client (autosell.pl). React · Next.js · Node.js · TypeScript.",
+    // Similarly, uncomment if you aren't using automatic OG image generation:
+    // images: ["/images/opengraph-image.webp"],
   },
   robots: {
     index: true,
