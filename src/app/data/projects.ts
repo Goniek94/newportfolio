@@ -36,6 +36,9 @@ export type Project = {
   codeNote?: string;
   image?: string;
   thumbnail?: string;
+  /** Additional screenshots for the gallery lightbox. The hero `image`
+   *  is always shown first; `images` are appended after it. */
+  images?: string[];
 };
 
 export const projects: Project[] = [
@@ -140,6 +143,18 @@ export const projects: Project[] = [
     year: "2025 — 2026",
     image: "/img/Matchdays (2).png",
     thumbnail: "/img/Panel - Admina Dashboard.webp",
+    images: [
+      "/img/content.png",
+      "/img/content (1).png",
+      "/img/content (2).png",
+      "/img/content (3).png",
+      "/img/content (4).png",
+      "/img/content (5).png",
+      "/img/content (6).png",
+      "/img/beck1.png",
+      "/img/ars1.png",
+      "/img/arse2.png",
+    ],
     description:
       "A professional-grade auction marketplace for sports memorabilia, engineered to handle high-concurrency bidding wars. Built with a focus on data integrity, real-time synchronization, and automated trust systems.",
     bullets: [

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import {
   motion,
   AnimatePresence,
@@ -8,7 +8,13 @@ import {
   useTransform,
   useInView,
 } from "framer-motion";
-import { FaExternalLinkAlt, FaGithub } from "react-icons/fa";
+import {
+  FaExternalLinkAlt,
+  FaGithub,
+  FaChevronLeft,
+  FaChevronRight,
+  FaTimes,
+} from "react-icons/fa";
 import VSCodeViewer from "./VSCodeViewer";
 import { projects, Project } from "../data/projects";
 import {
@@ -168,7 +174,52 @@ export default function Projects() {
   const [isVSCodeOpen, setIsVSCodeOpen] = useState(false);
   const [vsCodeFiles, setVsCodeFiles] = useState(autosellFiles);
   const [vsCodeTitle, setVsCodeTitle] = useState("Autosell-Repo");
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // Gallery state — open when a project mockup is clicked.
+  // `images` is the full list for the active project; `index` is the
+  // currently displayed slide.
+  const [gallery, setGallery] = useState<{
+    images: string[];
+    index: number;
+  } | null>(null);
+
+  const openGallery = useCallback((project: Project) => {
+    // Hero image first, then any additional screenshots from `images`.
+    const all = [
+      ...(project.image ? [project.image] : []),
+      ...(project.images ?? []),
+    ];
+    if (all.length === 0) return;
+    setGallery({ images: all, index: 0 });
+  }, []);
+
+  const galleryNext = useCallback(() => {
+    setGallery((g) =>
+      g ? { ...g, index: (g.index + 1) % g.images.length } : g,
+    );
+  }, []);
+
+  const galleryPrev = useCallback(() => {
+    setGallery((g) =>
+      g
+        ? { ...g, index: (g.index - 1 + g.images.length) % g.images.length }
+        : g,
+    );
+  }, []);
+
+  const galleryClose = useCallback(() => setGallery(null), []);
+
+  // Keyboard navigation while the gallery is open
+  useEffect(() => {
+    if (!gallery) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") galleryClose();
+      if (e.key === "ArrowRight") galleryNext();
+      if (e.key === "ArrowLeft") galleryPrev();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [gallery, galleryClose, galleryNext, galleryPrev]);
 
   const getActiveTab = (projectId: number) =>
     activeTabs[projectId] || "overview";
@@ -207,24 +258,93 @@ export default function Projects() {
         title={vsCodeTitle}
       />
 
-      {/* Lightbox */}
+      {/* Gallery Lightbox */}
       <AnimatePresence>
-        {selectedImage && (
+        {gallery && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSelectedImage(null)}
-            className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/95 p-4 md:p-10 cursor-zoom-out"
+            onClick={galleryClose}
+            className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/95 p-4 md:p-10"
           >
-            <motion.img
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9 }}
-              src={selectedImage}
-              alt="Zoomed Project"
-              className="max-w-full max-h-full rounded-lg border border-[#333] shadow-2xl"
-            />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                galleryClose();
+              }}
+              aria-label="Close gallery"
+              className="absolute top-4 right-4 md:top-6 md:right-6 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md text-white flex items-center justify-center transition-colors"
+            >
+              <FaTimes size={14} />
+            </button>
+
+            {gallery.images.length > 1 && (
+              <span className="absolute top-4 left-4 md:top-6 md:left-6 z-10 font-mono text-xs text-white/80 tracking-widest bg-white/5 border border-white/10 backdrop-blur-md px-3 py-1.5 rounded-full">
+                {String(gallery.index + 1).padStart(2, "0")} /{" "}
+                {String(gallery.images.length).padStart(2, "0")}
+              </span>
+            )}
+
+            {gallery.images.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  galleryPrev();
+                }}
+                aria-label="Previous image"
+                className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md text-white flex items-center justify-center transition-colors"
+              >
+                <FaChevronLeft size={14} />
+              </button>
+            )}
+
+            {gallery.images.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  galleryNext();
+                }}
+                aria-label="Next image"
+                className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md text-white flex items-center justify-center transition-colors"
+              >
+                <FaChevronRight size={14} />
+              </button>
+            )}
+
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={gallery.images[gallery.index]}
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.2 }}
+                onClick={(e) => e.stopPropagation()}
+                src={gallery.images[gallery.index]}
+                alt={`Project screenshot ${gallery.index + 1}`}
+                className="max-w-full max-h-full rounded-lg border border-[#333] shadow-2xl cursor-default"
+              />
+            </AnimatePresence>
+
+            {gallery.images.length > 1 && gallery.images.length <= 12 && (
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 bg-white/5 border border-white/10 backdrop-blur-md px-4 py-2 rounded-full">
+                {gallery.images.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setGallery((g) => (g ? { ...g, index: i } : g));
+                    }}
+                    aria-label={`Go to image ${i + 1}`}
+                    className={`h-1.5 rounded-full transition-all ${
+                      i === gallery.index
+                        ? "bg-[#D4AF37] w-6"
+                        : "bg-white/30 hover:bg-white/60 w-1.5"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -340,9 +460,7 @@ export default function Projects() {
                             <div className="w-full flex flex-col gap-6 max-w-xl">
                               <motion.div
                                 whileHover={{ scale: 1.01 }}
-                                onClick={() =>
-                                  setSelectedImage(project.image as string)
-                                }
+                                onClick={() => openGallery(project)}
                                 className="relative w-full rounded-2xl overflow-hidden border border-[#ffffff10] shadow-xl cursor-zoom-in group"
                               >
                                 <div className="h-7 w-full bg-[#151515] border-b border-[#ffffff08] flex items-center px-4 gap-2">
