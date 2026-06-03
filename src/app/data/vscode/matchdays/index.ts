@@ -7,6 +7,9 @@ import { authContextCode } from "./frontend/AuthContext";
 import { smartFormCode } from "./frontend/SmartForm";
 import { smartFormStepsCode } from "./frontend/SmartFormSteps";
 import { stepCompletionModeCode } from "./frontend/StepCompletionMode";
+import { useAuctionRealtimeCode } from "./frontend/useAuctionRealtime";
+import { usePlaceBidCode } from "./frontend/usePlaceBid";
+import { legitCheckApiCode } from "./frontend/legitCheckApi";
 
 // ==========================================
 // BACKEND IMPORTS
@@ -71,7 +74,7 @@ export const matchdaysFiles: FileNode[] = [
       {
         name: "lib",
         language: "typescript",
-        isOpen: false,
+        isOpen: true,
         children: [
           {
             name: "context",
@@ -82,6 +85,42 @@ export const matchdaysFiles: FileNode[] = [
                 name: "AuthContext.tsx",
                 language: "typescript",
                 content: authContextCode,
+              },
+            ],
+          },
+          {
+            name: "hooks",
+            language: "typescript",
+            isOpen: true,
+            children: [
+              {
+                name: "useAuctionRealtime.ts",
+                language: "typescript",
+                content: useAuctionRealtimeCode,
+              },
+              {
+                name: "bids",
+                language: "typescript",
+                isOpen: true,
+                children: [
+                  {
+                    name: "usePlaceBid.ts",
+                    language: "typescript",
+                    content: usePlaceBidCode,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            name: "api",
+            language: "typescript",
+            isOpen: true,
+            children: [
+              {
+                name: "legit-check.ts",
+                language: "typescript",
+                content: legitCheckApiCode,
               },
             ],
           },
