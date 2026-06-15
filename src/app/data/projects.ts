@@ -1,5 +1,3 @@
-// src/app/data/projects.ts
-
 export type JourneyStep = {
   phase: string;
   title: string;
@@ -10,32 +8,22 @@ export type JourneyStep = {
 export type StackCategory = {
   label: string;
   items: string[];
-  description?: string; // <--- NOWE POLE NA CASE STUDY
-};
-
-export type CodeSnippet = {
-  name: string;
-  code: string;
+  description?: string;
 };
 
 export type Project = {
   id: number;
   number: string;
   title: string;
-  nda: boolean;
   category: string;
   year: string;
   description: string;
   bullets?: string[];
-  tech: string[];
   stackCategories: StackCategory[];
   journey: JourneyStep[];
-  snippets: CodeSnippet[];
   website: string | null;
   github: string | null;
-  codeNote?: string;
   image?: string;
-  thumbnail?: string;
   /** Additional screenshots for the gallery lightbox. The hero `image`
    *  is always shown first; `images` are appended after it. */
   images?: string[];
@@ -46,11 +34,9 @@ export const projects: Project[] = [
     id: 1,
     number: "01",
     title: "Autosell.pl",
-    nda: true,
     category: "Client Project · Live in Production",
     year: "2024 — 2025",
     image: "/img/autosell (3).png",
-    thumbnail: "/img/Lista ogłoszeń.webp",
     description:
       "Built and deployed a production automotive marketplace for a paying client, live at autosell.pl and used by real users.",
     bullets: [
@@ -61,15 +47,6 @@ export const projects: Project[] = [
       "Implemented authentication and basic security features for production use",
       "Wrote integration tests with Jest and Supertest covering search filters, auth, and input validation",
       "Deployed to production using Docker on a Linux VPS",
-    ],
-    tech: [
-      "React 18",
-      "Node.js",
-      "Express",
-      "MongoDB",
-      "Socket.IO",
-      "Docker",
-      "Jest",
     ],
     stackCategories: [
       {
@@ -130,7 +107,6 @@ export const projects: Project[] = [
         duration: "2 weeks",
       },
     ],
-    snippets: [],
     website: "https://www.autosell.pl",
     github: "https://github.com/Goniek94/Autosell_selected_files",
   },
@@ -138,11 +114,9 @@ export const projects: Project[] = [
     id: 2,
     number: "02",
     title: "Matchdays",
-    nda: false,
     category: "Real-time Auction Platform · High-Concurrency System",
     year: "2025 — 2026",
     image: "/img/Matchdays (2).png",
-    thumbnail: "/img/Panel - Admina Dashboard.webp",
     images: [
       "/img/content.png",
       "/img/content (1).png",
@@ -163,15 +137,6 @@ export const projects: Project[] = [
       "Integrated an AI-powered verification layer using Google Gemini Vision to automatically analyze and flag suspicious or low-quality memorabilia listings",
       "Architected a complex multi-party payment flow with Stripe Connect, handling automated seller onboarding, escrow-like hold periods, and instant payouts",
       "Built a robust background processing system using Redis and Bull queues to handle heavy tasks like AI analysis and automated auction closings without impacting API performance",
-    ],
-    tech: [
-      "Next.js 14",
-      "NestJS",
-      "PostgreSQL",
-      "Socket.IO",
-      "Stripe Connect",
-      "Google Gemini AI",
-      "Redis",
     ],
     stackCategories: [
       {
@@ -229,21 +194,16 @@ export const projects: Project[] = [
         duration: "2 weeks",
       },
     ],
-    snippets: [],
     website: "https://www.matchdaysproject.vercel.app",
     github: null,
-    codeNote:
-      "Core bidding engine and financial logic are private. Architecture diagrams available upon request.",
   },
   {
     id: 3,
     number: "03",
     title: "Windows XP",
-    nda: false,
     category: "Interactive Browser OS · Frontend Architecture",
     year: "2026",
     image: "/img/windowxp.png",
-    thumbnail: "/img/lights.jpg",
     description:
       "An incredibly complex, interactive simulation of the Windows XP operating system built entirely in the browser. A deep dive into advanced DOM manipulation, custom window management, and native HTML5 APIs.",
     bullets: [
@@ -252,13 +212,6 @@ export const projects: Project[] = [
       "Developed a deeply nested, globally synchronized state architecture linking the taskbar, system tray, desktop icons, and active window processes",
       "Built a highly authentic boot sequence and custom 'Glitch/Blue Screen' engine using advanced CSS animations and React lifecycles",
       "Implemented a functional File Explorer routing system to showcase portfolio projects within the retro OS environment",
-    ],
-    tech: [
-      "Next.js",
-      "React 19",
-      "TypeScript",
-      "Tailwind CSS",
-      "HTML5 Audio API",
     ],
     stackCategories: [
       {
@@ -310,7 +263,6 @@ export const projects: Project[] = [
         duration: "1.5 weeks",
       },
     ],
-    snippets: [],
     website: "https://mateusz-goszczycki-portfolio.vercel.app/",
     github: "https://github.com/Goniek94/Windows_xp",
   },

@@ -106,11 +106,13 @@ export default function VSCodeViewer({
   const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const codeContainerRef = useRef<HTMLDivElement>(null);
 
+  // Sync body scroll-lock with modal state; reset selection when closed
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reset selection on close so next open starts fresh
       setActiveFile(null);
     }
     return () => {
@@ -118,19 +120,23 @@ export default function VSCodeViewer({
     };
   }, [isOpen]);
 
+  // Initialise tree state when the modal opens or files change
   useEffect(() => {
-    if (isOpen) {
-      setOpenFolders(collectRootFolderNames(files));
-      if (!activeFile) {
-        setActiveFile(findFirstFile(files));
-      }
+    if (!isOpen) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initialise UI state when opening
+    setOpenFolders(collectRootFolderNames(files));
+    if (!activeFile) {
+      setActiveFile(findFirstFile(files));
     }
-  }, [isOpen, files]);
+    // activeFile intentionally omitted: we only want to seed selection on open/file-change
+  }, [isOpen, files]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Typing animation: streams the file content one character at a time
   useEffect(() => {
     if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
 
     if (activeFile && activeFile.language !== "image" && activeFile.content) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- restart typing animation when file changes
       setDisplayedCode("");
       setIsTyping(true);
 
@@ -338,6 +344,7 @@ export default function VSCodeViewer({
                   {activeFile ? (
                     activeFile.language === "image" ? (
                       <div className="w-full h-full flex items-center justify-center p-10">
+                        {/* eslint-disable-next-line @next/next/no-img-element -- dynamic preview, intrinsic dimensions unknown */}
                         <img
                           src={activeFile.imageSrc}
                           alt={activeFile.name}

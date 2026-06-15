@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import InitialLoader from "./components/InitialLoader";
 import Hero from "./components/Hero";
-import AboutMe from "./components/AboutMe";
+// import AboutMe from "./components/AboutMe"; // ← revert: re-enable & swap below
+import ProfileCockpit from "./components/ProfileCockpit";
 import Projects from "./components/Projects";
 import Contact from "./components/Contacts";
 import CustomCursor from "./components/CustomCursor";
@@ -35,7 +36,8 @@ export default function Home() {
       {/* Dopiero gdy loader zniknie (lub pod kurtyną), pokazujemy resztę */}
       <div className="relative z-0">
         <Hero />
-        <AboutMe />
+        {/* Cockpit / noir case-file prototype — swap back to <AboutMe /> to revert */}
+        <ProfileCockpit />
         <Projects />
         <Contact />
       </div>

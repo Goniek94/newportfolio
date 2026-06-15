@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 import SplitWord from "./about/SplitWord";
@@ -9,6 +9,7 @@ import StackPill from "./about/StackPill";
 import Terminal from "./about/Terminal";
 import ChallengeTab from "./about/ChallengeTab";
 import { buildItems, allStack } from "./about/data";
+import { useIsTouch } from "../hooks/useIsTouch";
 
 function RightColumn() {
   return (
@@ -204,11 +205,7 @@ function TabNav({
 
 export default function AboutMe() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [isTouch, setIsTouch] = useState(false);
-
-  useEffect(() => {
-    setIsTouch(window.matchMedia("(pointer: coarse)").matches);
-  }, []);
+  const isTouch = useIsTouch();
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,

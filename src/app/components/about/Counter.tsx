@@ -61,7 +61,6 @@ export default function Counter({
 
           const tick = (now: number) => {
             const elapsed = Math.min((now - startTime) / DURATION, 1);
-            const progress = easeOut(elapsed);
 
             // First 60% of time: count UP fast past spinMax
             // Last 40%: count down/ease to the real value

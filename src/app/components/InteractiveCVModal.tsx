@@ -6,7 +6,6 @@ import {
   FaDownload,
   FaServer,
   FaCodeBranch,
-  FaBug,
   FaUsers,
   FaLightbulb,
   FaRocket,
@@ -68,7 +67,7 @@ export default function InteractiveCVModal({
             <div className="flex items-center gap-4">
               {/* DESKTOP DOWNLOAD BUTTON */}
               <a
-                href="/cv_mateusz.pdf" // Zmieniono z cv_mateusz (1).pdf
+                href="/cv_mateusz.pdf"
                 download="Mateusz_Goszczycki_CV.pdf"
                 className="hidden sm:flex items-center gap-2 bg-[#D4AF37] text-black px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white transition-all shadow-[0_0_20px_rgba(212,175,55,0.2)] transform hover:-translate-y-0.5"
               >
@@ -86,7 +85,7 @@ export default function InteractiveCVModal({
           {/* MOBILE DOWNLOAD BUTTON */}
           <div className="sm:hidden p-4 border-b border-[#222] bg-[#0a0a0a]">
             <a
-              href="/cv_mateusz.pdf" // Zmieniono z cv_mateusz (1).pdf
+              href="/cv_mateusz.pdf"
               download="Mateusz_Goszczycki_CV.pdf"
               className="w-full flex justify-center items-center gap-2 bg-[#D4AF37] text-black px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest"
             >
@@ -105,7 +104,7 @@ export default function InteractiveCVModal({
                     Philosophy
                   </h3>
                   <p className="text-neutral-400 text-[13px] leading-relaxed font-light">
-                    I don't just write code; I build businesses. My focus is on
+                    I don&apos;t just write code; I build businesses. My focus is on
                     robust architecture, scalable databases, and seamless user
                     experiences. I believe in choosing the right tool for the
                     job, writing maintainable code, and anticipating bottlenecks

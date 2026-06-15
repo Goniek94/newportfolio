@@ -9,12 +9,10 @@ import {
 import { useRef, useState, useEffect } from "react";
 import { FaGithub, FaCode, FaFileAlt } from "react-icons/fa";
 
-// Importy Modali
 import VSCodeViewer from "./VSCodeViewer";
 import ProjectsVaultModal from "./ProjectsVaultModal";
 import InteractiveCVModal from "./InteractiveCVModal";
 
-// Importy Danych
 import { heroQuotes } from "../data/hero-quotes";
 import {
   autosellFiles,
@@ -25,7 +23,6 @@ import {
 export default function Hero() {
   const containerRef = useRef(null);
 
-  // Animacje na scrolla
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
@@ -33,20 +30,17 @@ export default function Hero() {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
-  // Stany lokalne
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [time, setTime] = useState("");
 
-  // Stany Modali
   const [isCVModalOpen, setIsCVModalOpen] = useState(false);
   const [isProjectsModalOpen, setIsProjectsModalOpen] = useState(false);
 
-  // Stany VSCode
   const [isVSCodeOpen, setIsVSCodeOpen] = useState(false);
   const [currentFiles, setCurrentFiles] = useState(autosellFiles);
   const [currentTitle, setCurrentTitle] = useState("Autosell-Repo");
 
-  // Zegar
+  // Clock
   useEffect(() => {
     const updateTime = () => {
       setTime(new Date().toLocaleTimeString("pl-PL", { hour12: false }));
@@ -56,7 +50,7 @@ export default function Hero() {
     return () => clearInterval(timer);
   }, []);
 
-  // Rotacja cytatów
+  // Rotating hero quotes
   useEffect(() => {
     const interval = setInterval(() => {
       setQuoteIndex((prev) => (prev + 1) % heroQuotes.length);
@@ -89,6 +83,11 @@ export default function Hero() {
         {/* --- BACKGROUND --- */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_50%,#1a1a1a,transparent)] pointer-events-none opacity-60"></div>
+
+        {/* Nebula gradients — same palette as the loader's deep-space scene */}
+        <div className="absolute -left-[15%] -top-[10%] h-[720px] w-[720px] rounded-full bg-[radial-gradient(circle,rgba(36,86,196,0.22),transparent_70%)] blur-[120px] pointer-events-none" />
+        <div className="absolute -right-[15%] bottom-[-12%] h-[760px] w-[760px] rounded-full bg-[radial-gradient(circle,rgba(190,42,110,0.20),transparent_70%)] blur-[130px] pointer-events-none" />
+        <div className="absolute left-1/2 top-1/3 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(212,175,55,0.08),transparent_70%)] blur-[110px] pointer-events-none" />
 
         {/* --- MAIN CONTENT --- */}
         <div className="z-10 w-full max-w-[1800px] mx-auto flex flex-col justify-center">

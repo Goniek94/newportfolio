@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { FaCopy, FaCheck, FaGithub, FaPhone, FaEnvelope, FaLinkedin } from "react-icons/fa";
+import { FaCopy, FaCheck, FaGithub, FaPhone, FaEnvelope } from "react-icons/fa";
+import { useIsTouch } from "../hooks/useIsTouch";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 const EMAIL = "mateusz.goszczycki1994@gmail.com";
@@ -54,11 +55,7 @@ const STATS = [
 export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null);
   const { copied, copy } = useCopy(EMAIL);
-  const [isTouch, setIsTouch] = useState(false);
-
-  useEffect(() => {
-    setIsTouch(window.matchMedia("(pointer: coarse)").matches);
-  }, []);
+  const isTouch = useIsTouch();
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -258,7 +255,7 @@ export default function Contact() {
                 </div>
 
                 {/* Sub + arrow */}
-                <div className="relative shrink-0 flex flex-col items-end gap-1 hidden sm:flex">
+                <div className="relative shrink-0 hidden sm:flex flex-col items-end gap-1">
                   <span className="text-[10px] font-mono text-neutral-700 group-hover:text-neutral-500 transition-colors">
                     {sub}
                   </span>

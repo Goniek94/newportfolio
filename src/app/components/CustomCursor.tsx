@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useIsTouch } from "../hooks/useIsTouch";
+
+const TRAIL_COUNT = 8;
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const trailsRef = useRef<HTMLDivElement[]>([]);
-  const TRAIL_COUNT = 8;
 
   const mouse = useRef({ x: -200, y: -200 });
   const ring = useRef({ x: -200, y: -200 });
@@ -16,17 +18,22 @@ export default function CustomCursor() {
   const rafRef = useRef<number>(0);
   const isHoveringRef = useRef(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(true); // domyślnie true — nie renderuj przed sprawdzeniem
+  const [hidden, setHidden] = useState(false);
+  const isTouch = useIsTouch();
+
+  // The loader hides the global crosshair while it draws its own flight reticle
+  useEffect(() => {
+    const hide = () => setHidden(true);
+    const show = () => setHidden(false);
+    window.addEventListener("cursor:hide", hide);
+    window.addEventListener("cursor:show", show);
+    return () => {
+      window.removeEventListener("cursor:hide", hide);
+      window.removeEventListener("cursor:show", show);
+    };
+  }, []);
 
   useEffect(() => {
-    const isTouch =
-      window.matchMedia("(pointer: coarse)").matches ||
-      "ontouchstart" in window;
-
-    setIsTouchDevice(isTouch);
-
-    // Na mobilnych — kończymy tutaj, żaden rAF nie startuje
     if (isTouch) return;
 
     const onMove = (e: MouseEvent) => {
@@ -42,9 +49,7 @@ export default function CustomCursor() {
       const hoverable = target.closest(
         "a, button, [role='button'], [data-cursor='pointer']",
       );
-      const val = !!hoverable;
-      isHoveringRef.current = val;
-      setIsHovering(val);
+      isHoveringRef.current = !!hoverable;
     };
 
     window.addEventListener("mousemove", onMove);
@@ -91,14 +96,14 @@ export default function CustomCursor() {
       document.removeEventListener("mouseover", onMouseOver);
       cancelAnimationFrame(rafRef.current);
     };
-  }, []); // ← pusta tablica — rAF odpala się RAZ, isHovering przez ref
+  }, [isTouch]);
 
-  if (isTouchDevice) return null;
+  if (isTouch) return null;
 
   return (
     <div
       className="pointer-events-none fixed inset-0 z-[99998]"
-      style={{ opacity: isVisible ? 1 : 0, transition: "opacity 0.3s ease" }}
+      style={{ opacity: isVisible && !hidden ? 1 : 0, transition: "opacity 0.3s ease" }}
       aria-hidden="true"
     >
       {Array.from({ length: TRAIL_COUNT }).map((_, i) => (

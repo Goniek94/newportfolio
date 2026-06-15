@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mateusz Goszczycki — Portfolio
 
-## Getting Started
+Personal portfolio site for **Mateusz Goszczycki**, full-stack engineer.
+Built with Next.js 16 (App Router), React 19, TypeScript and Tailwind CSS 4.
 
-First, run the development server:
+Live: <https://mateusz-goszczycki.vercel.app>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Stack
+
+- **Framework:** Next.js 16 (App Router), React 19
+- **Language:** TypeScript (strict)
+- **Styling:** Tailwind CSS 4 + CSS variables for fluid typography
+- **Animation:** Framer Motion (page transitions, hover/scroll effects)
+- **Icons:** react-icons
+- **Linting:** ESLint 9 + `eslint-config-next`
+
+## Structure
+
+```
+src/app/
+├── components/         # Top-level page sections + reusable widgets
+│   ├── Hero.tsx
+│   ├── AboutMe.tsx
+│   ├── Projects.tsx
+│   ├── Contacts.tsx
+│   ├── InitialLoader.tsx
+│   ├── CustomCursor.tsx
+│   ├── VSCodeViewer.tsx           # Modal: VSCode-style code preview
+│   ├── ProjectsVaultModal.tsx     # Modal: project picker
+│   ├── InteractiveCVModal.tsx     # Modal: long-form CV view
+│   └── about/                     # AboutMe sub-components (Terminal, Counter, …)
+├── data/
+│   ├── projects.ts                # Project case studies (used by Projects.tsx)
+│   ├── hero-quotes.tsx            # Rotating hero quotes
+│   └── vscode/                    # Snippet bundles rendered inside VSCodeViewer
+│       ├── autosell/
+│       ├── matchdays/
+│       └── windows_xp/
+├── hooks/
+│   └── useIsTouch.ts              # SSR-safe pointer-coarse detection (useSyncExternalStore)
+├── globals.css
+├── layout.tsx
+└── page.tsx
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The `data/vscode/*` files export **string literals** of code from the author's
+real projects. They are rendered inside the in-page "VSCode" modal — they are
+not executable modules.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Getting started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev      # http://localhost:3000
+```
 
-## Learn More
+## Quality
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run typecheck    # tsc --noEmit
+npm run lint
+npm run build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Deployed on Vercel. `app/layout.tsx` declares the canonical URL, OpenGraph
+metadata and Twitter Card metadata for social previews.

@@ -9,9 +9,10 @@ export default function Terminal() {
   const [lineIdx, setLineIdx] = useState(0);
   const [charIdx, setCharIdx] = useState(0);
   const [running, setRunning] = useState(false);
-  const [done, setDone] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
+
+  const done = lineIdx >= terminalScript.length;
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -31,10 +32,6 @@ export default function Terminal() {
 
   useEffect(() => {
     if (!running || done) return;
-    if (lineIdx >= terminalScript.length) {
-      setDone(true);
-      return;
-    }
     const line = terminalScript[lineIdx];
     if (line.type === "cmd") {
       if (charIdx < line.text.length) {
@@ -61,6 +58,7 @@ export default function Terminal() {
       return () => clearTimeout(t);
     }
   }, [running, done, lineIdx, charIdx]);
+
 
   useEffect(() => {
     if (containerRef.current) {
