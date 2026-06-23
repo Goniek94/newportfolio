@@ -168,7 +168,7 @@ function TopNav() {
     ["Contact", "#contact"],
   ] as const;
   return (
-    <div className="relative z-20 flex items-center justify-between border-b border-[#D4AF37]/20 px-6 py-4 md:px-10">
+    <div className="relative z-20 flex items-center justify-between border-b border-[#D4AF37]/20 py-4">
       <div className="flex items-center gap-3">
         <span className="grid h-8 w-8 place-items-center border border-[#D4AF37] font-mono text-[13px] font-black text-[#D4AF37]">
           MG
@@ -206,7 +206,7 @@ function RailReadout({ label, value }: { label: string; value: string }) {
 
 function LeftRail() {
   return (
-    <div className="hidden w-20 shrink-0 flex-col items-start gap-7 border-r border-[#D4AF37]/15 px-4 py-8 font-mono uppercase tracking-[0.2em] lg:flex">
+    <div className="absolute left-0 top-0 bottom-0 z-20 hidden w-16 flex-col items-start gap-7 border-r border-[#D4AF37]/15 px-3 py-8 font-mono uppercase tracking-[0.2em] lg:flex">
       <div className="text-[9px] leading-tight text-[#27c93f]">SYS<br />ONLINE</div>
       <span className="text-[#D4AF37]/40">+</span>
       <RailReadout label="LAT" value="51.10° N" />
@@ -220,7 +220,7 @@ function LeftRail() {
 function RightRail() {
   const ticks = ["10", "05", "00", "-05", "-10"];
   return (
-    <div className="hidden w-20 shrink-0 flex-col items-end gap-6 border-l border-[#D4AF37]/15 px-4 py-8 font-mono uppercase tracking-[0.2em] lg:flex">
+    <div className="absolute right-0 top-0 bottom-0 z-20 hidden w-16 flex-col items-end gap-6 border-l border-[#D4AF37]/15 px-3 py-8 font-mono uppercase tracking-[0.2em] lg:flex">
       <div className="text-right text-[9px] leading-tight text-[#D4AF37]/70">COMMS<br />ENCRYPTED</div>
       <div className="flex flex-1 flex-col justify-center gap-3 text-[9px] text-neutral-600">
         {ticks.map((t, i) => (
@@ -383,7 +383,7 @@ function CaseFiles({
   return (
     <div className="relative z-10 flex h-full flex-col gap-2 p-5 pt-14 md:p-6 md:pt-14">
       <p className="mb-1 text-[12px] leading-snug text-neutral-400">
-        Evidence. Experiments. Postmortems. Open each file to decrypt the subject.
+        Evidence. Experiments. Postmortems. Open a file for the full breakdown.
       </p>
       {projects.map((p) => {
         const open = openId === p.id;
@@ -457,7 +457,7 @@ function CaseFiles({
         );
       })}
       <p className="mt-auto pt-1 font-mono text-[9px] uppercase tracking-[0.2em] text-neutral-600">
-        {reviewed.size}/{projects.length} files opened — decrypt the subject ↓
+        {reviewed.size}/{projects.length} files opened · subject data below ↓
       </p>
     </div>
   );
@@ -478,9 +478,9 @@ function SubjectData({ unlocked, count, total }: { unlocked: boolean; count: num
     <div className="relative z-10 p-6 pt-14 md:p-8 md:pt-14">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.3em]">
         <span className={unlocked ? "text-[#27c93f]" : "text-[#D4AF37]/70"}>
-          {unlocked ? "● Access granted" : "▮ Encrypted · classified"}
+          {unlocked ? "● Subject data · open channel" : "▮ Encrypted · classified"}
         </span>
-        <span className="text-neutral-600">decryption {count}/{total}</span>
+        {!unlocked && <span className="text-neutral-600">decryption {count}/{total}</span>}
       </div>
       <div className="grid gap-x-10 gap-y-3 sm:grid-cols-2">
         {SUBJECT_ROWS.map(([k, v], idx) => (
@@ -539,7 +539,9 @@ export default function ProfileCockpit() {
       next.add(id);
       return next;
     });
-  const unlocked = reviewed.size >= projects.length;
+  // Contact data is always visible — a recruiter shouldn't have to "play" to
+  // reach it. The case files stay interactive purely for project detail.
+  const unlocked = true;
 
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const titleYRaw = useTransform(scrollYProgress, [0, 1], ["0%", "-8%"]);
@@ -556,8 +558,8 @@ export default function ProfileCockpit() {
       <div className="pointer-events-none absolute -left-[12%] top-[8%] z-0 h-[640px] w-[640px] rounded-full bg-[radial-gradient(circle,rgba(36,86,196,0.16),transparent_70%)] blur-[130px]" />
       <div className="pointer-events-none absolute -right-[12%] bottom-[2%] z-0 h-[680px] w-[680px] rounded-full bg-[radial-gradient(circle,rgba(190,42,110,0.14),transparent_70%)] blur-[140px]" />
       <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(to_right,#D4AF3708_1px,transparent_1px),linear-gradient(to_bottom,#D4AF3708_1px,transparent_1px)] bg-[size:40px_40px]" />
-      <div className="pointer-events-none absolute inset-0 z-30 shadow-[inset_0_0_220px_120px_rgba(0,0,0,0.92)]" />
-      <div className="hud-scanlines pointer-events-none absolute inset-0 z-30 opacity-50" />
+      <div className="pointer-events-none absolute inset-0 z-30 shadow-[inset_0_0_90px_20px_rgba(0,0,0,0.5)] md:shadow-[inset_0_0_220px_120px_rgba(0,0,0,0.92)]" />
+      <div className="hud-scanlines pointer-events-none absolute inset-0 z-30 opacity-25 md:opacity-50" />
       <div className="pointer-events-none absolute inset-0 z-30 overflow-hidden">
         <div className="hud-sweep h-1/3 w-full bg-[linear-gradient(to_bottom,transparent,rgba(212,175,55,0.05),transparent)]" />
       </div>
@@ -565,13 +567,10 @@ export default function ProfileCockpit() {
       <DreamLayer />
       <div className="pointer-events-none absolute inset-3 z-30 md:inset-6"><HudCorners /></div>
 
-      <div className="relative z-10 mx-auto max-w-[1800px]">
+      <div className="relative z-10 mx-auto max-w-[1800px] px-6 py-10 md:px-10 md:py-14 lg:px-16">
+        <LeftRail />
+        <RightRail />
         <TopNav />
-
-        <div className="flex">
-          <LeftRail />
-
-          <div className="min-w-0 flex-1 px-6 py-10 md:px-10 md:py-14">
             {/* ── HERO: monologue (left) + cockpit window (right) ─ */}
             <div className="mb-10 grid grid-cols-1 items-center gap-8 lg:grid-cols-[1.05fr_1fr] lg:gap-12">
               <div>
@@ -754,10 +753,6 @@ export default function ProfileCockpit() {
                 <span className="hud-blink text-[#D4AF37]">▮</span> Awaiting orders
               </span>
             </div>
-          </div>
-
-          <RightRail />
-        </div>
       </div>
     </section>
   );

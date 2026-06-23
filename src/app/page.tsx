@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
-import InitialLoader from "./components/InitialLoader";
+import AsciiLoader from "./components/AsciiLoader";
+// import AinoLoader from "./components/AinoLoader";       // ← wariant reveal tekstu
+// import InitialLoader from "./components/InitialLoader"; // ← kosmos: przywróć i zamień niżej
 import Hero from "./components/Hero";
 // import AboutMe from "./components/AboutMe"; // ← revert: re-enable & swap below
 import ProfileCockpit from "./components/ProfileCockpit";
@@ -26,7 +28,7 @@ export default function Home() {
     <main className="bg-[#050505] min-h-screen text-white relative selection:bg-[#D4AF37] selection:text-black">
       <AnimatePresence mode="wait">
         {isLoading && (
-          <InitialLoader finishLoading={() => setIsLoading(false)} />
+          <AsciiLoader finishLoading={() => setIsLoading(false)} />
         )}
       </AnimatePresence>
 

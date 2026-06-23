@@ -132,7 +132,7 @@ function StackTabContent({ project }: { project: Project }) {
 function SectionBridge() {
   return (
     <div className="relative w-full overflow-hidden bg-[#050505]">
-      <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16">
+      <div className="max-w-[1800px] mx-auto px-6 md:px-10 lg:px-16">
         <div className="relative flex items-center gap-0 py-0">
           <motion.div
             initial={{ scaleX: 0 }}
@@ -168,7 +168,8 @@ function SectionBridge() {
 }
 
 export default function Projects() {
-  const [activeIds, setActiveIds] = useState<number[]>([1]);
+  // All projects expanded from the start (collapse is still available on click)
+  const [activeIds, setActiveIds] = useState<number[]>(projects.map((p) => p.id));
   const [activeTabs, setActiveTabs] = useState<Record<number, Tab>>({});
 
   const [isVSCodeOpen, setIsVSCodeOpen] = useState(false);
@@ -351,7 +352,7 @@ export default function Projects() {
 
       <SectionBridge />
 
-      <div className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 pt-20 pb-24 md:pb-36">
+      <div className="max-w-[1800px] mx-auto px-6 md:px-10 lg:px-16 pt-20 pb-24 md:pb-36">
         <div className="flex flex-col gap-6">
           {projects.map((project, i) => {
             const isOpen = activeIds.includes(project.id);

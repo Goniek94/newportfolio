@@ -97,7 +97,7 @@ export default function Contact() {
         </div>
       </motion.div>
 
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 lg:px-16">
+      <div className="relative z-10 max-w-[1800px] mx-auto px-6 md:px-10 lg:px-16">
 
         {/* TOP BAR */}
         <motion.div
@@ -305,7 +305,7 @@ export default function Contact() {
       </div>
 
       {/* FOOTER */}
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 lg:px-16 py-7">
+      <div className="relative z-10 max-w-[1800px] mx-auto px-6 md:px-10 lg:px-16 py-7">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px] text-neutral-700 font-mono">
           <p>© 2026 Mateusz Goszczycki · All rights reserved</p>
           <p className="flex items-center gap-2">

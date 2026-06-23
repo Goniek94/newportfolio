@@ -250,6 +250,7 @@ export default function InitialLoader({ finishLoading }: LoaderProps) {
         dragOffset={dragOffset}
         boost={smoothBoost}
         approach={approach}
+        lowPower={isTouch}
       />
 
       {/* Cinematic vignette */}

@@ -8,6 +8,21 @@ import {
 } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { FaGithub, FaCode, FaFileAlt } from "react-icons/fa";
+import {
+  SiReact,
+  SiTypescript,
+  SiJavascript,
+  SiNextdotjs,
+  SiNodedotjs,
+  SiTailwindcss,
+  SiPostgresql,
+  SiDocker,
+  SiRedis,
+  SiPrisma,
+  SiNestjs,
+  SiMongodb,
+} from "react-icons/si";
+import { useIsTouch } from "../hooks/useIsTouch";
 
 import VSCodeViewer from "./VSCodeViewer";
 import ProjectsVaultModal from "./ProjectsVaultModal";
@@ -19,6 +34,77 @@ import {
   matchdaysFiles,
   windowsXpFiles,
 } from "../data/vscode/index";
+
+// ── Floating tech icons + code tokens drifting in the hero background ──
+const TECH_ICONS = [
+  SiReact, SiTypescript, SiJavascript, SiNextdotjs, SiNodedotjs,
+  SiTailwindcss, SiPostgresql, SiDocker, SiRedis, SiPrisma, SiNestjs, SiMongodb,
+];
+
+const CODE_TOKENS = [
+  "</>", "{ }", "=>", "<p>", "const", "( )", "async", "await", "</div>",
+  "git push", "npm run dev", "::after", "0xFF", "<Hero/>", "return", "useState()",
+];
+
+// Deterministic layout (index-based math → no SSR/CSR hydration drift)
+const FLOATERS = Array.from({ length: 22 }, (_, i) => ({
+  k: i,
+  left: (i * 47.3 + 4) % 100,
+  top: (i * 29.7 + 7) % 100,
+  size: 16 + ((i * 11) % 26),
+  dur: 12 + ((i * 7) % 14),
+  delay: (i * 1.3) % 8,
+  dx: (i % 3) * 16 - 16,
+  dy: i % 2 === 0 ? 28 : -28,
+  rot: ((i * 13) % 26) - 13,
+  isIcon: i % 2 === 0,
+}));
+
+function FloatingTech() {
+  const isTouch = useIsTouch();
+  if (isTouch) return null; // keep mobile light
+
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] overflow-hidden">
+      {FLOATERS.map((f) => {
+        const gold = f.k % 3 !== 0;
+        const color = gold ? "text-[#D4AF37]" : "text-neutral-500";
+        const Icon = TECH_ICONS[(f.k >> 1) % TECH_ICONS.length];
+        const token = CODE_TOKENS[(f.k >> 1) % CODE_TOKENS.length];
+        return (
+          <motion.div
+            key={f.k}
+            className={`absolute ${color}`}
+            style={{ left: `${f.left}%`, top: `${f.top}%`, opacity: 0.1 }}
+            animate={{
+              y: [0, f.dy, 0],
+              x: [0, f.dx, 0],
+              rotate: [0, f.rot, 0],
+              opacity: [0.05, gold ? 0.16 : 0.1, 0.05],
+            }}
+            transition={{
+              duration: f.dur,
+              delay: f.delay,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            {f.isIcon ? (
+              <Icon size={f.size + 8} />
+            ) : (
+              <span
+                className="font-mono font-bold"
+                style={{ fontSize: f.size }}
+              >
+                {token}
+              </span>
+            )}
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function Hero() {
   const containerRef = useRef(null);
@@ -78,7 +164,7 @@ export default function Hero() {
     <>
       <section
         ref={containerRef}
-        className="relative min-h-screen w-full bg-[#050505] text-[#e1e1e1] flex flex-col justify-center px-4 md:px-12 overflow-hidden pt-32 pb-20"
+        className="relative min-h-screen w-full bg-[#050505] text-[#e1e1e1] flex flex-col justify-center px-6 md:px-10 lg:px-16 overflow-hidden pt-32 pb-20"
       >
         {/* --- BACKGROUND --- */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
@@ -88,6 +174,9 @@ export default function Hero() {
         <div className="absolute -left-[15%] -top-[10%] h-[720px] w-[720px] rounded-full bg-[radial-gradient(circle,rgba(36,86,196,0.22),transparent_70%)] blur-[120px] pointer-events-none" />
         <div className="absolute -right-[15%] bottom-[-12%] h-[760px] w-[760px] rounded-full bg-[radial-gradient(circle,rgba(190,42,110,0.20),transparent_70%)] blur-[130px] pointer-events-none" />
         <div className="absolute left-1/2 top-1/3 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(212,175,55,0.08),transparent_70%)] blur-[110px] pointer-events-none" />
+
+        {/* Floating tech icons + code tokens */}
+        <FloatingTech />
 
         {/* --- MAIN CONTENT --- */}
         <div className="z-10 w-full max-w-[1800px] mx-auto flex flex-col justify-center">
