@@ -24,6 +24,7 @@ import {
 } from "react-icons/si";
 import { useIsTouch } from "../hooks/useIsTouch";
 
+import HeroSpotlight from "./HeroSpotlight";
 import VSCodeViewer from "./VSCodeViewer";
 import ProjectsVaultModal from "./ProjectsVaultModal";
 import InteractiveCVModal from "./InteractiveCVModal";
@@ -59,6 +60,49 @@ const FLOATERS = Array.from({ length: 22 }, (_, i) => ({
   rot: ((i * 13) % 26) - 13,
   isIcon: i % 2 === 0,
 }));
+
+// ── Animated stat: counts a number up from 0, or shows static text ──
+function Stat({
+  value,
+  display,
+  label,
+  delay = 0,
+}: {
+  value?: number;
+  display?: string;
+  label: string;
+  delay?: number;
+}) {
+  const [n, setN] = useState(0);
+
+  useEffect(() => {
+    if (value === undefined) return;
+    let raf = 0;
+    const begin = performance.now() + delay;
+    const tick = (now: number) => {
+      const t = Math.min(Math.max((now - begin) / 900, 0), 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setN(Math.round(eased * value));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [value, delay]);
+
+  const shown =
+    display ?? (value !== undefined ? String(n).padStart(2, "0") : "");
+
+  return (
+    <div className="flex flex-col">
+      <span className="font-mono text-4xl md:text-6xl font-black tabular-nums text-white leading-none">
+        {shown}
+      </span>
+      <span className="mt-2 text-[11px] md:text-xs font-mono uppercase tracking-[0.2em] text-neutral-500">
+        {label}
+      </span>
+    </div>
+  );
+}
 
 function FloatingTech() {
   const isTouch = useIsTouch();
@@ -178,6 +222,9 @@ export default function Hero() {
         {/* Floating tech icons + code tokens */}
         <FloatingTech />
 
+        {/* Cursor flashlight revealing a living ASCII texture (ties to intro) */}
+        <HeroSpotlight />
+
         {/* --- MAIN CONTENT --- */}
         <div className="z-10 w-full max-w-[1800px] mx-auto flex flex-col justify-center">
           {/* TOP BAR */}
@@ -189,8 +236,10 @@ export default function Hero() {
               className="flex items-center gap-4"
             >
               <div className="h-[2px] w-12 bg-[#D4AF37]" />
-              <span className="text-xs md:text-sm font-mono tracking-[0.2em] text-[#D4AF37] uppercase font-bold">
-                Software Engineer • Poland
+              <span className="text-xs md:text-sm font-mono tracking-[0.2em] uppercase font-bold">
+                <span className="text-white">Mateusz Goszczycki</span>
+                <span className="mx-2 text-neutral-600">/</span>
+                <span className="text-[#D4AF37]">Fullstack Engineer · PL</span>
               </span>
             </motion.div>
 
@@ -225,32 +274,40 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          {/* TITLE */}
-          <motion.div
-            style={{ y, opacity }}
-            className="relative z-20 mix-blend-difference"
-          >
-            <h1 className="text-[12vw] leading-[0.85] font-black tracking-tighter text-white uppercase break-words">
-              <motion.span
-                initial={{ y: "100%", opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
-                className="block"
-              >
-                Mateusz
-              </motion.span>
-              <motion.span
-                initial={{ y: "100%", opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{
-                  duration: 1,
-                  delay: 0.1,
-                  ease: [0.76, 0, 0.24, 1],
-                }}
-                className="block text-neutral-500"
-              >
-                Goszczycki
-              </motion.span>
+          {/* TITLE — the pitch (your strongest line) instead of the name,
+              which the intro already established. */}
+          <motion.div style={{ y, opacity }} className="relative z-20">
+            <h1 className="text-[clamp(2.5rem,7.2vw,7.5rem)] leading-[0.95] font-black tracking-tighter text-white uppercase max-w-[16ch]">
+              <span className="block overflow-hidden">
+                <motion.span
+                  initial={{ y: "110%" }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
+                  className="block"
+                >
+                  I build the parts
+                </motion.span>
+              </span>
+              <span className="block overflow-hidden">
+                <motion.span
+                  initial={{ y: "110%" }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 1, delay: 0.12, ease: [0.76, 0, 0.24, 1] }}
+                  className="block text-[#D4AF37]"
+                >
+                  that fall apart
+                </motion.span>
+              </span>
+              <span className="block overflow-hidden">
+                <motion.span
+                  initial={{ y: "110%" }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 1, delay: 0.24, ease: [0.76, 0, 0.24, 1] }}
+                  className="block text-[#D4AF37]"
+                >
+                  in production.
+                </motion.span>
+              </span>
             </h1>
           </motion.div>
 
@@ -300,6 +357,18 @@ export default function Hero() {
               </AnimatePresence>
             </div>
           </div>
+
+          {/* --- HARD PROOF: animated stat counters --- */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="mt-12 flex flex-wrap gap-x-12 gap-y-8 border-t border-[#222] pt-8"
+          >
+            <Stat value={3} label="Production apps" />
+            <Stat value={1} label="Paying client · autosell.pl" delay={150} />
+            <Stat display="Solo" label="Schema → API → prod" delay={300} />
+          </motion.div>
 
           {/* --- GOLD STACK MARQUEE --- */}
           <div className="mt-16 w-full overflow-hidden whitespace-nowrap pointer-events-none">
